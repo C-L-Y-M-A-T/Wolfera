@@ -1,4 +1,7 @@
 import { Config } from './types';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: process.cwd() + '/../.env' });
 
 export const config: Config = {
   apiHost: process.env.API_HOST || 'localhost',
