@@ -1,19 +1,22 @@
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
+import { GamePhase } from './GamePhase';
+import { WaitingForGameStartPhase } from './phases/WatitingForGameStart.phase';
 import { Player } from './Player';
 
 export class GameContext {
-  isEmpty() {
-    return this.players.size === 0;
-  }
-  private players: Map<string, Player> = new Map();
+  public players: Map<string, Player> = new Map();
   public gameId: string;
   private gameOwner: Player;
+  private phase: GamePhase;
 
   constructor(gameOwner: User) {
     this.gameId = this.generateGameId();
     this.addPlayer(gameOwner);
     this.setOwner(gameOwner.id);
+  }
+  isEmpty() {
+    return this.players.size === 0;
   }
   addPlayer(user: User): Player {
     const player = new Player(user, this);
@@ -44,6 +47,10 @@ export class GameContext {
       throw new Error(`Player with ID ${userId} not found`);
     }
   }
+  start(): void {
+    this.phase = new WaitingForGameStartPhase(this);
+    this.phase.execute();
+  }
 
   stop(): void {
     this.players.forEach((player) => {
@@ -54,5 +61,16 @@ export class GameContext {
   //todo: change generate game id
   generateGameId(): string {
     return Math.random().toString(36).substring(2, 15);
+  }
+
+  //TODO: to replace with event emitter
+  emmit(event: string, data: any): void {
+    this.players.forEach((player) => {
+      //player.socket?.emit(event, data);
+      player.socket?.emit('game-event', {
+        event,
+        data,
+      });
+    });
   }
 }

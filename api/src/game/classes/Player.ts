@@ -19,7 +19,7 @@ export class Player {
   connect(socket: Socket): void {
     this.socket = socket;
     this.socket.data.player = this;
-    this.socket.data.context = this.context;
+    this.socket.data.game = this.context;
   }
 
   disconnect(): void {

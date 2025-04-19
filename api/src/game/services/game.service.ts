@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../classes/GameContext';
+import { GameOptions } from '../classes/GameOptions';
 
 @Injectable()
 export class GameService {
   private games: Map<string, GameContext> = new Map();
 
-  createGame(gameOwner: User): GameContext {
+  getGame(gameId: string): GameContext | undefined {
+    return this.games.get(gameId);
+  }
+
+  //TODO: check if player is already in a game
+  createGame(gameOwner: User, options: GameOptions): GameContext {
     const gameContext = new GameContext(gameOwner);
     this.games.set(gameContext.gameId, gameContext);
     return gameContext;

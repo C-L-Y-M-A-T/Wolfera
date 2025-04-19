@@ -4,7 +4,7 @@ import { Player } from 'src/game/classes/Player';
 
 export interface GameSocket extends Socket {
   data: {
-    context: GameContext;
+    game: GameContext;
     player: Player;
   };
 }
