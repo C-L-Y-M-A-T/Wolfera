@@ -17,4 +17,9 @@ export type WitchPick = SocketMessage<
   { player: string; action: 'save' | 'kill' }
 >;
 
-export type GameClientEvent = Start | CupidPick | WerewolvesPick | SeerPeek | WitchPick;
+export type GameClientEvent =
+  | Start
+  | CupidPick
+  | WerewolvesPick
+  | SeerPeek
+  | WitchPick;

@@ -4,41 +4,13 @@ import { SocketMessage } from 'src/socket/events/types/events';
 export type Started = SocketMessage<'started'>;
 export type GameOver = SocketMessage<'over'>;
 
+// Role assignment events
 export type AssignRole = SocketMessage<
   'assign-role',
   { playerId: string; role: string }
 >;
-export type StartRound = SocketMessage<
-  'start-round',
-  { round: number; duration: number }
->;
-export type EndRound = SocketMessage<'end-round'>;
 
-// I. Night events
-export type StartNight = SocketMessage<'start-night'>;
-export type EndNight = SocketMessage<'end-night'>;
-
-//   1. Cupid events (Only for first night == Round 1)
-export type CupidWakeUp = SocketMessage<'cupid-wake-up'>;
-export type CupidPickDone = SocketMessage<'cupid-pick-done'>;
-
-//   2. Werewolves events
-export type WerewolvesWakeUp = SocketMessage<'werewolves-wake-up'>;
-export type WerewolvesPickDone = SocketMessage<'werewolves-pick-done'>;
-
-//   3. Seer events
-export type SeerWakeUp = SocketMessage<'seer-wake-up'>;
-export type SeerPeekDone = SocketMessage<'seer-peek-done'>;
-
-//   4. Witch events
-export type WitchWakeUp = SocketMessage<'witch-wake-up'>;
-export type WitchPickDone = SocketMessage<'witch-pick-done'>;
-
-// II. Day events
-export type DayTime = SocketMessage<'start-day'>;
-export type DayTimeOver = SocketMessage<'end-day'>;
-
-//   1. Announcement events
+// Announcement event
 export type Announcement = SocketMessage<
   'announcement',
   {
@@ -49,40 +21,38 @@ export type Announcement = SocketMessage<
   }
 >;
 
-//   2. Voting events
-export type StartVoting = SocketMessage<'start-voting'>;
-export type PlayerVoted = SocketMessage<
-  'player-voted',
-  { player: string; votedFor: string | null }
+// Phase start and end events
+//
+// TODO: Add more specific fields to the phase event
+// PhaseType can be:
+// |
+// |- 'round'
+// |- 'day' | 'night'
+// |- Role: 'werewolf' | 'seer' | 'witch' | 'hunter' | 'villager'
+// |- 'voting' | 'voting-results'
+
+export type PhaseType = undefined;
+
+export type StartPhase = SocketMessage<
+  'phase-start',
+  {
+    phase: PhaseType;
+    duration: number;
+    startTime: Date;
+    endTime: Date;
+    description: string;
+    round: number;
+
+    // TODO: Add more specific fields
+  }
 >;
-export type VoteDone = SocketMessage<'vote-done'>;
-export type VoteResult = SocketMessage<
-  'vote-result',
-  { player: string; votedFor: string | null }
->;
-export type EndVoting = SocketMessage<'end-voting'>;
+
+export type EndPhase = SocketMessage<'phase-end'>;
 
 export type GameServerEvent =
   | Started
   | GameOver
   | AssignRole
-  | StartRound
-  | EndRound
-  | StartNight
-  | EndNight
-  | CupidWakeUp
-  | CupidPickDone
-  | WerewolvesWakeUp
-  | WerewolvesPickDone
-  | SeerWakeUp
-  | SeerPeekDone
-  | WitchWakeUp
-  | WitchPickDone
-  | DayTime
-  | DayTimeOver
-  | Announcement
-  | StartVoting
-  | PlayerVoted
-  | VoteDone
-  | VoteResult
-  | EndVoting;
+  | StartPhase
+  | EndPhase
+  | Announcement;
