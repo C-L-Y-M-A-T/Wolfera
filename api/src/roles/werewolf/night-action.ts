@@ -27,7 +27,6 @@ export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
     // todo: implement emit to role/ emit to players under a certain condition like has or has not role
     this.context.emmit('werewolf:night:start', {
       message: 'Choose a victim...',
-      alivePlayers: this.context.getAlivePlayers(),
     });
     console.log('Werewolf night phase started');
   }

@@ -37,9 +37,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('start-dummy-game event received');
     const dummyPlayers: User[] = [
       {
-        id: '123',
-      },
-      {
         id: '456',
       },
       {
@@ -55,7 +52,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     dummyPlayers.forEach((player) => {
       client.data.game.addPlayer(player);
     });
-    client.data.game.start();
+    //client.data.game.start();
   }
 
   handleConnection(client: Socket) {

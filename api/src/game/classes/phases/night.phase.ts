@@ -67,7 +67,6 @@ export class NightPhase extends GamePhase {
           role.nightPhase.isActiveTonight(this.context),
       )
       .map((role) => {
-        console.log('adding role to uniqueRoles', role);
         if (!uniqueRoles.has(role.roleData.name)) {
           uniqueRoles.set(role.roleData.name, role);
         }
@@ -78,8 +77,8 @@ export class NightPhase extends GamePhase {
         (b.nightPhase?.nightPriority ?? -1),
     );
     console.log(
-      'uniqueRoles',
-      Array.from(uniqueRoles.values()).map((role) => role.roleData.name),
+      'activeRoles',
+      this.activeRoles.map((role) => role.roleData.name),
     );
     console.log('NightPhase: activeRoles', this.activeRoles);
   }

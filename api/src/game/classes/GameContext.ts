@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { SEER_ROLE_NAME } from 'src/roles/seer';
+import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { ChatHandler } from '../chat/ChatHandler';
@@ -71,7 +73,6 @@ export class GameContext {
       throw new Error('Game is already started');
     }
     this.tempAsignRoles();
-    console.log('Game started with players:', this.players);
     this.phase = new NightPhase(this);
     const result = await this.phase.executeAsync();
     console.log('Game ended with result: <<<<<<<<<', result, '>>>>>>>>>>>');
@@ -105,6 +106,8 @@ export class GameContext {
 
   //TODO: to remove this function (just for testing)
   tempAsignRoles(): void {
-    this.players.get('123')!.role = this.rolesService.getRole('Werewolf');
+    this.players.get('123')!.role =
+      this.rolesService.getRole(WEREWOLF_ROLE_NAME);
+    this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
   }
 }

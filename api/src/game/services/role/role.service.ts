@@ -3,11 +3,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { assert } from 'console';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { GameRole, RoleSchema } from 'src/roles';
+import { GameRole, RoleName, RoleSchema } from 'src/roles';
 
 @Injectable()
 export class RoleService implements OnModuleInit {
-  private roles: Map<string, GameRole> = new Map(); // Format: { [roleId]: role }
+  private roles: Map<RoleName, GameRole> = new Map();
 
   async onModuleInit() {
     await this.loadRoles();
@@ -100,7 +100,7 @@ export class RoleService implements OnModuleInit {
   }
 
   // Get a specific role's config
-  getRole(roleId) {
-    return this.roles.get(roleId);
+  getRole(roleName: RoleName) {
+    return this.roles.get(roleName);
   }
 }
