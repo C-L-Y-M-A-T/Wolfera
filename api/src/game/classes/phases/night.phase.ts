@@ -47,12 +47,8 @@ export class NightPhase extends GamePhase {
     player: Player,
     action: PlayerAction,
   ): Promise<void> {
-    if (this.currentSubPhase) {
-      await this.currentSubPhase.handlePlayerAction(player, action);
-    } else {
-      throw new Error('No active sub-phase to handle the player action');
-    }
-  }
+-  private currentSubPhase: GamePhase;
++  private currentSubPhase?: GamePhase;
 
   private buildNightSubPhases(): void {
     console.log('alive players', this.context.getAlivePlayers());
