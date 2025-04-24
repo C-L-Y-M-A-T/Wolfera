@@ -47,8 +47,11 @@ export class NightPhase extends GamePhase {
   }
 
   protected async processPlayerAction(player: any, action: any): Promise<void> {
-    console.log('nightphase processing action', action);
-    this.currentSubPhase.handlePlayerAction(player, action);
+    if (this.currentSubPhase) {
+      this.currentSubPhase.handlePlayerAction(player, action);
+    } else {
+      throw new Error('No active sub-phase to handle the player action');
+    }
   }
 
   private buildNightSubPhases(): void {
