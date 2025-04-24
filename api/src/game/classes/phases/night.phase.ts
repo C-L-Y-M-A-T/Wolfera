@@ -6,7 +6,7 @@ import { PlayerAction } from '../types';
 export class NightPhase extends GamePhase {
   readonly phaseName = 'Night-phase';
   private activeRoles: Array<GameRole>;
-  private currentSubPhase: GamePhase;
+  private currentSubPhase?: GamePhase;
 
   get phaseDuration(): number {
     return 0;
@@ -47,8 +47,12 @@ export class NightPhase extends GamePhase {
     player: Player,
     action: PlayerAction,
   ): Promise<void> {
--  private currentSubPhase: GamePhase;
-+  private currentSubPhase?: GamePhase;
+    if (this.currentSubPhase) {
+      await this.currentSubPhase.handlePlayerAction(player, action);
+    } else {
+      throw new Error('No active sub-phase to handle the player action');
+    }
+  }
 
   private buildNightSubPhases(): void {
     console.log('alive players', this.context.getAlivePlayers());
