@@ -10,6 +10,8 @@ declare global {
 }
 export type RoleName = keyof RoleNameMap;
 
+export type Team = 'villagers' | 'werewolves';
+
 export type GameRole = {
   roleData: RoleData;
   nightPhase?: RoleNightPhase;
@@ -23,7 +25,7 @@ export type RoleNightPhase = {
 
 export type RoleData = {
   name: RoleName;
-  team: string;
+  team: Team;
   description: string;
 };
 
