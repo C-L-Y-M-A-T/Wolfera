@@ -13,7 +13,6 @@ export class RoleService implements OnModuleInit {
     await this.loadRoles();
   }
   validateRole(role: unknown): GameRole {
-    debugger;
     const result = RoleSchema.parse(role);
 
     return result as GameRole;
