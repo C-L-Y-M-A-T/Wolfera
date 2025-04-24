@@ -1,20 +1,20 @@
-import { GameRole, RoleData } from '..';
+import { GameRole } from '..';
 import { WerewolfNightPhase } from './night-action';
 
-export const WerewolfRole: RoleData = {
-  name: 'Werewolf',
-  team: 'werewolves',
-  description: 'Kill villagers at night.',
-  canActAtNight: true,
-  nightPriority: 1,
-};
-
-const werewolfRoleData: GameRole = {
-  roleData: WerewolfRole,
-  nightPhase: WerewolfNightPhase,
+export const werewolfRole: GameRole = {
+  roleData: {
+    name: 'Werewolf',
+    team: 'werewolves',
+    description: 'Kill villagers at night.',
+  },
+  nightPhase: {
+    class: WerewolfNightPhase,
+    isActiveTonight: (context) => true,
+    nightPriority: 1,
+  },
 };
 
 //TODO: this is just a dummy type, we need to implement the werewolf role
 export type WerewolfAction = { action: 'werewolf-kill'; personToKill: string };
 
-export default werewolfRoleData;
+export default werewolfRole;

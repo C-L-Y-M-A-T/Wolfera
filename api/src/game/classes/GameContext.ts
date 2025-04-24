@@ -15,6 +15,7 @@ export class GameContext {
   public gameId: string;
   private gameOwner: Player;
   private phase: GamePhase;
+  public round: number = 0;
 
   //TODO: add options
   constructor(public rolesService: RoleService) {
@@ -65,7 +66,7 @@ export class GameContext {
 
   async start() {
     //TODO: to implement real logic here, this is just to test the game
-    if (this.phase.phaseName !== 'WaitingForGameStart') {
+    if (this.phase.phaseName !== 'WaitingForGameStart-phase') {
       //TODO: not use string for phase name
       throw new Error('Game is already started');
     }

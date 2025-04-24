@@ -1,12 +1,11 @@
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseState, PlayerAction } from './types';
+import { PhaseName, PhaseState, PlayerAction } from './types';
 
 export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
-  constructor(protected context: GameContext) {}
   public phaseState: PhaseState = PhaseState.Pending;
-
-  abstract readonly phaseName: string;
+  constructor(protected context: GameContext) {}
+  abstract readonly phaseName: PhaseName;
 
   public startTime: number;
   protected abstract onStart(): Promise<void> | void;
@@ -57,7 +56,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
 
     // 1. Pre-phase
     this.phaseState = PhaseState.Pre;
-    if (this.onPrePhase) await this.onPrePhase();
+    await this.onPrePhase?.();
     if (this.prePhaseDuration > 0) await this.delay(this.prePhaseDuration);
 
     // 2. Main phase
@@ -80,8 +79,8 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
     this.phaseState = PhaseState.Post;
 
     // 3. Post-phase
-    if (this.onPostPhase) await this.onPostPhase();
     if (this.postPhaseDuration > 0) await this.delay(this.postPhaseDuration);
+    await this.onPostPhase?.();
 
     this.phaseState = PhaseState.Completed;
     this.onComplete?.(this.output);
@@ -112,7 +111,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
    * @param action
    * @param processPlayerAction
    */
-  public validatePlayerAction?(
+  protected validatePlayerAction?(
     player: Player,
     action: PlayerAction,
   ): action is A;

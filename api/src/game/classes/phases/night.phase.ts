@@ -1,8 +1,10 @@
 import { GameRole } from 'src/roles';
 import { GamePhase } from '../GamePhase';
+import { Player } from '../Player';
+import { PlayerAction } from '../types';
 
 export class NightPhase extends GamePhase {
-  readonly phaseName = 'NightPhase';
+  readonly phaseName = 'Night-phase';
   private activeRoles: Array<GameRole>;
   private currentSubPhase: GamePhase;
 
@@ -32,7 +34,7 @@ export class NightPhase extends GamePhase {
     console.log('NightPhase: executePhases', this.activeRoles);
     for (const role of this.activeRoles) {
       if (role.nightPhase) {
-        this.currentSubPhase = new role.nightPhase(this.context);
+        this.currentSubPhase = new role.nightPhase.class(this.context);
         currentData[role.roleData.name] =
           await this.currentSubPhase.executeAsync(currentData);
       }
@@ -41,14 +43,12 @@ export class NightPhase extends GamePhase {
     return currentData;
   }
 
-  protected validateAction(action: any): boolean {
-    console.log('validating action', action);
-    return true;
-  }
-
-  protected async processPlayerAction(player: any, action: any): Promise<void> {
+  public async handlePlayerAction(
+    player: Player,
+    action: PlayerAction,
+  ): Promise<void> {
     if (this.currentSubPhase) {
-      this.currentSubPhase.handlePlayerAction(player, action);
+      await this.currentSubPhase.handlePlayerAction(player, action);
     } else {
       throw new Error('No active sub-phase to handle the player action');
     }
@@ -62,7 +62,9 @@ export class NightPhase extends GamePhase {
       .map((player) => player.role)
       .filter(
         (role): role is GameRole =>
-          role !== undefined && role.nightPhase !== undefined,
+          role !== undefined &&
+          role.nightPhase !== undefined &&
+          role.nightPhase.isActiveTonight(this.context),
       )
       .map((role) => {
         console.log('adding role to uniqueRoles', role);
@@ -72,7 +74,8 @@ export class NightPhase extends GamePhase {
       });
     this.activeRoles = Array.from(uniqueRoles.values()).sort(
       (a, b) =>
-        (a.roleData.nightPriority ?? 0) - (b.roleData.nightPriority ?? 0),
+        (a.nightPhase?.nightPriority ?? -1) -
+        (b.nightPhase?.nightPriority ?? -1),
     );
     console.log(
       'uniqueRoles',

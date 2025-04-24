@@ -1,20 +1,24 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { GamePhase } from 'src/game/classes/GamePhase';
+import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { z } from 'zod';
 //TODO: explain why I used zod instead of class-validator
 
 export type GameRole = {
   roleData: RoleData;
-  nightPhase?: new (context: GameContext) => GamePhase;
+  nightPhase?: RoleNightPhase;
   // Optional night behavior
+};
+
+export type RoleNightPhase = {
+  class: new (context: GameContext) => RolePhase;
+  isActiveTonight: (context: GameContext) => boolean;
+  nightPriority: number;
 };
 
 export type RoleData = {
   name: string;
   team: string;
   description: string;
-  canActAtNight?: boolean; // Signals that this role has a night phase
-  nightPriority?: number; // Execution order (werewolves act before seer/witch)
 };
 
 export const RoleDataSchema = z
@@ -22,15 +26,23 @@ export const RoleDataSchema = z
     name: z.string(),
     team: z.string(),
     description: z.string(),
-    canActAtNight: z.boolean().optional(),
-    nightPriority: z.number().optional(),
+  })
+  .strict();
+
+export const RoleNightPhaseSchema = z
+  .object({
+    class: z.any(), //TODO: this should be a class
+    isActiveTonight: z
+      .function()
+      .returns(z.boolean()),
+    nightPriority: z.number(),
   })
   .strict();
 
 export const RoleSchema = z
   .object({
     roleData: RoleDataSchema,
-    nightPhase: z.any().optional(), // TODO: Add type check for GamePhase
+    nightPhase: RoleNightPhaseSchema.optional(),
   })
   .strict();
 
