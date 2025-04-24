@@ -1,7 +1,7 @@
 import { GameRole } from '..';
 import { SeerNightPhase } from './night-action';
 
-const seerRoleData: GameRole = {
+const seerRole: GameRole = {
   roleData: {
     name: 'seer',
     team: 'villagers',
@@ -14,4 +14,4 @@ const seerRoleData: GameRole = {
   },
 };
 
-export default seerRoleData;
+export default seerRole;

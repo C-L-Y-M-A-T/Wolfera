@@ -1,12 +1,14 @@
 // src/roles/werewolf/night-action.ts
 
+import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
 import werewolfRole, { WerewolfAction } from '.';
 
-//TODO: consider creating a base class for night actions if they share common logic
 export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
-  role = werewolfRole;
+  constructor(context: GameContext) {
+    super(context, werewolfRole);
+  }
   get phaseDuration(): number {
     return 0;
   }
