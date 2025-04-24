@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { Socket } from 'socket.io';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../../classes/GameContext';
@@ -8,16 +9,24 @@ import { GameOptions } from '../../classes/GameOptions';
 export class GameService {
   private games: Map<string, GameContext> = new Map();
 
+  constructor(private moduleRef: ModuleRef) {}
+
   getGame(gameId: string): GameContext | undefined {
     return this.games.get(gameId);
   }
 
-  //TODO: check if player is already in a game
-  createGame(gameOwner: User, options: GameOptions): GameContext {
-    const gameContext = new GameContext(gameOwner);
+  async createGame(
+    gameOwner: User,
+    options: GameOptions,
+  ): Promise<GameContext> {
+    const gameContext = await this.moduleRef.create(GameContext);
+    gameContext.addPlayer(gameOwner);
+    gameContext.setOwner(gameOwner.id);
     this.games.set(gameContext.gameId, gameContext);
     return gameContext;
   }
+
+  //TODO: check if player is already in a game
   connectPlayer(user: User, gameId: string, socket: Socket): GameContext {
     const gameContext = this.games.get(gameId);
     if (!gameContext) {

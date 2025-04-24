@@ -6,10 +6,11 @@ import { WerewolfAction } from '.';
 
 //TODO: consider creating a base class for night actions if they share common logic
 export class WerewolfNightPhase extends GamePhase<WerewolfAction> {
-  protected onEnd(): Promise<void> | void {
-    throw new Error('Method not implemented.');
-  }
   readonly phaseName = 'werewolf-night';
+
+  get phaseDuration(): number {
+    return 0;
+  }
 
   validatePlayerAction(player: Player, action: any): action is WerewolfAction {
     // Validate:
@@ -35,6 +36,14 @@ export class WerewolfNightPhase extends GamePhase<WerewolfAction> {
       message: 'Choose a victim...',
       alivePlayers: this.context.getAlivePlayers(),
     });
+    console.log('Werewolf night phase started');
+  }
+  async onEnd() {
+    // Notify werewolves the night phase is over
+    this.context.emmit('werewolf:night:end', {
+      message: 'Night phase is over.',
+    });
+    console.log('Werewolf night phase ended');
   }
 
   async processPlayerAction(player: Player, action: WerewolfAction) {
@@ -43,5 +52,7 @@ export class WerewolfNightPhase extends GamePhase<WerewolfAction> {
     console.log(
       `Werewolf ${player.profile.id} chose to kill ${action.personToKill}`,
     );
+    this.output = [action];
+    this.end();
   }
 }

@@ -1,11 +1,12 @@
+import { GameContext } from 'src/game/classes/GameContext';
 import { GamePhase } from 'src/game/classes/GamePhase';
-import { PlayerAction } from 'src/game/classes/types';
 import { z } from 'zod';
 //TODO: explain why I used zod instead of class-validator
 
-export type RoleModule = {
-  data: RoleData;
-  nightPhase?: typeof GamePhase<PlayerAction>; // Optional night behavior
+export type GameRole = {
+  roleData: RoleData;
+  nightPhase?: new (context: GameContext) => GamePhase;
+  // Optional night behavior
 };
 
 export type RoleData = {
@@ -26,9 +27,9 @@ export const RoleDataSchema = z
   })
   .strict();
 
-export const RoleModuleSchema = z
+export const RoleSchema = z
   .object({
-    data: RoleDataSchema,
+    roleData: RoleDataSchema,
     nightPhase: z.any().optional(), // TODO: Add type check for GamePhase
   })
   .strict();

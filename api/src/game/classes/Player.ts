@@ -1,19 +1,22 @@
 import { Socket } from 'socket.io';
+import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from './GameContext';
 
 export class Player {
   public socket?: GameSocket;
+  public role?: GameRole;
+  public isAlive: boolean = true;
   constructor(
-    private user: User,
+    public profile: User,
     private context: GameContext,
   ) {}
   public get id(): string {
-    return this.user.id;
+    return this.profile.id;
   }
 
-  isConnected(): this is this & { socket: GameSocket } {
+  isConnected(): this is { socket: GameSocket } {
     return this.socket !== undefined && this.socket.connected;
   }
   connect(socket: Socket): void {

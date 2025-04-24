@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ChatGateway } from 'src/socket/room.gateway';
+
 import { GameController } from './controllers/game.controller';
-import { GameService } from './services/game.service';
+import { GameService } from './services/game/game.service';
+import { RoleService } from './services/role/role.service';
 
 @Module({
-  providers: [GameService, ChatGateway],
+  providers: [GameService, RoleService],
   controllers: [GameController],
   exports: [GameService],
 })

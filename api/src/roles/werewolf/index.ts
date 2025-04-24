@@ -1,4 +1,4 @@
-import { RoleData, RoleModule } from '..';
+import { GameRole, RoleData } from '..';
 import { WerewolfNightPhase } from './night-action';
 
 export const WerewolfRole: RoleData = {
@@ -9,8 +9,8 @@ export const WerewolfRole: RoleData = {
   nightPriority: 1,
 };
 
-const werewolfRoleData: RoleModule = {
-  data: WerewolfRole,
+const werewolfRoleData: GameRole = {
+  roleData: WerewolfRole,
   nightPhase: WerewolfNightPhase,
 };
 

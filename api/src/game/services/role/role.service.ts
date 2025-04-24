@@ -3,7 +3,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { GamePhase } from 'src/game/classes/GamePhase';
-import { RoleModuleSchema } from 'src/roles';
+import { GameRole, RoleSchema } from 'src/roles';
 
 @Injectable()
 export class RoleService implements OnModuleInit {
@@ -12,9 +12,9 @@ export class RoleService implements OnModuleInit {
   async onModuleInit() {
     await this.loadRoles();
   }
-  validateRoleModule(module: unknown) {
+  validateRole(role: unknown) {
     // Parse with Zod (throws if invalid)
-    const result = RoleModuleSchema.parse(module);
+    const result = RoleSchema.parse(role);
 
     // Additional check for nightPhase
     if (
@@ -35,9 +35,10 @@ export class RoleService implements OnModuleInit {
 
     for (const folder of roleFolders) {
       try {
-        const module = (await import(path.join(rolesDir, folder))).default;
-        this.validateRoleModule(module);
-        this.roles.set(module.data.name, module);
+        const role = (await import(path.join(rolesDir, folder)))
+          .default as GameRole;
+        this.validateRole(role);
+        this.roles.set(role.roleData.name, role);
       } catch (error) {
         console.error(`Failed to load role ${folder}:`);
         throw error;

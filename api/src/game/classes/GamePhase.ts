@@ -1,7 +1,8 @@
 import { GameContext } from './GameContext';
-import { PhaseState } from './types';
+import { Player } from './Player';
+import { PhaseState, PlayerAction } from './types';
 
-export abstract class GamePhase {
+export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
   constructor(protected context: GameContext) {}
   public phaseState: PhaseState = PhaseState.Pending;
 
@@ -26,12 +27,26 @@ export abstract class GamePhase {
     return 3000;
   } // 3s post-phase by default
 
+  private input?: any;
+  private onComplete?: (output: any) => void;
+  protected output?: any;
   // can be overridden in subclasses by using:
   // get prePhaseDuration() { return 1000; }
   // or
   // const prePhaseDuration = 1000;
 
-  async execute() {
+  public executeAsync(input: any = {}): Promise<any> {
+    return new Promise((resolve) => {
+      this.execute(input, (output) => {
+        resolve(output);
+      });
+    });
+  }
+
+  async execute(input: any = {}, onComplete?: (output: any) => void) {
+    this.input = input;
+    this.onComplete = onComplete;
+
     console.log('Executing phase:', this.phaseName);
     if (this.phaseState !== PhaseState.Pending) {
       throw new Error(
@@ -69,12 +84,43 @@ export abstract class GamePhase {
     if (this.postPhaseDuration > 0) await this.delay(this.postPhaseDuration);
 
     this.phaseState = PhaseState.Completed;
+    this.onComplete?.(this.output);
   }
 
-  onPlayerAction(playerId: string, action: any): void {
-    // This method is called when a player performs an action in the game phase
-    // You can override this method in subclasses to implement custom behavior
+  public async handlePlayerAction(
+    player: Player,
+    action: PlayerAction,
+  ): Promise<void> {
+    if (this.phaseState !== PhaseState.Active) {
+      throw new Error(
+        `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
+      ); //TODO:  handle this error
+    }
+    this.validatePlayerAction?.(player, action);
+    this.processPlayerAction?.(player, action as A);
   }
+  /**
+   *  This function validates:
+   *  - If the player performing the action has the right to do it
+   *  - If the action is valid for the current phase
+   *  - If the action format is valid
+   *
+   *  If the action is valid, it is of type A.
+   *  If not, it throws an error.
+   *
+   * @param player
+   * @param action
+   * @param processPlayerAction
+   */
+  public validatePlayerAction?(
+    player: Player,
+    action: PlayerAction,
+  ): action is A;
+
+  protected async processPlayerAction?(
+    player: Player,
+    action: A,
+  ): Promise<void>;
 
   private delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
