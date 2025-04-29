@@ -27,13 +27,15 @@ export type RoleData = {
   name: RoleName;
   team: Team;
   description: string;
+  maxPlayers?: number; // Maximum number of players with this role, not define or 0 means unlimited
 };
 
 export const RoleDataSchema = z
   .object({
     name: z.string(),
-    team: z.string(),
+    team: z.enum(['villagers', 'werewolves']),
     description: z.string(),
+    maxPlayers: z.number().optional(),
   })
   .strict();
 
