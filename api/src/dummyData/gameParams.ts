@@ -1,4 +1,4 @@
-import { GameOptions } from 'src/game/classes/GameOptions';
+import { GameOptions } from 'src/game/classes/types';
 
 export const tempGameOptions: GameOptions = {
   roles: {

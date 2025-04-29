@@ -5,11 +5,11 @@ import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
-import { GameOptions } from './GameOptions';
 import { GamePhase } from './GamePhase';
 import { NightPhase } from './phases/night.phase';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
+import { GameOptions } from './types';
 
 @Injectable()
 export class GameContext {

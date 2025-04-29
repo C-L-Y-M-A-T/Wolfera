@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Socket } from 'socket.io';
+import { GameOptions } from 'src/game/classes/types';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../../classes/GameContext';
-import { GameOptions } from '../../classes/GameOptions';
 
 @Injectable()
 export class GameService {
