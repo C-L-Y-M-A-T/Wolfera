@@ -20,6 +20,7 @@ export class GameService {
     options: GameOptions,
   ): Promise<GameContext> {
     const gameContext = await this.moduleRef.create(GameContext);
+    gameContext.setOptions(options);
     gameContext.addPlayer(gameOwner);
     gameContext.setOwner(gameOwner.id);
     this.games.set(gameContext.gameId, gameContext);

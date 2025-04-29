@@ -52,7 +52,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     dummyPlayers.forEach((player) => {
       client.data.game.addPlayer(player);
     });
-    //client.data.game.start();
+    client.data.game.start();
   }
 
   handleConnection(client: Socket) {

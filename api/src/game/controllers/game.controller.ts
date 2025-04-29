@@ -1,4 +1,5 @@
 import { Controller, Injectable, Post } from '@nestjs/common';
+import { tempGameOptions } from 'src/dummyData/gameParams';
 import { GameService } from '../services/game/game.service';
 
 @Injectable()
@@ -12,12 +13,10 @@ export class GameController {
     // user is the active user from auth
     // game option are from the request body
     const tempUser = { id: '123' };
-    const tempGameOptions = {
-      numberOfPlayers: 4,
-    };
-    const game = await this.gameService.createGame(tempUser, tempGameOptions);
+    const gameOptions = tempGameOptions;
+    const game = await this.gameService.createGame(tempUser, gameOptions);
     return {
       gameId: game.gameId,
-    };
+    }; //TODO: create dto for output
   }
 }

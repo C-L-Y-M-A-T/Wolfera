@@ -5,6 +5,7 @@ import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
+import { GameOptions } from './GameOptions';
 import { GamePhase } from './GamePhase';
 import { NightPhase } from './phases/night.phase';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
@@ -18,6 +19,7 @@ export class GameContext {
   private gameOwner: Player;
   private phase: GamePhase;
   public round: number = 0;
+  public gameOptions: GameOptions; //TODO: add game options type
 
   //TODO: add options
   constructor(public rolesService: RoleService) {
@@ -41,6 +43,9 @@ export class GameContext {
       player.connect(socket);
     }
     return player;
+  }
+  setOptions(options: any): void {
+    this.gameOptions = options;
   }
 
   getplayers(): Player[] {
