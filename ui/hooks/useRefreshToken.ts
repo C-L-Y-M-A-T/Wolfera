@@ -1,15 +1,11 @@
-import axios from "axios";
 import { useEffect } from "react";
+import { refresh } from "../api/authService";
 
 export const useRefreshToken = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        await axios.post(
-          "http://localhost:3000/auth/refresh",
-          {},
-          { withCredentials: true }
-        );
+        await refresh();
         console.log("Token refreshed");
       } catch (err) {
         console.error("Failed to refresh token", err);

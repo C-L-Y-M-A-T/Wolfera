@@ -1,21 +1,26 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:2000/auth";
+import apiClient from "../utils/apiClient";
 
 export const signup = async (email: string, password: string) => {
-  const response = await axios.post(
-    `${API_URL}/signup`,
-    { email, password },
-    { withCredentials: true }
-  );
+  const response = await apiClient.post("/auth/signup", {
+    email,
+    password,
+  });
   return response.data;
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await axios.post(
-    `${API_URL}/login`,
-    { email, password },
-    { withCredentials: true }
-  );
+  const response = await apiClient.post("/auth/login", {
+    email,
+    password,
+  });
+  return response.data;
+};
+
+export const logout = async () => {
+  await apiClient.post("/auth/logout");
+};
+
+export const refresh = async () => {
+  const response = await apiClient.post("/auth/refresh");
   return response.data;
 };

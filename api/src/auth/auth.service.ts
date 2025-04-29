@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
-import { supabase } from '../supabase/supabase.client';
+import { supabase, supabaseAdmin } from '../supabase/supabase.client';
 
 @Injectable()
 export class AuthService {
@@ -37,5 +37,16 @@ export class AuthService {
 
     if (error) throw new Error(`Refresh failed: ${error.message}`);
     return data;
+  }
+
+  async logout(access_token: string) {
+    const { error } = await supabaseAdmin.auth.admin.signOut(
+      access_token,
+      'global',
+    );
+
+    if (error) {
+      throw new Error(`Failed to logout: ${error.message}`);
+    }
   }
 }

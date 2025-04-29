@@ -1,5 +1,18 @@
-import React from "react";
+"use client";
+
+import { getAuthToken, logout } from "../../../utils/authHelpers";
 
 export default function dashboard() {
-  return <div>Hello dashboard XD</div>;
+  const token = getAuthToken();
+  function handleClick() {
+    logout();
+  }
+
+  return (
+    <>
+      <div>Hello dashboard {token} XD</div>
+      <div>{token}</div>
+      <button onClick={handleClick}>Logout</button>
+    </>
+  );
 }

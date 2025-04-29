@@ -60,4 +60,17 @@ export class AuthController {
 
     return { message: 'Session refreshed' };
   }
+
+  @Post('logout')
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const accessToken = req.cookies['access_token'];
+    if (!accessToken) throw new UnauthorizedException('No access token found');
+
+    await this.authService.logout(accessToken);
+
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+
+    return { message: 'Logged out successfully' };
+  }
 }
