@@ -24,3 +24,11 @@ export const refresh = async () => {
   const response = await apiClient.post("/auth/refresh");
   return response.data;
 };
+
+export const callback = async (access_token: string, refresh_token: string) => {
+  const response = await apiClient.post("/auth/callback", {
+    access_token,
+    refresh_token,
+  });
+  return response.data;
+};

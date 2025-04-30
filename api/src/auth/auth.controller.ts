@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
@@ -7,6 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { supabaseAdmin } from 'src/supabase/supabase.client';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
@@ -45,6 +47,26 @@ export class AuthController {
 
     this.authService.setAuthCookies(res, data.session);
     return { message: 'Login successful' };
+  }
+
+  @Post('callback')
+  async callback(
+    @Body('access_token') access_token: string,
+    @Body('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!access_token || !refresh_token) {
+      throw new BadRequestException('Missing tokens');
+    }
+
+    const { data: userData, error: userError } =
+      await supabaseAdmin.auth.getUser(access_token);
+    if (userError || !userData.user) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+
+    this.authService.setAuthCookies(res, { access_token, refresh_token });
+    return { message: 'Tokens validated & stored' };
   }
 
   @Post('refresh')
