@@ -22,13 +22,7 @@ export class AuthController {
     @Body() dto: SignupDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { data, error } = await this.authService.signup(
-      dto.email,
-      dto.password,
-    );
-
-    if (error) throw error;
-
+    const data = await this.authService.signup(dto.email, dto.password);
     this.authService.setAuthCookies(res, data.session);
     return { message: 'Signup successful' };
   }
@@ -38,13 +32,7 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { data, error } = await this.authService.login(
-      dto.email,
-      dto.password,
-    );
-
-    if (error) throw error;
-
+    const data = await this.authService.login(dto.email, dto.password);
     this.authService.setAuthCookies(res, data.session);
     return { message: 'Login successful' };
   }

@@ -1,15 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { supabase, supabaseAdmin } from '../supabase/supabase.client';
 
 @Injectable()
 export class AuthService {
   async signup(email: string, password: string) {
-    return await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      //fmma moshkla lenna
+      // if (error && error.code === 'email_exists') {
+      //   throw new ConflictException('Email is already registered');
+      // }
+      if (error.code === 'weak_password') {
+        throw new BadRequestException('Password does not meet requirements');
+      }
+      console.error('Unexpected Supabase error:', error);
+      throw new BadRequestException(error.message);
+    }
+
+    return data;
   }
 
   async login(email: string, password: string) {
-    return await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      if (error.code === 'email_not_confirmed') {
+        throw new ForbiddenException(
+          'Please confirm your email before signing in',
+        );
+      }
+      if (error.code === 'invalid_credentials') {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+      console.error('Unexpected Supabase error:', error);
+      throw new BadRequestException(error.message);
+    }
+    return data;
   }
 
   setAuthCookies(res: Response, session: any) {
