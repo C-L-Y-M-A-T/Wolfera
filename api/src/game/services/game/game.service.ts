@@ -22,7 +22,7 @@ export class GameService {
     const gameContext = await this.moduleRef.create(GameContext);
     gameContext.setOptions(options);
     gameContext.addPlayer(gameOwner);
-    gameContext.setOwner(gameOwner.id);
+    gameContext.owner = gameOwner;
     this.games.set(gameContext.gameId, gameContext);
     return gameContext;
   }

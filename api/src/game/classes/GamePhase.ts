@@ -17,7 +17,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
 
   // Timers (override in subclasses)
   get prePhaseDuration(): number {
-    return 3000;
+    return 0;
   } // 3s pre-phase by default
   get phaseDuration(): number {
     return 0;
@@ -34,8 +34,8 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
   // or
   // const prePhaseDuration = 1000;
 
-  public executeAsync(input: any = {}): Promise<any> {
-    return new Promise((resolve) => {
+  public async executeAsync(input: any = {}): Promise<any> {
+    return await new Promise((resolve) => {
       this.execute(input, (output) => {
         resolve(output);
       });

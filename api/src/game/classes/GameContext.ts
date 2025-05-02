@@ -5,8 +5,7 @@ import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
-import { GamePhase } from './GamePhase';
-import { NightPhase } from './phases/night.phase';
+import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
 import { GameOptions } from './types';
@@ -16,8 +15,12 @@ export class GameContext {
   public players: Map<string, Player> = new Map();
   private chatHandler: ChatHandler = new ChatHandler(this);
   public gameId: string;
-  private gameOwner: Player;
-  private phase: GamePhase;
+  private _owner: Player;
+  private eventEmitter: any; //TODO: add event emitter type
+  private orchestrator = new ChainPhaseOrchestrator(
+    this,
+    WaitingForGameStartPhase,
+  );
   public round: number = 0;
   public gameOptions: GameOptions; //TODO: add game options type
 
@@ -25,8 +28,7 @@ export class GameContext {
   constructor(public rolesService: RoleService) {
     console.log('GameContext created, rolesService:', rolesService);
     this.gameId = this.generateGameId();
-    this.phase = new WaitingForGameStartPhase(this);
-    this.phase.execute();
+    this.orchestrator.execute();
   }
   isEmpty() {
     return this.players.size === 0;
@@ -54,10 +56,17 @@ export class GameContext {
   getAlivePlayers(): Player[] {
     return Array.from(this.players.values()).filter((player) => player.isAlive);
   }
-  setOwner(userId: string): void {
+
+  get owner(): Player {
+    return this._owner;
+  }
+  set owner(player: Player | User) {
+    this.setOwner(player.id);
+  }
+  setOwner(userId: string) {
     const player = this.players.get(userId);
     if (player) {
-      this.gameOwner = player;
+      this._owner = player;
     } else {
       throw new Error(`Player with ID ${userId} not found`);
     }
@@ -69,18 +78,6 @@ export class GameContext {
     } else {
       throw new Error(`Player with ID ${userId} not found`);
     }
-  }
-
-  async start() {
-    //TODO: to implement real logic here, this is just to test the game
-    if (this.phase.phaseName !== 'WaitingForGameStart-phase') {
-      //TODO: not use string for phase name
-      throw new Error('Game is already started');
-    }
-    this.tempAsignRoles();
-    this.phase = new NightPhase(this);
-    const result = await this.phase.executeAsync();
-    console.log('Game ended with result: <<<<<<<<<', result, '>>>>>>>>>>>');
   }
 
   stop(): void {
@@ -106,7 +103,7 @@ export class GameContext {
   }
 
   handlePlayerAction(player: Player, action: any): void {
-    this.phase.handlePlayerAction(player, action);
+    this.orchestrator.handlePlayerAction(player, action);
   }
 
   //TODO: to remove this function (just for testing)

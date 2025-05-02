@@ -20,7 +20,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   startGame(client: GameSocket, payload: any) {
     //TODO: add interceptor to exctract game and player from client (same in websocket)
     console.log('start-game', payload);
-    client.data.game.start();
+    //client.data.game.start();
   }
 
   @SubscribeMessage('player-action')
@@ -52,7 +52,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     dummyPlayers.forEach((player) => {
       client.data.game.addPlayer(player);
     });
-    client.data.game.start();
+    client.data.game.handlePlayerAction(client.data.game.owner, {
+      action: 'start-game',
+    });
   }
 
   handleConnection(client: Socket) {

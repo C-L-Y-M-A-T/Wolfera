@@ -1,25 +1,32 @@
 import { GameRole } from 'src/roles';
-import { GamePhase } from '../GamePhase';
+import { ChainableGamePhase } from '../chainablePhase';
 import { PhaseOrchestrator } from '../PhaseOrchestrator';
 import { Player } from '../Player';
 import { SequentialPhaseOrchestrator } from '../SequentialPhaseOrchestrator';
-import { PlayerAction } from '../types';
+import { PhaseConstructor, PlayerAction } from '../types';
+import { WaitingForGameStartPhase } from './waitingForGameStart/WatitingForGameStart.phase';
 
-export class NightPhase extends GamePhase {
-  protected onEnd(): Promise<void> | void {}
+export class NightPhase extends ChainableGamePhase {
+  getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
+    return WaitingForGameStartPhase;
+  }
+  protected async onEnd(): Promise<void> {}
   readonly phaseName = 'Night-phase';
   private orchestrator: PhaseOrchestrator;
   private activeRoles: GameRole[] = [];
 
+  async onPrePhase(): Promise<void> {
+    this.orchestrator = this.createOrchestrator();
+  }
+
   async onStart(): Promise<void> {
     this.context.emmit('game:night:start', undefined);
-    this.buildNightSubPhases();
-    this.orchestrator = this.createOrchestrator();
     this.output = await this.orchestrator.execute();
     this.end();
   }
 
   private createOrchestrator(): PhaseOrchestrator {
+    this.buildNightSubPhases();
     const phaseDefinitions = this.activeRoles.map((role) => ({
       factory: () => new role.nightPhase!.class(this.context),
     }));

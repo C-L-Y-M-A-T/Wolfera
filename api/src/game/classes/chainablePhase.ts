@@ -1,6 +1,5 @@
-import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
-import { PlayerAction } from './types';
+import { PhaseConstructor, PlayerAction } from './types';
 
 export abstract class ChainableGamePhase<
   A extends PlayerAction = PlayerAction,
@@ -12,10 +11,5 @@ export abstract class ChainableGamePhase<
    * - Input for the next phase
    * - undefined to end the chain
    */
-  abstract getNextPhase?():
-    | {
-        phase: new (context: GameContext) => ChainableGamePhase;
-        input?: any;
-      }
-    | undefined;
+  abstract getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined;
 }

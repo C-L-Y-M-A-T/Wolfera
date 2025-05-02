@@ -1,6 +1,7 @@
 import { ChainableGamePhase } from './chainablePhase';
 import { GameContext } from './GameContext';
 import { PhaseOrchestrator } from './PhaseOrchestrator';
+import { PhaseConstructor } from './types';
 
 //TODO: this class and ChainablePhase are not tested
 export class ChainPhaseOrchestrator<
@@ -12,15 +13,14 @@ export class ChainPhaseOrchestrator<
 
   constructor(
     context: GameContext,
-    private initialPhase: new (context: GameContext) => ChainableGamePhase,
+    private initialPhase: PhaseConstructor<ChainableGamePhase>,
   ) {
     super(context);
   }
 
   async execute(initialData?: TInput): Promise<TOutput> {
-    let PhaseConstructor:
-      | (new (context: GameContext) => ChainableGamePhase)
-      | undefined = ({} = this.initialPhase);
+    let PhaseConstructor: PhaseConstructor<ChainableGamePhase> | undefined =
+      this.initialPhase;
     let currentData = { initialData };
 
     while (PhaseConstructor) {
@@ -32,8 +32,7 @@ export class ChainPhaseOrchestrator<
         await this.currentPhase.executeAsync(currentData);
 
       // Determine next phase
-      const next = this.currentPhase.getNextPhase?.();
-      PhaseConstructor = next?.phase;
+      PhaseConstructor = this.currentPhase.getNextPhase?.();
     }
 
     this.currentPhase = undefined;

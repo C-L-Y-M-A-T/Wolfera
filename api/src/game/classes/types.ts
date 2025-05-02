@@ -1,4 +1,7 @@
 import { RoleName } from 'src/roles';
+import { GameContext } from './GameContext';
+import { GamePhase } from './GamePhase';
+import { ChainableGamePhase } from './chainablePhase';
 
 export enum PhaseState {
   Pending = 'pending',
@@ -13,6 +16,10 @@ export type GameOptions = {
   roles: Record<RoleName, number>;
   totalPlayers: number;
 };
+
+export type PhaseConstructor<T extends ChainableGamePhase = GamePhase> = new (
+  context: GameContext,
+) => T;
 
 export type PhaseName = `${string}-phase`;
 

@@ -1,9 +1,14 @@
-import { GamePhase } from '../../GamePhase';
+import { ChainableGamePhase } from '../../chainablePhase';
 import { Player } from '../../Player';
-import { PlayerAction } from './../../types';
+import { NightPhase } from '../night.phase';
+import { PhaseConstructor, PlayerAction } from './../../types';
 import { WaitingForGameStartPlayerAction } from './types';
 
-export class WaitingForGameStartPhase extends GamePhase<WaitingForGameStartPlayerAction> {
+export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameStartPlayerAction> {
+  getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
+    return NightPhase;
+  }
+
   readonly phaseName = 'WaitingForGameStart-phase';
   get phaseDuration(): number {
     return 0;
@@ -34,6 +39,7 @@ export class WaitingForGameStartPhase extends GamePhase<WaitingForGameStartPlaye
     player: Player,
     action: WaitingForGameStartPlayerAction,
   ): Promise<void> {
-    this.context.start();
+    this.context.tempAsignRoles();
+    this.end();
   }
 }

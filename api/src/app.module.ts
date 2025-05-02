@@ -5,7 +5,7 @@ import { GameModule } from './game/game.module';
 import { SocketModule } from './socket/socket.module';
 
 @Module({
-  imports: [ GameModule, SocketModule],  
+  imports: [GameModule, SocketModule],
   controllers: [AppController],
   providers: [AppService],
 })

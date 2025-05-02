@@ -30,4 +30,7 @@ export class Player {
       this.socket.disconnect();
     }
   }
+  equals(other: Player): boolean {
+    return this.id === other.id;
+  }
 }
