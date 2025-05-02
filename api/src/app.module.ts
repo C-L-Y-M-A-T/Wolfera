@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-<<<<<<< HEAD
+import { config } from './config';
 import { GameModule } from './game/game.module';
 import { SocketModule } from './socket/socket.module';
-
-@Module({
-  imports: [GameModule, SocketModule],
-=======
-import { config } from './config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -22,8 +17,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: config.postgres.dbName,
       synchronize: config.env === 'development',
     }),
+    GameModule,
+    SocketModule,
   ],
->>>>>>> main
   controllers: [AppController],
   providers: [AppService],
 })
