@@ -1,0 +1,114 @@
+{
+  "common": {
+    "play": "Jouer Maintenant",
+    "connect": "Connexion",
+    "login": "Se Connecter",
+    "signup": "S'inscrire",
+    "logout": "Déconnexion",
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "submit": "Soumettre",
+    "loading": "Chargement...",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "language": "Langue"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français",
+    "ar": "Arabe"
+  },
+  "home": {
+    "title": "Loup-Garou En Ligne",
+    "subtitle": "Un jeu de déduction sociale palpitant où la tromperie, le travail d'équipe et la réflexion rapide sont vos meilleurs alliés. Allez-vous traquer les loups-garous ou tromper le village pour la victoire?",
+    "features": {
+      "title": "Caractéristiques du Jeu",
+      "strategic": {
+        "title": "Gameplay Stratégique",
+        "description": "Utilisez la déduction et la tromperie pour découvrir la vérité ou vous cacher au grand jour."
+      },
+      "roles": {
+        "title": "Rôles Multiples",
+        "description": "Jouez en tant que Villageois, Voyante, Loup-Garou et bien d'autres personnages uniques."
+      },
+      "cycles": {
+        "title": "Cycles Jour & Nuit",
+        "description": "Vivez la tension de la chasse nocturne et des accusations diurnes."
+      }
+    },
+    "howToPlay": {
+      "title": "Comment Jouer",
+      "steps": {
+        "1": {
+          "title": "Rejoindre une Partie",
+          "description": "Créez une nouvelle partie ou rejoignez-en une existante avec un code."
+        },
+        "2": {
+          "title": "Découvrir Votre Rôle",
+          "description": "Chaque joueur se voit attribuer secrètement un rôle avec des capacités uniques."
+        },
+        "3": {
+          "title": "Survivre à la Nuit",
+          "description": "Les loups-garous chassent pendant la nuit tandis que les villageois dorment."
+        },
+        "4": {
+          "title": "Débattre & Voter",
+          "description": "Pendant la journée, discutez et votez pour éliminer les loups-garous suspectés."
+        }
+      }
+    }
+  },
+  "game": {
+    "phases": {
+      "roleReveal": "Révélation du Rôle",
+      "night": "Phase de Nuit",
+      "day": "Discussion du Jour {{day}}",
+      "voting": "Phase de Vote"
+    },
+    "status": {
+      "starting": "La partie commence. Vous découvrirez bientôt votre rôle.",
+      "night": "C'est la nuit. Les loups-garous choisissent leur victime, tandis que la Voyante et le Médecin utilisent leurs capacités.",
+      "day": "C'est le jour. Discutez avec les autres villageois pour identifier les loups-garous.",
+      "voting": "Le vote est en cours. Sélectionnez un joueur que vous soupçonnez d'être un loup-garou."
+    },
+    "chat": {
+      "village": "Chat du Village",
+      "werewolf": "Meute de Loups-Garous",
+      "placeholder": "Tapez un message...",
+      "unavailable": "Chat indisponible",
+      "dead": "Vous êtes mort et ne pouvez pas discuter",
+      "nightRestriction": "Seuls les loups-garous peuvent discuter la nuit",
+      "disabled": "Le chat est actuellement désactivé"
+    },
+    "roles": {
+      "villager": "Villageois",
+      "werewolf": "Loup-Garou",
+      "seer": "Voyante",
+      "doctor": "Médecin",
+      "hunter": "Chasseur",
+      "witch": "Sorcière",
+      "littleGirl": "Petite Fille",
+      "cupid": "Cupidon",
+      "lover": "Amoureux"
+    },
+    "status": {
+      "alive": "Vivant",
+      "dead": "Mort"
+    }
+  },
+  "profile": {
+    "stats": "Statistiques",
+    "gamesPlayed": "Parties Jouées",
+    "wins": "Victoires",
+    "winRate": "Taux de Victoire",
+    "favoriteRole": "Rôle Favori",
+    "recentGames": "Parties Récentes",
+    "aboutMe": "À Propos de Moi",
+    "editProfile": "Modifier le Profil",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "bio": "Bio",
+    "achievements": "Succès",
+    "achievementsUnlocked": "Vous avez débloqué {{unlocked}} sur {{total}} succès"
+  }
+}
