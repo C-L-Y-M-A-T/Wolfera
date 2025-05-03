@@ -5,8 +5,8 @@ import type React from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "../../styles/globals.css";
-import { ThemeProvider } from "../components/theme-provider";
 import "../i18n/i18n";
+import { ThemeProvider } from "./theme-provider";
 
 export default function ClientLayout({
   children,
