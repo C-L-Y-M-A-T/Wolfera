@@ -12,12 +12,14 @@ export class AuthService {
   async signup(email: string, password: string) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      //fmma moshkla lenna
-      // if (error && error.code === 'email_exists') {
-      //   throw new ConflictException('Email is already registered');
-      // }
+      if (error.code === 'user_already_exists') {
+        throw new BadRequestException(error.message);
+      }
       if (error.code === 'weak_password') {
-        throw new BadRequestException('Password does not meet requirements');
+        throw new BadRequestException(error.message);
+      }
+      if (error.code === 'invalid_credentials') {
+        throw new UnauthorizedException(error.message);
       }
       console.error('Unexpected Supabase error:', error);
       throw new BadRequestException(error.message);
@@ -38,7 +40,10 @@ export class AuthService {
         );
       }
       if (error.code === 'invalid_credentials') {
-        throw new UnauthorizedException('Invalid email or password');
+        throw new UnauthorizedException(error.message);
+      }
+      if (error.code == 'validation_failed') {
+        throw new BadRequestException(error.message);
       }
       console.error('Unexpected Supabase error:', error);
       throw new BadRequestException(error.message);
