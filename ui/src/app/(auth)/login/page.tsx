@@ -1,6 +1,11 @@
 "use client";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useAuth } from "../../../../hooks/useAuth";
+
+const GoogleSignIn = dynamic(() => import("@/components/google-signIn"), {
+  ssr: false,
+});
 
 const LoginPage = () => {
   const { handleLogin, error, loading } = useAuth();
@@ -32,6 +37,7 @@ const LoginPage = () => {
         {loading ? "Loading..." : "Login"}
       </button>
       {error && <p>{error}</p>}
+      <GoogleSignIn />
     </form>
   );
 };

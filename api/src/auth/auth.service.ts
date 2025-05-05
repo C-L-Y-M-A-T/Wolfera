@@ -88,4 +88,15 @@ export class AuthService {
       throw new Error(`Failed to logout: ${error.message}`);
     }
   }
+  async googleSignIn(token: string) {
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token,
+    });
+    if (error) {
+      console.error('Google sign-in error:', error);
+      throw new BadRequestException(error.message);
+    }
+    return data;
+  }
 }

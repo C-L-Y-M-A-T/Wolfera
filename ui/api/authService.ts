@@ -32,3 +32,10 @@ export const callback = async (access_token: string, refresh_token: string) => {
   });
   return response.data;
 };
+
+export const googleSignIn = async (token: string) => {
+  const response = await apiClient.post("/auth/google-signin", {
+    token,
+  });
+  return response.data;
+};

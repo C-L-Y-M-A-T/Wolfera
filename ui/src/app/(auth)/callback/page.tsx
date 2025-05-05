@@ -3,10 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { callback } from "../../../../api/authService";
-import { getBrowserSupabase } from "../../../../utils/supabase/supabaseBrowser";
 
 export default function CallbackPage() {
-  const supabase = getBrowserSupabase();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,7 +15,7 @@ export default function CallbackPage() {
       const refresh_token = params.get("refresh_token");
 
       if (!access_token || !refresh_token) {
-        console.error("Missing access_token or refresh_token");
+        console.error("Missing tokens");
         return router.replace("/login");
       }
 
@@ -29,7 +27,7 @@ export default function CallbackPage() {
         router.replace("/login");
       }
     })();
-  }, [router, supabase]);
+  }, [router]);
 
   return <p>Signing you in…</p>;
 }

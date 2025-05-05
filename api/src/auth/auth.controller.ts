@@ -10,6 +10,7 @@ import {
 import { Request, Response } from 'express';
 import { supabaseAdmin } from 'src/supabase/supabase.client';
 import { AuthService } from './auth.service';
+import { GoogleSignInDto } from './dtos/google-signin.dto';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
 
@@ -33,6 +34,16 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const data = await this.authService.login(dto.email, dto.password);
+    this.authService.setAuthCookies(res, data.session);
+    return { message: 'Login successful' };
+  }
+
+  @Post('google-signin')
+  async googleSignIn(
+    @Body() dto: GoogleSignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const data = await this.authService.googleSignIn(dto.token);
     this.authService.setAuthCookies(res, data.session);
     return { message: 'Login successful' };
   }
