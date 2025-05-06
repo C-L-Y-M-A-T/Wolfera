@@ -55,17 +55,19 @@ export class AuthService {
     if (!session || !session.access_token || !session.refresh_token) return;
 
     res.cookie('access_token', session.access_token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60,
+      // domain: 'rntpm-102-158-89-85.a.free.pinggy.link',
     });
 
     res.cookie('refresh_token', session.refresh_token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      // domain: 'rntpm-102-158-89-85.a.free.pinggy.link',
     });
   }
 
@@ -88,6 +90,7 @@ export class AuthService {
       throw new Error(`Failed to logout: ${error.message}`);
     }
   }
+
   async googleSignIn(token: string) {
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'google',

@@ -1,18 +1,22 @@
+"use client";
+import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { useEffect } from "react";
 import { googleSignIn } from "../../api/authService";
 
 declare global {
   interface Window {
-    handleSignInWithGoogle: (response: any) => void;
+    handleSignInWithGoogle: (response: Response) => void;
   }
 }
 
 export default function GoogleSignIn() {
-  async function handleSignInWithGoogle(response) {
+  const router = useRouter();
+  async function handleSignInWithGoogle(response: Response) {
+    console.log("Google Sign-In Response: ", response);
     try {
-      const res = await googleSignIn(response.credential);
-      console.log("Google Sign-In Response: ", res);
+      await googleSignIn(response.credential);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Google sign-in failed", error);
     }
