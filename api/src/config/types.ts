@@ -7,6 +7,13 @@ type DatabaseConfig = {
   uri?: string;
 };
 
+type SupabaseConfig = {
+  url: string;
+  roleKey: string;
+  jwtSecret: string;
+  anonKey: string;
+};
+
 export type Config = {
   apiHost: string;
   apiPort: number;
@@ -17,5 +24,7 @@ export type Config = {
   uiBaseUrl: string;
 
   postgres: DatabaseConfig;
+  supabase: SupabaseConfig;
+
   env: string;
 };
