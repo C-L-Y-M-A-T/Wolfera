@@ -3,7 +3,6 @@ import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
@@ -13,7 +12,6 @@ import { GameOptions } from './types';
 @Injectable()
 export class GameContext {
   public players: Map<string, Player> = new Map();
-  private chatHandler: ChatHandler = new ChatHandler(this);
   public gameId: string;
   private _owner: Player;
   private eventEmitter: any; //TODO: add event emitter type
