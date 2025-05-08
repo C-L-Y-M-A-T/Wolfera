@@ -16,6 +16,7 @@ import { SocketModule } from './socket/socket.module';
       password: config.postgres.password,
       database: config.postgres.dbName,
       synchronize: config.env === 'development',
+      autoLoadEntities: true,
     }),
     GameModule,
     SocketModule,
