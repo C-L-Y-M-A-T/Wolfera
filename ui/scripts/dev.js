@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 const port = process.env.UI_PORT || "3000";
 
 // Start Next.js with the loaded port
-spawn("next", ["dev", "--turbo", "-p", port], {
+spawn("next", ["dev", "-p", port], {
   stdio: "inherit",
   shell: true,
 });
