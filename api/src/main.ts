@@ -7,10 +7,7 @@ import { swagger } from './utils/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [
-      'https://rnsyl-197-30-220-62.a.free.pinggy.link',
-      'http://localhost:1234',
-    ],
+    origin: config.corsOrigin,
     credentials: true,
   });
   app.useGlobalPipes(

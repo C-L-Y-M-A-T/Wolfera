@@ -21,6 +21,8 @@ export type Config = {
   uiPort: number;
   uiBaseUrl: string;
 
+  corsOrigin: string;
+
   postgres: DatabaseConfig;
 
   supabase: SupabaseConfig;

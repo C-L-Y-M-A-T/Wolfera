@@ -18,6 +18,8 @@ export const config: Config = {
     `http://${process.env.UI_HOST || 'localhost'}:${process.env.UI_PORT || '3000'}` ||
     'http://localhost:3000',
 
+  corsOrigin: process.env.UI_BASE_URL || 'http://localhost:3000',
+
   postgres: {
     user: process.env.POSTGRES_USER || 'user',
     password: process.env.POSTGRES_PASSWORD || 'pass',
