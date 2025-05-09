@@ -19,6 +19,8 @@ const nextConfig = {
   env: {
     UI_BASE_URL: process.env.UI_BASE_URL,
     API_BASE_URL: process.env.API_BASE_URL,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   },
 };
 
