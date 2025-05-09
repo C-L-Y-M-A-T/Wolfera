@@ -1,5 +1,5 @@
-import { Config } from './types';
 import * as dotenv from 'dotenv';
+import { Config } from './types';
 
 dotenv.config({ path: process.cwd() + '/../.env' });
 
@@ -24,6 +24,12 @@ export const config: Config = {
     dbName: process.env.POSTGRES_DB || 'postgres',
     host: process.env.POSTGRES_HOST || 'localhost',
     port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  },
+
+  supabase: {
+    url: process.env.SUPABASE_URL || 'https://your-supabase-url.supabase.co',
+    serviceRoleKey:
+      process.env.SUPABASE_SERVICE_ROLE_KEY || 'your-supabase-key',
   },
 
   env: process.env.ENV || 'development',

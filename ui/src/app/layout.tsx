@@ -1,4 +1,5 @@
 import { ClientLayout } from "@/components";
+import { AuthProvider } from "@/context/AuthContext";
 import type { Metadata } from "next";
 import type React from "react";
 import "../../styles/globals.css";
@@ -14,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" dir="ltr" className="dark" style={{ colorScheme: "dark" }}>
-      <ClientLayout>{children}</ClientLayout>
+      <ClientLayout>
+        <AuthProvider>{children}</AuthProvider>
+      </ClientLayout>
     </html>
   );
 }
