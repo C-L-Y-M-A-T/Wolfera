@@ -1,0 +1,10 @@
+# Normalize all files to LF
+* text=auto
+
+# Force LF line endings for specific file types
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
