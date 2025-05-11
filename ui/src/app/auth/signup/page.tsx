@@ -1,15 +1,13 @@
 "use client";
-import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { handleSignup, error, loading } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSignup(email, password);
+    // handleSignup(email, password);
   };
 
   return (
@@ -30,11 +28,11 @@ const Signup = () => {
           placeholder="Password"
           required
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Signing Up..." : "Signup"}
+        <button type="submit" disabled={false}>
+          {false ? "Signing Up..." : "Signup"}
         </button>
       </form>
-      {error && <p>{error}</p>}
+      {/* {error <p>{error}</p>} */}
     </div>
   );
 };

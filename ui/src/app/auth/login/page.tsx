@@ -1,16 +1,15 @@
 "use client";
 import GoogleSignIn from "@/components/google-signIn";
-import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 
 const LoginPage = () => {
-  const { handleLogin, error, loading } = useAuth();
+  // const { handleLogin, error, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleLogin(email, password);
+    // handleLogin(email, password);
   };
 
   return (
@@ -29,10 +28,10 @@ const LoginPage = () => {
         placeholder="Password"
         required
       />
-      <button type="submit" disabled={loading}>
-        {loading ? "Loading..." : "Login"}
+      <button type="submit" disabled={false}>
+        {false ? "Loading..." : "Login"}
       </button>
-      {error && <p>{error}</p>}
+      {/* {error && <p>{error}</p>} */}
       <GoogleSignIn />
     </form>
   );

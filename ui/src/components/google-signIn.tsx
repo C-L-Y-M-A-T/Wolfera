@@ -1,7 +1,7 @@
 "use client";
 
-import apiClient from "@/utils/apiClient";
-import { supabase } from "@/utils/supabaseClient";
+import api from "@/services/api";
+import { supabase } from "@/services/supabase/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -33,11 +33,7 @@ export default function GoogleSignIn() {
 
         if (accessToken) {
           // Call your API to sync user with header authorization bearer token
-          await apiClient.post("/auth/sync-user", null, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+          await api.auth.syncUser(accessToken);
 
           // Optionally store token in cookie for middleware
           document.cookie = `sb-access-token=${accessToken}; path=/; max-age=3600`;
@@ -55,7 +51,7 @@ export default function GoogleSignIn() {
     script.onload = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
-          client_id: $`{process.env.GOOGLE_CLIENT_ID}`,
+          client_id: `${process.env.GOOGLE_CLIENT_ID}`,
           callback: window.handleCredentialResponse,
         });
 
@@ -74,7 +70,7 @@ export default function GoogleSignIn() {
     };
 
     document.head.appendChild(script);
-  }, []);
+  }, [router]);
 
   return <div id="g_id_signin"></div>;
 }
