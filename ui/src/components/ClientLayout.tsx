@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../styles/globals.css";
 import "../i18n/i18n";
