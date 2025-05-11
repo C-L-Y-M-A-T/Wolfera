@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@parcel/css": "^1.14.0",
+    "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/oxide": "^4.1.5",
     "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
