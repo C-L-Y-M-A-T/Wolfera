@@ -2,7 +2,6 @@ import { ClientLayout } from "@/components";
 import { AuthProvider } from "@/context/auth-context";
 import type { Metadata } from "next";
 import type React from "react";
-import "../../styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Wolfera",
