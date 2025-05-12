@@ -1,38 +1,24 @@
 export type AvatarConfigType = {
-  features: string[];
-  glasses: string[];
   hair: string[];
   eyes: string[];
   eyebrows: string[];
   mouth: string[];
   skinColor: string[];
   hairColor: string[];
-  earrings: string[];
   backgroundColor: string[];
-  glassesProbability: number[];
-  featuresProbability: number[];
-  earringsProbability: number[];
 };
 
 export enum AvatarConfigKeys {
-  features = "features",
-  glasses = "glasses",
   hair = "hair",
   eyes = "eyes",
   eyebrows = "eyebrows",
   mouth = "mouth",
   skinColor = "skinColor",
   hairColor = "hairColor",
-  earrings = "earrings",
   backgroundColor = "backgroundColor",
-  glassesProbability = "glassesProbability",
-  featuresProbability = "featuresProbability",
-  earringsProbability = "earringsProbability",
 }
 
-export const options: Record<keyof AvatarConfigType, string[] | number[]> = {
-  features: ["birthmark", "blush", "freckles", "mustache"],
-  glasses: ["variant01", "variant02", "variant03", "variant04", "variant05"],
+export const options: Record<keyof AvatarConfigType, string[]> = {
   hair: [
     "long01",
     "long02",
@@ -174,18 +160,42 @@ export const options: Record<keyof AvatarConfigType, string[] | number[]> = {
     "dba3be",
     "e5d7a3",
   ],
-  earrings: [
-    "variant01",
-    "variant02",
-    "variant03",
-    "variant04",
-    "variant05",
-    "variant06",
-  ],
+
   backgroundColor: ["b6e3f4", "c0aede", "d1d4f9", "ffd5dc", "ffdfbf"],
-  glassesProbability: [0, 100],
-  featuresProbability: [0, 100],
-  earringsProbability: [0, 100],
+};
+
+export const colorOptions = {
+  hair: [
+    { value: "0e0e0e", label: "Black" },
+    { value: "3eac2c", label: "Green" },
+    { value: "6a4e35", label: "Brown" },
+    { value: "85c2c6", label: "Blue" },
+    { value: "796a45", label: "Olive" },
+    { value: "562306", label: "Dark Brown" },
+    { value: "592454", label: "Purple" },
+    { value: "ab2a18", label: "Red" },
+    { value: "ac6511", label: "Orange" },
+    { value: "afafaf", label: "Gray" },
+    { value: "b9a05f", label: "Blonde" },
+    { value: "cb6820", label: "Light Brown" },
+    { value: "dba3be", label: "Pink" },
+    { value: "e5d7a3", label: "Beige" },
+  ],
+
+  skin: [
+    { value: "9e5622", label: "Dark" },
+    { value: "763900", label: "Deeper" },
+    { value: "ecad80", label: "Medium" },
+    { value: "f2d3b1", label: "Light" },
+  ],
+
+  background: [
+    { value: "b6e3f4", label: "Blue" },
+    { value: "c0aede", label: "Purple" },
+    { value: "d1d4f9", label: "Indigo" },
+    { value: "ffd5dc", label: "Pink" },
+    { value: "ffdfbf", label: "Peach" },
+  ],
 };
 
 // For easier categorization of avatar features
@@ -223,13 +233,6 @@ export const avatarFeatures: AvatarFeature[] = [
     category: FeatureCategory.Face,
   },
   { key: AvatarConfigKeys.hair, label: "Hair", category: FeatureCategory.Face },
-  {
-    key: AvatarConfigKeys.features,
-    label: "Features",
-    category: FeatureCategory.Face,
-    showToggle: true,
-    toggleKey: AvatarConfigKeys.featuresProbability,
-  },
 
   {
     key: AvatarConfigKeys.skinColor,
@@ -248,20 +251,5 @@ export const avatarFeatures: AvatarFeature[] = [
     label: "Background",
     category: FeatureCategory.Color,
     isColor: true,
-  },
-
-  {
-    key: AvatarConfigKeys.glasses,
-    label: "Glasses",
-    category: FeatureCategory.Accessories,
-    showToggle: true,
-    toggleKey: AvatarConfigKeys.glassesProbability,
-  },
-  {
-    key: AvatarConfigKeys.earrings,
-    label: "Earrings",
-    category: FeatureCategory.Accessories,
-    showToggle: true,
-    toggleKey: AvatarConfigKeys.earringsProbability,
   },
 ];
