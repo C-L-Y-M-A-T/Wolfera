@@ -1,0 +1,23 @@
+{
+  "name": "wolfera",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "dev": "concurrently -n ui,api -c blue,green \"npm --workspace ui run dev\" \"npm --workspace api run start:dev\"",
+    "dev:ui": "npm --workspace ui run dev",
+    "dev:api": "npm --workspace api run start:dev"
+  },
+  "workspaces": [
+    "ui",
+    "api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/C-L-Y-M-A-T/Wolfera.git"
+  },
+  "homepage": "https://github.com/C-L-Y-M-A-T/Wolfera#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
