@@ -1,16 +1,16 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryColumn()
+  @PrimaryColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
-  name: string;
+  @Column({ unique: true })
+  username: string;
 
   @Column({ nullable: true })
-  avatarUrl: string;
+  avatar_url?: string;
 }

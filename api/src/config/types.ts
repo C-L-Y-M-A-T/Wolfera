@@ -10,6 +10,7 @@ type DatabaseConfig = {
 type SupabaseConfig = {
   url: string;
   serviceRoleKey: string;
+  jwtSecret: string;
 };
 
 export type Config = {
