@@ -19,5 +19,8 @@
   "homepage": "https://github.com/C-L-Y-M-A-T/Wolfera#readme",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "framer-motion": "^12.11.0"
   }
 }
