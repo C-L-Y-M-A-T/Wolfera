@@ -1,4 +1,5 @@
 {
+  "files.eol": "\n",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
@@ -14,7 +15,7 @@
   "[properties]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-  "eslint.workingDirectories": ["./api", "./frontend"],
+  "eslint.workingDirectories": ["../api", "../ui"],
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

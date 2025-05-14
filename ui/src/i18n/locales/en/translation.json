@@ -1,0 +1,114 @@
+{
+  "common": {
+    "play": "Play Now",
+    "connect": "Connect",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "settings": "Settings",
+    "profile": "Profile",
+    "language": "Language"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "French",
+    "ar": "Arabic"
+  },
+  "home": {
+    "title": "Werewolf Online",
+    "subtitle": "A thrilling social deduction game where deception, teamwork, and quick thinking are your best allies. Will you hunt down the werewolves or deceive the village to victory?",
+    "features": {
+      "title": "Game Features",
+      "strategic": {
+        "title": "Strategic Gameplay",
+        "description": "Use deduction and deception to uncover the truth or hide in plain sight."
+      },
+      "roles": {
+        "title": "Multiple Roles",
+        "description": "Play as a Villager, Seer, Werewolf, and many more unique characters."
+      },
+      "cycles": {
+        "title": "Day & Night Cycles",
+        "description": "Experience the tension of night-time hunting and daytime accusations."
+      }
+    },
+    "howToPlay": {
+      "title": "How To Play",
+      "steps": {
+        "1": {
+          "title": "Join a Game",
+          "description": "Create a new game or join an existing one with a code."
+        },
+        "2": {
+          "title": "Discover Your Role",
+          "description": "Each player is secretly assigned a role with unique abilities."
+        },
+        "3": {
+          "title": "Survive the Night",
+          "description": "Werewolves hunt during the night while villagers sleep."
+        },
+        "4": {
+          "title": "Debate & Vote",
+          "description": "During the day, discuss and vote to eliminate suspected werewolves."
+        }
+      }
+    }
+  },
+  "game": {
+    "phases": {
+      "roleReveal": "Role Reveal",
+      "night": "Night Phase",
+      "day": "Day {{day}} Discussion",
+      "voting": "Voting Phase"
+    },
+    "status": {
+      "starting": "The game is starting. You will discover your role shortly.",
+      "night": "It's nighttime. Werewolves are choosing their victim, while the Seer and Doctor use their abilities.",
+      "day": "It's daytime. Discuss with other villagers to identify the werewolves.",
+      "voting": "Voting is in progress. Select a player you suspect is a werewolf."
+    },
+    "chat": {
+      "village": "Village Chat",
+      "werewolf": "Werewolf Pack",
+      "placeholder": "Type a message...",
+      "unavailable": "Chat unavailable",
+      "dead": "You are dead and cannot chat",
+      "nightRestriction": "Only werewolves can chat at night",
+      "disabled": "Chat is currently disabled"
+    },
+    "roles": {
+      "villager": "Villager",
+      "werewolf": "Werewolf",
+      "seer": "Seer",
+      "doctor": "Doctor",
+      "hunter": "Hunter",
+      "witch": "Witch",
+      "littleGirl": "Little Girl",
+      "cupid": "Cupid",
+      "lover": "Lover"
+    },
+    "status": {
+      "alive": "Alive",
+      "dead": "Dead"
+    }
+  },
+  "profile": {
+    "stats": "Stats",
+    "gamesPlayed": "Games Played",
+    "wins": "Wins",
+    "winRate": "Win Rate",
+    "favoriteRole": "Favorite Role",
+    "recentGames": "Recent Games",
+    "aboutMe": "About Me",
+    "editProfile": "Edit Profile",
+    "username": "Username",
+    "email": "Email",
+    "bio": "Bio",
+    "achievements": "Achievements",
+    "achievementsUnlocked": "You've unlocked {{unlocked}} out of {{total}} achievements"
+  }
+}

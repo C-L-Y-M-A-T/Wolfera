@@ -6,13 +6,9 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { GameContext } from 'src/game/classes/GameContext';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { SocketGame } from './decorators/socketGame.decorator';
-import { Player } from 'src/game/classes/Player';
-import { SocketPlayer } from './decorators/socketPlayer.decorator';
 
 //TODO: requqire authentication
 @Injectable()
@@ -21,27 +17,23 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private gameService: GameService) {}
 
   @SubscribeMessage('start-game')
-  startGame(@SocketGame() game: GameContext, payload: any) {
+  startGame(client: GameSocket, payload: any) {
+    //TODO: add interceptor to exctract game and player from client (same in websocket)
     console.log('start-game', payload);
-    //game.start();
     //client.data.game.start();
   }
 
   @SubscribeMessage('player-action')
-  handlePlayerAction(
-    @SocketGame() game: GameContext,
-    @SocketPlayer() player: Player,
-    payload: any,
-  ) {
+  handlePlayerAction(client: GameSocket, payload: any) {
     //TODO: read and validate player action
     const tempPlayerAction = {
       personToKill: 'sallemi',
     };
-    game.handlePlayerAction(player, tempPlayerAction);
+    client.data.game.handlePlayerAction(client.data.player, tempPlayerAction);
   }
 
   @SubscribeMessage('start-dummy-game')
-  createDummyGame(@SocketGame() game: GameContext, payload: any) {
+  createDummyGame(client: GameSocket, payload: any) {
     console.log('start-dummy-game event received');
     const dummyPlayers: User[] = [
       {
@@ -58,9 +50,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       },
     ];
     dummyPlayers.forEach((player) => {
-      game.addPlayer(player);
+      client.data.game.addPlayer(player);
     });
-    game.handlePlayerAction(game.owner, {
+    client.data.game.handlePlayerAction(client.data.game.owner, {
       action: 'start-game',
     });
   }
