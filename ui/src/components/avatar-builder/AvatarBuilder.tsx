@@ -11,7 +11,7 @@ import {
 } from "@/types/avatar-builder/avatarConfig";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Download, Save, Shuffle } from "lucide-react";
+import { ArrowLeft, Save, Shuffle } from "lucide-react";
 import { useState } from "react";
 import AvatarPreview from "./components/AvatarPreview";
 import ColorSelector from "./components/ColorSelector";
@@ -24,7 +24,6 @@ export default function AvatarCustomizer() {
     Object.keys(options).map((key) => [key, 0]),
   ) as Record<keyof AvatarConfigType, number>;
   const [currentOptions, setCurrentOptions] = useState(initialState);
-  const [avatarSvg, setAvatarSvg] = useState("");
   const [activeTab, setActiveTab] = useState("face");
 
   const handleRandomize = () => {
@@ -49,38 +48,6 @@ export default function AvatarCustomizer() {
       ...prev,
       [key]: value,
     }));
-  };
-
-  // Download avatar as PNG
-  const downloadAvatar = async () => {
-    try {
-      // Create a new Image to load the SVG
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-
-      // When the image loads, draw it to a canvas and download
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = 300;
-        canvas.height = 300;
-        const ctx = canvas.getContext("2d");
-
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, 300, 300);
-
-          // Create download link
-          const link = document.createElement("a");
-          link.download = `avatar-${seed}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }
-      };
-
-      // Set the source to the SVG data URL
-      img.src = avatarSvg;
-    } catch (error) {
-      console.error("Error downloading avatar:", error);
-    }
   };
 
   return (
@@ -126,14 +93,6 @@ export default function AvatarCustomizer() {
                 >
                   <Save className="mr-2 h-4 w-4" />
                   Save Avatar
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-red-500 text-red-400 hover:bg-red-950 hover:text-red-300"
-                  onClick={downloadAvatar}
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
                 </Button>
               </div>
             </div>
