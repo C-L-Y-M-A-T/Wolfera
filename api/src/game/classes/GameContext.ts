@@ -3,6 +3,8 @@ import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
+import { EventEmitter } from 'stream';
+import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { GameEventEmitter } from './GameEventEmitter';
@@ -13,6 +15,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class GameContext {
+  public eventEmitter: EventEmitter = new EventEmitter();
   public players: Map<string, Player> = new Map();
   public gameId: string;
   private _owner: Player;
@@ -21,6 +24,7 @@ export class GameContext {
     this,
     WaitingForGameStartPhase,
   );
+  private chatHandler = new ChatHandler(this);
   public round: number = 0;
   public gameOptions: GameOptions; //TODO: add game options type
 
