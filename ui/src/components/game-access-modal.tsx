@@ -1,42 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CreateGameModal } from "@/components/create-game-modal"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Unlock } from "lucide-react"
+import { CreateGameModal } from "@/components/create-game-modal";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Unlock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 // Mock data for public games
 const publicGames = [
-  { id: "game1", name: "Village Mayhem", players: 5, maxPlayers: 12, status: "waiting" },
-  { id: "game2", name: "Moonlit Hunt", players: 8, maxPlayers: 10, status: "waiting" },
-  { id: "game3", name: "Howling Night", players: 3, maxPlayers: 8, status: "waiting" },
-]
+  {
+    id: "game1",
+    name: "Village Mayhem",
+    players: 5,
+    maxPlayers: 12,
+    status: "waiting",
+  },
+  {
+    id: "game2",
+    name: "Moonlit Hunt",
+    players: 8,
+    maxPlayers: 10,
+    status: "waiting",
+  },
+  {
+    id: "game3",
+    name: "Howling Night",
+    players: 3,
+    maxPlayers: 8,
+    status: "waiting",
+  },
+];
 
 export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const [gameCode, setGameCode] = useState("")
-  const [createGameOpen, setCreateGameOpen] = useState(false)
-  const router = useRouter()
+  const [open, setOpen] = useState(false);
+  const [gameCode, setGameCode] = useState("");
+  const [createGameOpen, setCreateGameOpen] = useState(false);
+  const router = useRouter();
 
   const handleJoinGame = (gameId: string) => {
-    // In a real app, this would validate the game code and redirect to the game
-    console.log(`Joining game: ${gameId}`)
-    setOpen(false)
-    router.push(`/game/${gameId}`)
-  }
+    try {
+      // TODO: Add actual game code validation logic here
+      setOpen(false);
+      router.push(`/game/${gameId}`);
+    } catch (error) {
+      // TODO: Add proper error handling
+      console.error("Failed to join game:", error);
+      // Display error message to user
+    }
+  };
 
   const handleJoinByCode = () => {
-    if (gameCode.trim()) {
-      handleJoinGame(gameCode)
+    const trimmedCode = gameCode.trim();
+    // Check if code follows expected format (e.g., alphanumeric and minimum length)
+    if (trimmedCode && /^[A-Za-z0-9]{6,}$/.test(trimmedCode)) {
+      handleJoinGame(gameCode);
+    } else {
+      // TODO: Display validation error to user
+      console.error("Invalid game code format");
     }
-  }
+  };
 
   return (
     <>
@@ -44,7 +84,9 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Join a Game</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              Join a Game
+            </DialogTitle>
           </DialogHeader>
 
           <Tabs defaultValue="join" className="mt-4">
@@ -54,17 +96,27 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
             </TabsList>
 
             <TabsContent value="join" className="space-y-4 mt-4">
-              <div className="flex space-x-2">
-                <Input placeholder="Enter game code" value={gameCode} onChange={(e) => setGameCode(e.target.value)} />
-                <Button onClick={handleJoinByCode}>Join</Button>
-              </div>
+              <form
+                className="flex space-x-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleJoinByCode();
+                }}
+              >
+                <Input
+                  placeholder="Enter game code"
+                  value={gameCode}
+                  onChange={(e) => setGameCode(e.target.value)}
+                />
+                <Button type="submit">Join</Button>
+              </form>
 
               <div className="text-center mt-6">
                 <p className="mb-4">Or create your own game</p>
                 <Button
                   onClick={() => {
-                    setOpen(false)
-                    setCreateGameOpen(true)
+                    setOpen(false);
+                    setCreateGameOpen(true);
                   }}
                   className="bg-red-600 hover:bg-red-700"
                 >
@@ -87,7 +139,10 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
                       </CardDescription>
                     </CardHeader>
                     <CardFooter className="pt-2">
-                      <Button onClick={() => handleJoinGame(game.id)} className="w-full">
+                      <Button
+                        onClick={() => handleJoinGame(game.id)}
+                        className="w-full"
+                      >
                         Join Game
                       </Button>
                     </CardFooter>
@@ -101,5 +156,5 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
 
       <CreateGameModal open={createGameOpen} onOpenChange={setCreateGameOpen} />
     </>
-  )
+  );
 }

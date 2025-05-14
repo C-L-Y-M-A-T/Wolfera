@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function TestimonialsSection() {
+  const { t } = useTranslation();
   // Mock testimonials
   const testimonials = [
     {
@@ -39,7 +41,7 @@ export default function TestimonialsSection() {
       >
         <h2 className="text-4xl font-bold text-center mb-16 text-red-400">
           <span className="relative inline-block">
-            What Players Are Saying
+            {t("home.testimonials.title", "What Players Are Saying")}
             <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent"></span>
           </span>
         </h2>

@@ -1,49 +1,103 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Slider } from "@/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 // Available roles in the game
 const availableRoles = [
-  { id: "villager", name: "Villager", description: "A regular villager trying to find the werewolves" },
-  { id: "werewolf", name: "Werewolf", description: "Hunts villagers at night and tries to remain hidden" },
-  { id: "seer", name: "Seer", description: "Can check one player's identity each night" },
-  { id: "doctor", name: "Doctor", description: "Can protect one player from being killed each night" },
-  { id: "hunter", name: "Hunter", description: "Can take someone down when killed" },
-  { id: "witch", name: "Witch", description: "Has one healing potion and one poison potion" },
-]
+  {
+    id: "villager",
+    name: "Villager",
+    description: "A regular villager trying to find the werewolves",
+  },
+  {
+    id: "werewolf",
+    name: "Werewolf",
+    description: "Hunts villagers at night and tries to remain hidden",
+  },
+  {
+    id: "seer",
+    name: "Seer",
+    description: "Can check one player's identity each night",
+  },
+  {
+    id: "doctor",
+    name: "Doctor",
+    description: "Can protect one player from being killed each night",
+  },
+  {
+    id: "hunter",
+    name: "Hunter",
+    description: "Can take someone down when killed",
+  },
+  {
+    id: "witch",
+    name: "Witch",
+    description: "Has one healing potion and one poison potion",
+  },
+];
 
 export function CreateGameModal({
   open,
   onOpenChange,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
-  const router = useRouter()
-  const [gameName, setGameName] = useState("My Werewolf Game")
-  const [isPublic, setIsPublic] = useState(true)
-  const [wolfRatio, setWolfRatio] = useState([25]) // Percentage of werewolves
-  const [playerCount, setPlayerCount] = useState("8")
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(["villager", "werewolf", "seer"])
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [gameName, setGameName] = useState(
+    t("game.defaultName", "My Werewolf Game"),
+  );
+  const [isPublic, setIsPublic] = useState(true);
+  const [wolfRatio, setWolfRatio] = useState([25]); // Percentage of werewolves
+  const [playerCount, setPlayerCount] = useState("8");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([
+    "villager",
+    "werewolf",
+    "seer",
+  ]);
 
   const handleRoleToggle = (roleId: string, checked: boolean) => {
     if (checked) {
-      setSelectedRoles([...selectedRoles, roleId])
+      setSelectedRoles([...selectedRoles, roleId]);
     } else {
-      setSelectedRoles(selectedRoles.filter((id) => id !== roleId))
+      setSelectedRoles(selectedRoles.filter((id) => id !== roleId));
     }
-  }
+  };
 
   const handleCreateGame = () => {
+    if (!gameName.trim()) {
+      // Show an error message or toast notification
+      console.error("Game name is required");
+      return;
+    }
+    // Validate minimum role selection (could use a constant for min roles)
+    if (selectedRoles.length < 3) {
+      console.error("Select at least 3 roles");
+      return;
+    }
     // In a real app, this would create a game on the server
     console.log("Creating game with settings:", {
       name: gameName,
@@ -51,20 +105,22 @@ export function CreateGameModal({
       wolfRatio: wolfRatio[0],
       playerCount,
       roles: selectedRoles,
-    })
+    });
 
     // Generate a mock game ID
-    const gameId = `game-${Math.random().toString(36).substring(2, 8)}`
+    const gameId = `game-${Math.random().toString(36).substring(2, 8)}`;
 
-    onOpenChange(false)
-    router.push(`/waiting-room/${gameId}`)
-  }
+    onOpenChange(false);
+    router.push(`/waiting-room/${gameId}`);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Create New Game</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">
+            Create New Game
+          </DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
@@ -85,9 +141,15 @@ export function CreateGameModal({
               Public Game
             </Label>
             <div className="flex items-center space-x-2 col-span-3">
-              <Switch id="visibility" checked={isPublic} onCheckedChange={setIsPublic} />
+              <Switch
+                id="visibility"
+                checked={isPublic}
+                onCheckedChange={setIsPublic}
+              />
               <span className="text-sm text-gray-500">
-                {isPublic ? "Anyone can join with the code" : "Only invited players can join"}
+                {isPublic
+                  ? "Anyone can join with the code"
+                  : "Only invited players can join"}
               </span>
             </div>
           </div>
@@ -115,7 +177,13 @@ export function CreateGameModal({
               Wolf Ratio
             </Label>
             <div className="col-span-3 px-2">
-              <Slider id="wolf-ratio" value={wolfRatio} onValueChange={setWolfRatio} max={50} step={5} />
+              <Slider
+                id="wolf-ratio"
+                value={wolfRatio}
+                onValueChange={setWolfRatio}
+                max={50}
+                step={5}
+              />
               <div className="flex justify-between mt-1 text-xs text-gray-500">
                 <span>Few Wolves ({wolfRatio}%)</span>
                 <span>Many Wolves</span>
@@ -131,7 +199,9 @@ export function CreateGameModal({
                   <Checkbox
                     id={`role-${role.id}`}
                     checked={selectedRoles.includes(role.id)}
-                    onCheckedChange={(checked) => handleRoleToggle(role.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleRoleToggle(role.id, checked as boolean)
+                    }
                     disabled={role.id === "villager" || role.id === "werewolf"}
                   />
                   <div className="grid gap-1.5 leading-none">
@@ -150,11 +220,14 @@ export function CreateGameModal({
         </div>
 
         <DialogFooter>
-          <Button onClick={handleCreateGame} className="bg-red-600 hover:bg-red-700">
+          <Button
+            onClick={handleCreateGame}
+            className="bg-red-600 hover:bg-red-700"
+          >
             Create Game
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

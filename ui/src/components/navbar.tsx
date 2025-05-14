@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import Image from "next/image";
 import { LanguageSwitcher } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 // Mock authentication state - in a real app, this would come from your auth provider
 const useAuth = () => {
   // For demo purposes, let's assume the user is not logged in initially
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return {
     isLoggedIn,
@@ -69,7 +69,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
 
-          {isLoggedIn ? (
+          {isLoggedIn && user ? (
             <UserMenu user={user} onLogout={logout} />
           ) : (
             <Link href="/connect">
@@ -99,7 +99,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="flex items-center text-gray-300 hover:text-white transition-colors hover:text-red-400"
+      className="flex items-center text-gray-300 transition-colors hover:text-red-400"
     >
       <span className="mr-2">{icon}</span>
       <span>{label}</span>
@@ -107,7 +107,12 @@ function NavLink({
   );
 }
 
-function UserMenu({ user, onLogout }: { user: any; onLogout: () => void }) {
+interface User {
+  name: string;
+  avatar?: string;
+}
+
+function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
   const { t } = useTranslation();
 
   return (
@@ -117,10 +122,12 @@ function UserMenu({ user, onLogout }: { user: any; onLogout: () => void }) {
           variant="ghost"
           className="flex items-center space-x-2 hover:bg-gray-800"
         >
-          <img
+          <Image
             src={user.avatar || "/placeholder.svg"}
             alt={user.name}
-            className="w-8 h-8 rounded-full border-2 border-red-500"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full border-2 border-red-500 object-cover"
           />
           <span className="hidden md:inline">{user.name}</span>
         </Button>

@@ -68,10 +68,6 @@ interface DefaultTextProps {
   intensity: IntensitySettings;
 }
 
-interface BloodDropProps {
-  index: number;
-}
-
 export default function AnimatedText({
   text,
   type = "default",

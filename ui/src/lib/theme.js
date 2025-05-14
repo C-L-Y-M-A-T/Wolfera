@@ -176,9 +176,10 @@ export const cx = (...classes) => {
 };
 
 // Apply role-based colors
-export const getRoleColor = (role) => {
-  return colors.roles[role] || colors.roles.villager;
-};
+export const getRoleColor = (role) => {  
+  if (!role) return colors.roles.villager;  
+   return colors.roles[role] || colors.roles.villager;  
+ }; 
 
 // Export all theme elements
 export const theme = {
