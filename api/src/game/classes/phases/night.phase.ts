@@ -20,7 +20,6 @@ export class NightPhase extends ChainableGamePhase {
   }
 
   async onStart(): Promise<void> {
-    this.context.emmit('game:night:start', undefined);
     this.output = await this.orchestrator.execute();
     this.end();
   }

@@ -14,12 +14,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     return 0;
   }
 
-  onStart(): void {
-    this.context.emmit('game:waitingForGameStart', {
-      gameId: this.context.gameId,
-      players: this.context.players,
-    });
-  }
+  onStart(): void {}
 
   protected async onPrePhase(): Promise<void> {
     console.log('WaitingForGameStartPhase: onPrePhase');

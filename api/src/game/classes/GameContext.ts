@@ -3,6 +3,8 @@ import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
+import { EventEmitter } from 'stream';
+import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
@@ -11,14 +13,15 @@ import { GameOptions } from './types';
 
 @Injectable()
 export class GameContext {
+  public eventEmitter: EventEmitter = new EventEmitter();
   public players: Map<string, Player> = new Map();
   public gameId: string;
   private _owner: Player;
-  private eventEmitter: any; //TODO: add event emitter type
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
   );
+  private chatHandler = new ChatHandler(this);
   public round: number = 0;
   public gameOptions: GameOptions; //TODO: add game options type
 
@@ -27,6 +30,7 @@ export class GameContext {
     console.log('GameContext created, rolesService:', rolesService);
     this.gameId = this.generateGameId();
     this.orchestrator.execute();
+    
   }
   isEmpty() {
     return this.players.size === 0;
@@ -35,6 +39,7 @@ export class GameContext {
     console.log('Adding player:', user);
     const player = new Player(user, this);
     this.players.set(user.id, player);
+    this.eventEmitter.emit('player:join', player);
     return player;
   }
   connectPlayer(user: User | Player, socket?: GameSocket): Player {
@@ -89,16 +94,6 @@ export class GameContext {
     return Math.random().toString(36).substring(2, 15);
   }
 
-  //TODO: to replace with event emitter
-  emmit(event: string, data: any): void {
-    this.players.forEach((player) => {
-      //player.socket?.emit(event, data);
-      player.socket?.emit('game-event', {
-        event,
-        data,
-      });
-    });
-  }
 
   handlePlayerAction(player: Player, action: any): void {
     this.orchestrator.handlePlayerAction(player, action);

@@ -25,16 +25,10 @@ export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
     // Notify werewolves it's their turn
 
     // todo: implement emit to role/ emit to players under a certain condition like has or has not role
-    this.context.emmit('werewolf:night:start', {
-      message: 'Choose a victim...',
-    });
     console.log('Werewolf night phase started');
   }
   async onEnd() {
     // Notify werewolves the night phase is over
-    this.context.emmit('werewolf:night:end', {
-      message: 'Night phase is over.',
-    });
     console.log('Werewolf night phase ended');
   }
 
