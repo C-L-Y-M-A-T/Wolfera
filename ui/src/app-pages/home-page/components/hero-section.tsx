@@ -111,8 +111,14 @@ export default function HeroSection() {
           animate={{ opacity: 0.7 }}
           transition={{ delay: 1.5, duration: 1 }}
         >
-          <span className="text-sm text-gray-300 mb-2">Scroll to discover</span>
-          <ArrowDownIcon className="h-6 w-6 text-red-500" />
+          <span className="text-sm text-gray-300 mb-2" id="scroll-label">
+            Scroll to discover
+          </span>
+          <ArrowDownIcon
+            className="h-6 w-6 text-red-500"
+            aria-labelledby="scroll-label"
+            role="img"
+          />
         </motion.div>
       </motion.div>
     </section>
