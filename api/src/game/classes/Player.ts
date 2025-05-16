@@ -2,12 +2,14 @@ import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
+import { ChatChannel } from '../chat/chatChannel';
 import { GameContext } from './GameContext';
 
 export class Player {
   public socket?: GameSocket;
   public role?: GameRole;
   public isAlive: boolean = true;
+  public channels: ChatChannel[] = [];
   constructor(
     public profile: User,
     private context: GameContext,
@@ -32,5 +34,9 @@ export class Player {
   }
   equals(other: Player): boolean {
     return this.id === other.id;
+  }
+  die(): void {
+    this.isAlive = false;
+    this.context.eventEmitter.emit('player:die', this);
   }
 }
