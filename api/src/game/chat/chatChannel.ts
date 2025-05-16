@@ -52,8 +52,7 @@ export abstract class ChatChannel {
 
   handleIncomingMessage(message: IncomingMessage): void {
     if (this.verifyIncomingMessage(message)) {
-      this.brodcast(
-        {
+      this.brodcast({
         type: 'player_message',
         sender_id: message.sender.id,
         content: message.content,
@@ -63,11 +62,14 @@ export abstract class ChatChannel {
   }
   public activate(): void {
     this.isActive = true;
-    this.context.eventEmitter.emit('chat:channel:activate', this);
+    this.context.eventEmitter.emit(`chat:channel:${this.name}:activate`, this);
   }
   public deactivate(): void {
     this.isActive = false;
-    this.context.eventEmitter.emit('chat:channel:deactivate', this);
+    this.context.eventEmitter.emit(
+      `chat:channel:${this.name}:deactivate`,
+      this,
+    );
   }
 
   private verifyIncomingMessage(message: IncomingMessage): boolean {
@@ -90,8 +92,7 @@ export abstract class ChatChannel {
     return true;
   }
 
-  abstract playerCanSendMessage(
-    player: Player,
-    message: IncomingMessage,
-  ): boolean;
+  playerCanSendMessage(player: Player, message: IncomingMessage): boolean {
+    return true;
+  }
 }

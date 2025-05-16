@@ -3,7 +3,8 @@ import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { EventEmitter } from 'stream';
+
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ChatHandler } from '../chat/ChatHandler';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
@@ -13,7 +14,10 @@ import { GameOptions } from './types';
 
 @Injectable()
 export class GameContext {
-  public eventEmitter: EventEmitter = new EventEmitter();
+  public eventEmitter: EventEmitter2 = new EventEmitter2({
+    wildcard: true,
+    delimiter: ':',
+  });
   public players: Map<string, Player> = new Map();
   public gameId: string;
   private _owner: Player;
