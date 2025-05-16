@@ -21,9 +21,15 @@ export class SeerNightPhase extends RolePhase {
   }
 
   async onStart() {
+    this.context.emit('seer:night:start', {
+      message: 'Choose a victim...',
+    });
     console.log('seer night phase started');
   }
   async onEnd() {
+    this.context.emit('seer:night:end', {
+      message: 'Night phase is over.',
+    });
     console.log('seer night phase ended');
   }
 
