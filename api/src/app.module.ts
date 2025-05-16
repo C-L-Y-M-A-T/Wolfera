@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { config } from './config';
 import { GameModule } from './game/game.module';
 import { SocketModule } from './socket/socket.module';
+import { UserModule } from './users/user.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { SocketModule } from './socket/socket.module';
     }),
     GameModule,
     SocketModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

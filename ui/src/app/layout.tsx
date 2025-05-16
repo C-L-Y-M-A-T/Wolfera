@@ -1,4 +1,5 @@
 import { ClientLayout } from "@/components";
+import { AuthProvider } from "@/context/auth-context";
 import type { Metadata } from "next";
 import type React from "react";
 import { inter, creepster } from "@/lib/fonts";
@@ -18,7 +19,9 @@ export default function RootLayout({
       dir="ltr"
       className={`${inter.variable} ${creepster.variable}`}
     >
-      <ClientLayout>{children}</ClientLayout>
+      <ClientLayout>
+        <AuthProvider>{children}</AuthProvider>
+      </ClientLayout>
     </html>
   );
 }
