@@ -1,6 +1,6 @@
 import { getSupabaseFrontendClient } from "@/services/supabase/client";
 
-export async function singInWithEmailAndPassword(data: {
+export async function signInWithEmailAndPassword(data: {
   email: string;
   password: string;
 }) {
@@ -13,7 +13,7 @@ export async function singInWithEmailAndPassword(data: {
   return result;
 }
 
-export async function singUpWithEmailAndPassword(data: {
+export async function signUpWithEmailAndPassword(data: {
   email: string;
   password: string;
 }) {

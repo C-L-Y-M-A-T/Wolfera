@@ -17,8 +17,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/services/api";
 import {
-  singInWithEmailAndPassword,
-  singUpWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signUpWithEmailAndPassword,
 } from "@/services/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,7 @@ export default function ConnectPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await singInWithEmailAndPassword({
+    const { data, error } = await signInWithEmailAndPassword({
       email,
       password,
     });
@@ -51,7 +51,7 @@ export default function ConnectPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await singUpWithEmailAndPassword({
+    const { data, error } = await signUpWithEmailAndPassword({
       email,
       password,
     });
