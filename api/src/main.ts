@@ -1,7 +1,7 @@
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from './config';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { swagger } from './utils/swagger';
 
 async function bootstrap() {
