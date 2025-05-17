@@ -1,7 +1,7 @@
-export { default as ClientLayout } from "./ClientLayout";
-export * from "./game-access-modal";
-export * from "./navbar";
+export * from "../providers/theme-provider";
 export { default as AnimatedText } from "./animated-text";
-export * from "./language-switcher";
+export { default as ClientLayout } from "./ClientLayout";
 export * from "./create-game-modal";
-export * from "./theme-provider";
+export * from "./game-access-modal";
+export * from "./language-switcher";
+export * from "./navbar";
