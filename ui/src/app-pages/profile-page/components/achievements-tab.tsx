@@ -1,45 +1,64 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { ArrowUpRight, Trophy } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
-import { useState } from "react"
-import { AchievementDetailsDialog } from "./achievement-details-dialog"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Trophy } from "lucide-react";
+import { useState } from "react";
+import { AchievementDetailsDialog } from "./achievement-details-dialog";
 
 interface Achievement {
-  id: number
-  name: string
-  description: string
-  unlocked: boolean
-  date?: string
+  id: number;
+  name: string;
+  description: string;
+  unlocked: boolean;
+  date?: string;
 }
 
 interface AchievementsTabProps {
-  achievements: Achievement[]
+  achievements: Achievement[];
 }
 
 export function AchievementsTab({ achievements }: AchievementsTabProps) {
-  const theme = useTheme()
-  const [showAchievementDetails, setShowAchievementDetails] = useState<number | null>(null)
+  const theme = useTheme();
+  const [showAchievementDetails, setShowAchievementDetails] = useState<
+    number | null
+  >(null);
 
-  const selectedAchievement = achievements.find((a) => a.id === showAchievementDetails)
+  const selectedAchievement = achievements.find(
+    (a) => a.id === showAchievementDetails,
+  );
 
   return (
     <>
       <Card className={theme.gameStyles.cards.profile}>
         <CardHeader>
-          <CardTitle className="text-2xl text-yellow-400">Achievements</CardTitle>
+          <CardTitle className={`text-2xl text-yellow-500`}>
+            Achievements
+          </CardTitle>
           <CardDescription>
-            You've unlocked {achievements.filter((a) => a.unlocked).length} out of {achievements.length} achievements
+            You've unlocked {achievements.filter((a) => a.unlocked).length} out
+            of {achievements.length} achievements
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent
+          className={`${theme.typography.fontSize.lg} ${theme.typography.textColor.primary}`}
+        >
           <div className="mb-4">
             <Progress
-              value={(achievements.filter((a) => a.unlocked).length / achievements.length) * 100}
-              className="h-2 bg-gray-800"
+              value={
+                (achievements.filter((a) => a.unlocked).length /
+                  achievements.length) *
+                100
+              }
+              className={`h-2 bg-gray-800 text-yellow-500`}
             />
           </div>
 
@@ -54,7 +73,10 @@ export function AchievementsTab({ achievements }: AchievementsTabProps) {
                 key={achievement.id}
                 variants={theme.variants.item}
                 whileHover={{ scale: 1.02 }}
-                onClick={() => achievement.unlocked && setShowAchievementDetails(achievement.id)}
+                onClick={() =>
+                  achievement.unlocked &&
+                  setShowAchievementDetails(achievement.id)
+                }
                 className={`relative overflow-hidden rounded-lg border ${
                   achievement.unlocked
                     ? theme.gameStyles.cards.achievement.unlocked
@@ -77,13 +99,21 @@ export function AchievementsTab({ achievements }: AchievementsTabProps) {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">{achievement.name}</h3>
-                    <p className="text-sm text-gray-400">{achievement.description}</p>
+                    <h3 className="font-semibold text-lg">
+                      {achievement.name}
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                      {achievement.description}
+                    </p>
                     {achievement.unlocked && achievement.date && (
-                      <p className="text-xs text-yellow-400 mt-1">Unlocked: {achievement.date}</p>
+                      <p className="text-xs text-yellow-400 mt-1">
+                        Unlocked: {achievement.date}
+                      </p>
                     )}
                   </div>
-                  {achievement.unlocked && <ArrowUpRight className="h-4 w-4 text-yellow-400 absolute top-4 right-4" />}
+                  {achievement.unlocked && (
+                    <ArrowUpRight className="h-4 w-4 text-yellow-400 absolute top-4 right-4" />
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -100,5 +130,5 @@ export function AchievementsTab({ achievements }: AchievementsTabProps) {
         />
       )}
     </>
-  )
+  );
 }

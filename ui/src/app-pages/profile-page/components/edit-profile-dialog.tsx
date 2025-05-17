@@ -1,33 +1,47 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useTheme } from "@/providers/theme-provider"
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useTheme } from "@/providers/theme-provider";
 
 interface EditProfileDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   profile: {
-    username: string
-    email: string
-    bio: string
-  }
-  onProfileChange: (field: string, value: string) => void
-  onSave: () => void
+    username: string;
+    email: string;
+    bio: string;
+  };
+  onProfileChange: (field: string, value: string) => void;
+  onSave: () => void;
 }
 
-export function EditProfileDialog({ open, onOpenChange, profile, onProfileChange, onSave }: EditProfileDialogProps) {
-  const theme = useTheme()
+export function EditProfileDialog({
+  open,
+  onOpenChange,
+  profile,
+  onProfileChange,
+  onSave,
+}: EditProfileDialogProps) {
+  const theme = useTheme();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-gray-900 border-gray-700">
+      <DialogContent className={"sm:max-w-[425px] bg-gray-900 border-gray-700"}>
         <DialogHeader>
           <DialogTitle className="text-red-400">Edit Profile</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <div
+          className={` ${theme.typography.textColor.primary} space-y-4 py-4`}
+        >
           <div className="space-y-2">
             <label htmlFor="username">Username</label>
             <Input
@@ -59,11 +73,14 @@ export function EditProfileDialog({ open, onOpenChange, profile, onProfileChange
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={onSave} className={`bg-gradient-to-r ${theme.colors.gradients.redToRed} border-none`}>
+          <Button
+            onClick={onSave}
+            className={`bg-gradient-to-r ${theme.colors.gradients.redToRed} border-none`}
+          >
             Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

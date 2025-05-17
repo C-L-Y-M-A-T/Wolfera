@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Heart, MessageSquare } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { Heart, MessageSquare } from "lucide-react";
 
 interface FriendsCardProps {
   friends: Array<{
-    id: string
-    username: string
-    status: string
-    avatar: string
-  }>
+    id: string;
+    username: string;
+    status: string;
+    avatar: string;
+  }>;
 }
 
 export function FriendsCard({ friends }: FriendsCardProps) {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <motion.div variants={theme.variants.card}>
@@ -27,13 +27,22 @@ export function FriendsCard({ friends }: FriendsCardProps) {
               <Heart className="w-5 h-5 mr-2 text-red-500" />
               Friends
             </CardTitle>
-            <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-white">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-gray-400 hover:text-white"
+            >
               View All
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <motion.div variants={theme.variants.container} initial="hidden" animate="visible" className="space-y-3">
+        <CardContent className={` ${theme.typography.textColor.primary}`}>
+          <motion.div
+            variants={theme.variants.container}
+            initial="hidden"
+            animate="visible"
+            className="space-y-3"
+          >
             {friends.map((friend) => (
               <motion.div
                 key={friend.id}
@@ -54,7 +63,9 @@ export function FriendsCard({ friends }: FriendsCardProps) {
                   </div>
                   <div className="ml-3">
                     <div className="font-medium">{friend.username}</div>
-                    <div className="text-xs capitalize text-gray-400">{friend.status}</div>
+                    <div className="text-xs capitalize text-gray-400">
+                      {friend.status}
+                    </div>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -66,5 +77,5 @@ export function FriendsCard({ friends }: FriendsCardProps) {
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

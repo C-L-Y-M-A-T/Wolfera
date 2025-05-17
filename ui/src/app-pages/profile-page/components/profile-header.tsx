@@ -1,22 +1,27 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Calendar, Camera, Edit, Skull, Trophy } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
-import AnimatedText from "@/components/animated-text"
+import AnimatedText from "@/components/animated-text";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { Calendar, Camera, Edit, Skull, Trophy } from "lucide-react";
 
 interface ProfileHeaderProps {
-  userData: any
-  onEditProfile: () => void
-  onEditAvatar: () => void
-  avatarUrl: string
+  userData: any;
+  onEditProfile: () => void;
+  onEditAvatar: () => void;
+  avatarUrl: string;
 }
 
-export function ProfileHeader({ userData, onEditProfile, onEditAvatar, avatarUrl }: ProfileHeaderProps) {
-  const theme = useTheme()
-  const { avatar } = theme.gameStyles
+export function ProfileHeader({
+  userData,
+  onEditProfile,
+  onEditAvatar,
+  avatarUrl,
+}: ProfileHeaderProps) {
+  const theme = useTheme();
+  const { avatar } = theme.gameStyles;
 
   return (
     <motion.div
@@ -42,8 +47,17 @@ export function ProfileHeader({ userData, onEditProfile, onEditAvatar, avatarUrl
           className={avatar.container}
         >
           <div className={avatar.glow}></div>
-          <img src={avatarUrl || "/placeholder.svg"} alt={userData.username} className={avatar.image} />
-          <Button variant="outline" size="icon" className={avatar.editButton} onClick={onEditAvatar}>
+          <img
+            src={avatarUrl || "/placeholder.svg"}
+            alt={userData.username}
+            className={avatar.image}
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            className={avatar.editButton}
+            onClick={onEditAvatar}
+          >
             <Camera className="h-4 w-4 text-red-500" />
           </Button>
 
@@ -72,20 +86,32 @@ export function ProfileHeader({ userData, onEditProfile, onEditAvatar, avatarUrl
             transition={{ delay: 0.4, duration: 0.5 }}
             className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-2"
           >
-            <Badge variant="outline" className={theme.gameStyles.badges.default}>
+            <Badge
+              variant="outline"
+              className={theme.gameStyles.badges.default}
+            >
               <Calendar className="h-3 w-3 mr-1" /> Joined {userData.joinDate}
             </Badge>
-            <Badge variant="outline" className={theme.gameStyles.badges.default}>
+            <Badge
+              variant="outline"
+              className={theme.gameStyles.badges.default}
+            >
               <Trophy className="h-3 w-3 mr-1" /> {userData.stats.wins} Wins
             </Badge>
             <Badge className={theme.gameStyles.badges.kill}>
-              <Skull className="h-3 w-3 mr-1" /> {userData.stats.killCount} Kills
+              <Skull className="h-3 w-3 mr-1" /> {userData.stats.killCount}{" "}
+              Kills
             </Badge>
           </motion.div>
         </div>
 
         <div className="mt-4 md:mt-0 md:ml-auto">
-          <Button variant="outline" size="sm" className={theme.gameStyles.buttons.edit} onClick={onEditProfile}>
+          <Button
+            variant="outline"
+            size="sm"
+            className={theme.gameStyles.buttons.edit}
+            onClick={onEditProfile}
+          >
             <Edit className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>
@@ -95,22 +121,26 @@ export function ProfileHeader({ userData, onEditProfile, onEditAvatar, avatarUrl
       {/* XP Progress bar */}
       <ProfileXpBar level={userData.level} xp={userData.xp} />
     </motion.div>
-  )
+  );
 }
 
 interface ProfileXpBarProps {
-  level: number
-  xp: number
+  level: number;
+  xp: number;
 }
 
 function ProfileXpBar({ level, xp }: ProfileXpBarProps) {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <div className="px-6 pb-4">
       <div className="flex items-center justify-between text-xs mb-1">
-        <span className="text-gray-400">Level {level}</span>
-        <span className="text-gray-400">Level {level + 1}</span>
+        <span className={`${theme.typography.fontSize.sm} text-gray-300`}>
+          Level {level + 1}
+        </span>
+        <span className={`${theme.typography.fontSize.sm} text-gray-300`}>
+          Level {level + 1}
+        </span>
       </div>
       <div className={theme.gameStyles.progressBar.container}>
         <motion.div
@@ -120,7 +150,9 @@ function ProfileXpBar({ level, xp }: ProfileXpBarProps) {
           className={theme.gameStyles.progressBar.fill}
         />
       </div>
-      <div className="text-center text-xs text-gray-400 mt-1">{xp}% to next level</div>
+      <div className="text-center text-xs text-gray-400 mt-1">
+        {xp}% to next level
+      </div>
     </div>
-  )
+  );
 }

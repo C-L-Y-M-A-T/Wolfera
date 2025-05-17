@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChevronRight, User } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
-import { useRoleStyles } from "@/hooks/use-role-styles"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useRoleStyles } from "@/hooks/use-role-styles";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { ChevronRight, User } from "lucide-react";
 
 interface Game {
-  id: string
-  date: string
-  result: string
-  role: string
-  players: number
+  id: string;
+  date: string;
+  result: string;
+  role: string;
+  players: number;
 }
 
 interface GameHistoryTabProps {
-  games: Game[]
+  games: Game[];
 }
 
 export function GameHistoryTab({ games }: GameHistoryTabProps) {
-  const theme = useTheme()
-  const { getRoleIcon } = useRoleStyles()
+  const theme = useTheme();
+  const { getRoleIcon } = useRoleStyles();
 
   return (
     <Card className={theme.gameStyles.cards.profile}>
@@ -30,7 +36,7 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
         <CardTitle className="text-2xl text-blue-400">Game History</CardTitle>
         <CardDescription>Your journey through Miller's Hollow</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={`${theme.typography.textColor.primary}`}>
         <div className="relative">
           {/* Timeline line */}
           <div className={theme.gameStyles.timeline.line} />
@@ -42,11 +48,17 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
             className="space-y-6 relative"
           >
             {games.map((game) => (
-              <motion.div key={game.id} variants={theme.variants.item} className={theme.gameStyles.timeline.item}>
+              <motion.div
+                key={game.id}
+                variants={theme.variants.item}
+                className={theme.gameStyles.timeline.item}
+              >
                 {/* Timeline dot */}
                 <div
                   className={
-                    game.result === "Win" ? theme.gameStyles.timeline.dot.win : theme.gameStyles.timeline.dot.loss
+                    game.result === "Win"
+                      ? theme.gameStyles.timeline.dot.win
+                      : theme.gameStyles.timeline.dot.loss
                   }
                 >
                   {getRoleIcon(game.role) || <User className="h-4 w-4" />}
@@ -62,7 +74,11 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
                     </div>
                     <Badge
                       variant={game.result === "Win" ? "default" : "outline"}
-                      className={game.result === "Win" ? theme.gameStyles.badges.win : theme.gameStyles.badges.loss}
+                      className={
+                        game.result === "Win"
+                          ? theme.gameStyles.badges.win
+                          : theme.gameStyles.badges.loss
+                      }
                     >
                       {game.result}
                     </Badge>
@@ -83,7 +99,11 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
                     </div>
                   </div>
 
-                  <Button variant="ghost" size="sm" className="w-full mt-3 text-xs text-gray-400 hover:text-white">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full mt-4 text-gray-400 hover:text-white hover:bg-gray-800"
+                  >
                     View Game Details
                   </Button>
                 </div>
@@ -94,7 +114,10 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
               <div className="absolute left-0 top-0 w-8 h-8 rounded-full flex items-center justify-center bg-gray-700">
                 <ChevronRight className="h-4 w-4" />
               </div>
-              <Button variant="outline" className="w-full border-dashed">
+              <Button
+                variant="link"
+                className="w-full text-gray-400 hover:text-white hover:bg-gray-800 border-dashed"
+              >
                 Load More Games
               </Button>
             </div>
@@ -102,5 +125,5 @@ export function GameHistoryTab({ games }: GameHistoryTabProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

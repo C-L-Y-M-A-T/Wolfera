@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Trophy } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { Eye, Trophy } from "lucide-react";
 
 interface StatsCardProps {
   stats: {
-    gamesPlayed: number
-    wins: number
-    winRate: string
-    favoriteRole: string
-    killCount: number
-    survivedNights: number
-  }
+    gamesPlayed: number;
+    wins: number;
+    winRate: string;
+    favoriteRole: string;
+    killCount: number;
+    survivedNights: number;
+  };
 }
 
 export function StatsCard({ stats }: StatsCardProps) {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <motion.div variants={theme.variants.card}>
@@ -28,9 +28,12 @@ export function StatsCard({ stats }: StatsCardProps) {
             Player Stats
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={`${theme.typography.textColor.primary}`}>
           <div className="space-y-4">
-            <motion.div variants={theme.variants.item} className="grid grid-cols-2 gap-4">
+            <motion.div
+              variants={theme.variants.item}
+              className="grid grid-cols-2 gap-4"
+            >
               {/* Stats grid */}
               <div className={theme.gameStyles.cards.stat}>
                 <div className="text-xs text-gray-500 mb-1">Games Played</div>
@@ -39,17 +42,25 @@ export function StatsCard({ stats }: StatsCardProps) {
 
               <div className={theme.gameStyles.cards.stat}>
                 <div className="text-xs text-gray-500 mb-1">Win Rate</div>
-                <div className="text-xl font-bold text-green-400">{stats.winRate}</div>
+                <div className="text-xl font-bold text-green-400">
+                  {stats.winRate}
+                </div>
               </div>
 
               <div className={theme.gameStyles.cards.stat}>
                 <div className="text-xs text-gray-500 mb-1">Kills</div>
-                <div className="text-xl font-bold text-red-400">{stats.killCount}</div>
+                <div className="text-xl font-bold text-red-400">
+                  {stats.killCount}
+                </div>
               </div>
 
               <div className={theme.gameStyles.cards.stat}>
-                <div className="text-xs text-gray-500 mb-1">Nights Survived</div>
-                <div className="text-xl font-bold text-blue-400">{stats.survivedNights}</div>
+                <div className="text-xs text-gray-500 mb-1">
+                  Nights Survived
+                </div>
+                <div className="text-xl font-bold text-blue-400">
+                  {stats.survivedNights}
+                </div>
               </div>
             </motion.div>
 
@@ -61,8 +72,12 @@ export function StatsCard({ stats }: StatsCardProps) {
                     <Eye className="h-5 w-5 text-purple-400" />
                   </div>
                   <div>
-                    <div className="font-bold text-purple-400">{stats.favoriteRole}</div>
-                    <div className="text-xs text-gray-400">Most played role</div>
+                    <div className="font-bold text-purple-400">
+                      {stats.favoriteRole}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Most played role
+                    </div>
                   </div>
                 </div>
               </div>
@@ -71,5 +86,5 @@ export function StatsCard({ stats }: StatsCardProps) {
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

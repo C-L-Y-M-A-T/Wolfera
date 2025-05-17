@@ -29,7 +29,9 @@ export function AboutTab({ userData }: AboutTabProps) {
         <CardTitle className={`text-2xl text-red-500`}>About Me</CardTitle>
         <CardDescription>Your profile information</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent
+        className={`${theme.typography.fontSize.lg} ${theme.typography.textColor.primary}`}
+      >
         <motion.div
           variants={theme.variants.container}
           initial="hidden"
