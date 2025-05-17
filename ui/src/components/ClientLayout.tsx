@@ -4,7 +4,7 @@ import "@/i18n/i18n";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../styles/globals.css";
-import { ThemeProvider } from "./theme-provider";
+import { ThemeProvider } from "../providers/theme-provider";
 
 export default function ClientLayout({
   children,

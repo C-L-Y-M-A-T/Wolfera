@@ -1,0 +1,117 @@
+{
+  "username": "WolfHunter",
+  "email": "wolf.hunter@example.com",
+  "bio": "I love playing as the Seer and uncovering the truth!",
+  "joinDate": "January 2023",
+  "avatar": "/placeholder.svg?height=128&width=128",
+  "avatarData": {},
+  "level": 24,
+  "xp": 75,
+  "stats": {
+    "gamesPlayed": 87,
+    "wins": 52,
+    "winRate": "59.8%",
+    "favoriteRole": "Seer",
+    "killCount": 34,
+    "survivedNights": 156
+  },
+  "achievements": [
+    {
+      "id": 1,
+      "name": "First Blood",
+      "description": "Win your first game",
+      "unlocked": true,
+      "date": "Jan 15, 2023"
+    },
+    {
+      "id": 2,
+      "name": "Pack Leader",
+      "description": "Win 5 games as a Werewolf",
+      "unlocked": true,
+      "date": "Feb 3, 2023"
+    },
+    {
+      "id": 3,
+      "name": "Village Elder",
+      "description": "Win 10 games as a Villager",
+      "unlocked": true,
+      "date": "Mar 12, 2023"
+    },
+    {
+      "id": 4,
+      "name": "Psychic",
+      "description": "Correctly identify 3 Werewolves in a single game as Seer",
+      "unlocked": false
+    },
+    {
+      "id": 5,
+      "name": "Survivor",
+      "description": "Win 20 games in a row",
+      "unlocked": false
+    },
+    {
+      "id": 6,
+      "name": "Blood Moon",
+      "description": "Play during a full moon event",
+      "unlocked": true,
+      "date": "Apr 25, 2023"
+    },
+    {
+      "id": 7,
+      "name": "Lone Wolf",
+      "description": "Win as the last werewolf standing",
+      "unlocked": true,
+      "date": "May 10, 2023"
+    }
+  ],
+  "recentGames": [
+    {
+      "id": "g1",
+      "date": "2 hours ago",
+      "result": "Win",
+      "role": "Villager",
+      "players": 12
+    },
+    {
+      "id": "g2",
+      "date": "Yesterday",
+      "result": "Loss",
+      "role": "Werewolf",
+      "players": 8
+    },
+    {
+      "id": "g3",
+      "date": "3 days ago",
+      "result": "Win",
+      "role": "Seer",
+      "players": 15
+    },
+    {
+      "id": "g4",
+      "date": "Last week",
+      "result": "Win",
+      "role": "Hunter",
+      "players": 10
+    }
+  ],
+  "friends": [
+    {
+      "id": "f1",
+      "username": "MoonHowler",
+      "status": "online",
+      "avatar": "/placeholder.svg?height=40&width=40&text=MH"
+    },
+    {
+      "id": "f2",
+      "username": "VillageProtector",
+      "status": "offline",
+      "avatar": "/placeholder.svg?height=40&width=40&text=VP"
+    },
+    {
+      "id": "f3",
+      "username": "NightStalker",
+      "status": "in-game",
+      "avatar": "/placeholder.svg?height=40&width=40&text=NS"
+    }
+  ]
+}
