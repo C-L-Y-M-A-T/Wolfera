@@ -1,67 +1,64 @@
+// Updated GameContext.ts with event handling
 import { Injectable } from '@nestjs/common';
-import { SEER_ROLE_NAME } from 'src/roles/seer';
-import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
+import { ModuleRef } from '@nestjs/core';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ChatHandler } from '../chat/ChatHandler';
+import { SEER_ROLE_NAME } from 'src/roles/seer';
+import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
+import { registerGameEventHandlers } from '../event-emitter/decorators/game-event.decorator';
+import { GameEventEmitter } from '../event-emitter/GameEventEmitter';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
-import { GameEventEmitter } from './GameEventEmitter';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
 import { GameOptions } from './types';
-import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class GameContext {
-  public eventEmitter: EventEmitter2 = new EventEmitter2({
-    wildcard: true,
-    delimiter: ':',
-  });
   public players: Map<string, Player> = new Map();
   public gameId: string;
   private _owner: Player;
-  public gameEventEmitter: GameEventEmitter; //TODO: add event emitter type
+  public gameEventEmitter: GameEventEmitter;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
   );
-  private chatHandler = new ChatHandler(this);
   public round: number = 0;
-  public gameOptions: GameOptions; //TODO: add game options type
+  public gameOptions: GameOptions;
 
-  //TODO: add options
-  constructor(public rolesService: RoleService) {
-    console.log('GameContext created, rolesService:', rolesService);
+  constructor(
+    public rolesService: RoleService,
+    private moduleRef: ModuleRef,
+  ) {
     this.gameId = this.generateGameId();
-    this.orchestrator.execute();
+    // Initialize game event emitter
     this.gameEventEmitter = new GameEventEmitter();
-    this.setupEventListeners();
+    //this.setupEventListeners();
+    this.orchestrator.execute();
   }
 
-  private setupEventListeners(): void {
-    // Set up listeners for broadcast events
-    this.gameEventEmitter.on('broadcast:*', (event: string, data: any) => {
-      const actualEvent = event.replace('broadcast:', '');
-      this.players.forEach((player) => {
-        if (player.isConnected()) {
-          player.socket.emit('game-event', {
-            event: actualEvent,
-            data,
-          });
-        }
-      });
-    });
+  // private setupEventListeners(): void {
+  //   // Set up listeners for broadcast events
+  //   this.gameEventEmitter.on('broadcast:*', (data: any) => {
+  //     const event = this.gameEventEmitter.getEventEmitter().event;
+  //     const actualEvent = event.replace('broadcast:', '');
+  //     this.players.forEach((player) => {
+  //       if (player.isConnected()) {
+  //         player.socket.emit('game-event', {
+  //           event: actualEvent,
+  //           data,
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
 
-    // Add more event listeners as needed
-  }
-
-  logEvents() {
-    this.gameEventEmitter.on('*', (event, data) => {
-      console.log('Game event:', event, data);
-    });
+  /**
+   * Register a class that contains @OnGameEvent handlers
+   */
+  registerEventHandler(handler: any): void {
+    registerGameEventHandlers(handler, this.gameEventEmitter.getEventEmitter());
   }
 
   isEmpty() {
@@ -72,7 +69,7 @@ export class GameContext {
     console.log('Adding player:', user);
     const player = new Player(user, this);
     this.players.set(user.id, player);
-    this.gameEventEmitter.emitToPlayer(player, 'player:join', {
+    this.gameEventEmitter.emit('player:join', {
       player: player.profile,
     });
     return player;
@@ -142,7 +139,7 @@ export class GameContext {
     });
   }
 
-  //todo: change generate game id
+  //TODO: change generate game id
   generateGameId(): string {
     return Math.random().toString(36).substring(2, 15);
   }
@@ -153,7 +150,10 @@ export class GameContext {
   }
 
   handlePlayerAction(player: Player, action: any): void {
-    this.gameEventEmitter.emitToPlayer(player, 'player:action', action);
+    this.gameEventEmitter.emit('player:action', {
+      playerId: player.id,
+      action,
+    });
     this.orchestrator.handlePlayerAction(player, action);
   }
 

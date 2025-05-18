@@ -80,7 +80,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
     }
     this.startTime = Date.now();
 
-    this.context.eventEmitter.emit(`phase:start:${this.phaseName}`, this);
+    this.context.gameEventEmitter.emit(`phase:start:${this.phaseName}`, this);
     // 1. Pre-phase
     this.phaseState = PhaseState.Pre;
     await this.onPrePhase?.();
@@ -104,7 +104,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
     }
     await this.onEnd();
     this.phaseState = PhaseState.Post;
-    this.context.eventEmitter.emit(`phase:end:${this.phaseName}`, this);
+    this.context.gameEventEmitter.emit(`phase:end:${this.phaseName}`, this);
 
     // 3. Post-phase
     if (this.postPhaseDuration > 0) await this.delay(this.postPhaseDuration);

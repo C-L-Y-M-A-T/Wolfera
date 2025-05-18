@@ -2,12 +2,12 @@ import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
 import werewolfRole from 'src/roles/werewolf';
 import { IncomingMessage } from '../chat.types';
-import { ChatChannel } from '../chatChannel';
+import { ChatChannel } from '../ChatChannel';
 
 export class WerewolfChannel extends ChatChannel {
   constructor(context: GameContext) {
     super(context);
-    context.eventEmitter.on('player:join', (player: Player) => {
+    context.gameEventEmitter.on('player:join', (player: Player) => {
       this.onPlayerJoin(player);
     });
   }

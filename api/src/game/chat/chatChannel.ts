@@ -62,11 +62,14 @@ export abstract class ChatChannel {
   }
   public activate(): void {
     this.isActive = true;
-    this.context.eventEmitter.emit(`chat:channel:${this.name}:activate`, this);
+    this.context.gameEventEmitter.emit(
+      `chat:channel:${this.name}:activate`,
+      this,
+    );
   }
   public deactivate(): void {
     this.isActive = false;
-    this.context.eventEmitter.emit(
+    this.context.gameEventEmitter.emit(
       `chat:channel:${this.name}:deactivate`,
       this,
     );

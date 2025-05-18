@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { ChatChannel } from '../chat/chatChannel';
+import { ChatChannel } from '../chat/ChatChannel';
 import { GameContext } from './GameContext';
 
 export class Player {
@@ -37,6 +37,6 @@ export class Player {
   }
   die(): void {
     this.isAlive = false;
-    this.context.eventEmitter.emit('player:die', this);
+    this.context.gameEventEmitter.emit('player:die', this);
   }
 }

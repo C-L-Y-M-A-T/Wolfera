@@ -1,6 +1,6 @@
 import { GameContext } from '../classes/GameContext';
 import { IncomingMessage } from './chat.types';
-import { ChatChannel } from './chatChannel';
+import { ChatChannel } from './ChatChannel';
 import { DeadChannel } from './dead/dead.channel';
 import { GeneralChannel } from './general/general.channel';
 import { WerewolfChannel } from './werewolf/werewolf.channel';
@@ -13,9 +13,9 @@ export class ChatHandler {
   }
   initializeChannels() {
     const channels: ChatChannel[] = [
-      new GeneralChannel(this.context), 
+      new GeneralChannel(this.context),
       new DeadChannel(this.context),
-      new WerewolfChannel(this.context)
+      new WerewolfChannel(this.context),
     ];
 
     channels.forEach((channel) => {

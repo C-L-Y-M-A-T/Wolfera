@@ -1,12 +1,12 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
 import { IncomingMessage } from '../chat.types';
-import { ChatChannel } from '../chatChannel';
+import { ChatChannel } from '../ChatChannel';
 
 export class DeadChannel extends ChatChannel {
   constructor(context: GameContext) {
     super(context);
-    context.eventEmitter.on('player:die', (player: Player) => {
+    context.gameEventEmitter.on('player:die', (player: Player) => {
       this.onPlayerDie(player);
     });
   }
