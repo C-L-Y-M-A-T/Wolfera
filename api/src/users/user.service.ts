@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { Badge, User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -55,5 +55,39 @@ export class UsersService {
     }
 
     return user; // or omit sensitive fields if needed
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { username } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  findAll(): Promise<User[]> {
+    return this.userRepo.find();
+  }
+
+  awardBadges(user: User) {
+    if (user.gamesWon >= 1 && !user.badges.includes(Badge.FIRST_WIN)) {
+      user.badges.push(Badge.FIRST_WIN);
+    }
+    if (
+      user.gamesAsWerewolf >= 1 &&
+      !user.badges.includes(Badge.WEREWOLF_WIN)
+    ) {
+      user.badges.push(Badge.WEREWOLF_WIN);
+    }
+    if (
+      user.gamesWon - user.gamesAsWerewolf >= 1 &&
+      !user.badges.includes(Badge.VILLAGE_HERO)
+    ) {
+      user.badges.push(Badge.VILLAGE_HERO);
+    }
+
+    if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
+      user.badges.push(Badge.MOON_SURVIVOR);
+    }
   }
 }
