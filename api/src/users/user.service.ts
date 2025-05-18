@@ -69,7 +69,7 @@ export class UsersService {
     return this.userRepo.find();
   }
 
-  awardBadges(user: User) {
+  async awardBadges(user: User): Promise<User> {
     if (user.gamesWon >= 1 && !user.badges.includes(Badge.FIRST_WIN)) {
       user.badges.push(Badge.FIRST_WIN);
     }
@@ -89,5 +89,6 @@ export class UsersService {
     if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
       user.badges.push(Badge.MOON_SURVIVOR);
     }
+    return this.userRepo.save(user);
   }
 }

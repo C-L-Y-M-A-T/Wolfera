@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Badge } from '../entities/user.entity';
@@ -43,17 +44,21 @@ export class UserDto {
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesPlayed: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesWon: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesAsWerewolf: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesAsVillager: number;
 }

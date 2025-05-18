@@ -37,6 +37,7 @@ type User {
   gamesAsWerewolf: Float!
   gamesPlayed: Float!
   gamesWon: Float!
+  id: String!
   username: String!
 }
 

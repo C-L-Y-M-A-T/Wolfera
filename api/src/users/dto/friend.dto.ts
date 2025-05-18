@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Min,
 } from 'class-validator';
 import { Badge } from '../entities/user.entity';
 
@@ -34,17 +35,21 @@ export class FriendDto {
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesPlayed: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesWon: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesAsWerewolf: number;
 
   @Field()
   @IsNumber()
+  @Min(0)
   gamesAsVillager: number;
 }

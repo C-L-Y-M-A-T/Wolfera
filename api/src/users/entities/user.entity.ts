@@ -1,5 +1,4 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import {
   Column,
   Entity,
@@ -23,6 +22,7 @@ registerEnumType(Badge, {
 @ObjectType()
 @Entity('users')
 export class User {
+  @Field()
   @PrimaryGeneratedColumn('uuid') //to be changed to be in sync with the supbase id (while creating the new user)
   id: string;
 
@@ -38,7 +38,6 @@ export class User {
   @Column({ nullable: true })
   avatar_url?: string;
 
-  @Exclude()
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.friends)
   @JoinTable({

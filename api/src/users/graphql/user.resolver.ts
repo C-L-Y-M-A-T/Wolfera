@@ -22,6 +22,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => UserDto, { name: 'userProfile' })
+  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   async getGameProfile(@Args('username') username: string): Promise<UserDto> {
     try {
       const user = await this.userService.findByUsername(username);
@@ -40,12 +41,14 @@ export class UserResolver {
   }
 
   @Query(() => [UserDto], { name: 'allUsers' })
+  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   async getAllUsers(): Promise<UserDto[]> {
     const users = await this.userService.findAll();
     return users.map((user) => plainToInstance(UserDto, user));
   }
 
   @Query(() => UserDto)
+  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   me(@Context() context) {
     if (!context.req.user) {
       throw new GraphQLError('Unauthorized', {
