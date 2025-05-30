@@ -24,10 +24,7 @@ export class NightPhaseEventHandler implements GameEventHandler {
   constructor(
     private readonly gameService: GameService,
     private readonly gameId: string, // Add gameId parameter since this is per-game
-  ) {
-    // Remove the global registration - let the GameService handle per-game registration
-    // this.gameService.registerGameEventHandler(this); // <-- REMOVE THIS LINE
-  }
+  ) {}
 
   @OnGameEvent('phase:night:start')
   handleNightStart(data: { gameId: string }): void {
