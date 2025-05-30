@@ -1,8 +1,10 @@
 // lib/theme/game-styles.ts
 export const gameStyles = {
   cards: {
-    default: "bg-slate-800/60 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-lg",
-    highlighted: "bg-slate-800/60 backdrop-blur-md p-6 rounded-xl border border-red-500/50 shadow-lg shadow-red-500/20",
+    default:
+      "bg-slate-800/60 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-lg",
+    highlighted:
+      "bg-slate-800/60 backdrop-blur-md p-6 rounded-xl border border-red-500/50 shadow-lg shadow-red-500/20",
     role: "bg-slate-800/80 backdrop-blur-md p-4 rounded-lg border border-slate-700 shadow-md",
     profile: "border-gray-700 bg-gray-900/80 backdrop-blur-sm",
     stat: "bg-gray-800/50 p-3 rounded-lg border border-gray-700 hover:border-red-500/50 transition-colors duration-300",
@@ -16,10 +18,14 @@ export const gameStyles = {
   buttons: {
     primary:
       "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md shadow-red-900/20 hover:shadow-red-900/30",
-    secondary: "bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded shadow-md",
-    ghost: "bg-transparent hover:bg-slate-800 text-white font-bold py-2 px-4 rounded",
-    danger: "bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded shadow-md",
-    gradient: "bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border-none",
+    secondary:
+      "bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded shadow-md",
+    ghost:
+      "bg-transparent hover:bg-slate-800 text-white font-bold py-2 px-4 rounded",
+    danger:
+      "bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded shadow-md",
+    gradient:
+      "bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border-none",
     edit: "border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300",
   },
   inputs: {
@@ -28,11 +34,14 @@ export const gameStyles = {
   },
   modals: {
     overlay: "bg-black/80 backdrop-blur-sm",
-    content: "bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-red-900/10",
+    content:
+      "bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-red-900/10",
   },
   effects: {
-    bloodSplatter: "before:absolute before:inset-0 before:bg-red-900/10 before:rounded-full before:blur-3xl",
-    moonGlow: "before:absolute before:inset-0 before:bg-purple-900/20 before:rounded-full before:blur-3xl",
+    bloodSplatter:
+      "before:absolute before:inset-0 before:bg-red-900/10 before:rounded-full before:blur-3xl",
+    moonGlow:
+      "before:absolute before:inset-0 before:bg-purple-900/20 before:rounded-full before:blur-3xl",
     textShadow: "drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]",
   },
   badges: {
@@ -57,7 +66,8 @@ export const gameStyles = {
   },
   avatar: {
     container: "relative group",
-    image: "relative rounded-full w-32 h-32 border-2 border-gray-800 shadow-lg z-10",
+    image:
+      "relative rounded-full w-32 h-32 border-2 border-gray-800 shadow-lg z-10",
     glow: "absolute -inset-0.5 rounded-full bg-gradient-to-r from-red-500 to-purple-600 opacity-75 blur-sm group-hover:opacity-100 transition duration-300",
     editButton:
       "absolute bottom-0 right-0 rounded-full bg-gray-800 border-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20",
@@ -86,11 +96,14 @@ export const gameStyles = {
     },
   },
   backgrounds: {
-    page: "min-h-screen bg-[url('/moon-forest.jpg')] bg-cover bg-center bg-fixed",
-    overlay: "min-h-screen bg-gradient-to-b from-gray-900/95 to-gray-800/95 py-12",
+    page: "min-h-screen bg-[url('/moon-forest.jpg')] bg-cover bg-center bg-fixed overflow-auto",
+    overlay:
+      "min-h-screen bg-gradient-to-b from-gray-900/95 to-gray-800/95 py-12",
     header: {
-      gradient: "absolute inset-0 bg-gradient-to-r from-red-900/30 to-purple-900/30 mix-blend-multiply",
-      fadeBottom: "absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent",
+      gradient:
+        "absolute inset-0 bg-gradient-to-r from-red-900/30 to-purple-900/30 mix-blend-multiply",
+      fadeBottom:
+        "absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent",
     },
   },
-}
+};
