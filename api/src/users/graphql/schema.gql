@@ -12,7 +12,7 @@ enum Badge {
 
 type FriendDto {
   avatar_url: String
-  badges: [String!]!
+  badges: [Badge!]!
   email: String!
   gamesAsVillager: Float!
   gamesAsWerewolf: Float!
