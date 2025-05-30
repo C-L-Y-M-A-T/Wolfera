@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { ChatChannel } from '../chat/ChatChannel';
+import { ChatChannel } from '../chat/chatChannel';
 import { GameContext } from './GameContext';
 
 export class Player {

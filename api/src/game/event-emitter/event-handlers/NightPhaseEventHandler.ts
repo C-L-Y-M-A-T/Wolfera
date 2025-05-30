@@ -1,9 +1,7 @@
-// src/game/services/night-phase/night-phase.service.ts
-import { Injectable } from '@nestjs/common';
-
 import { GameService } from 'src/game/services/game/game.service';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { Player } from '../../classes/Player';
+import { EventHandlerFactory } from '../decorators/event-handler.decorator';
 import {
   GameEventHandler,
   OnGameEvent,
@@ -19,17 +17,23 @@ interface SeerActionData {
   result: boolean; // Is werewolf?
 }
 
-@Injectable()
+@EventHandlerFactory()
 export class NightPhaseEventHandler implements GameEventHandler {
   private gameVotes: Map<string, Map<string, string>> = new Map();
 
-  constructor(private readonly gameService: GameService) {
-    // Register this service to handle events for all games
-    this.gameService.registerGameEventHandler(this);
+  constructor(
+    private readonly gameService: GameService,
+    private readonly gameId: string, // Add gameId parameter since this is per-game
+  ) {
+    // Remove the global registration - let the GameService handle per-game registration
+    // this.gameService.registerGameEventHandler(this); // <-- REMOVE THIS LINE
   }
 
   @OnGameEvent('phase:night:start')
   handleNightStart(data: { gameId: string }): void {
+    // Only handle events for this specific game instance
+    if (data.gameId !== this.gameId) return;
+
     console.log(`Night phase started for game ${data.gameId}`);
 
     // Initialize voting tracking for this game
@@ -57,6 +61,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
 
   @OnGameEvent('werewolf:vote')
   handleWerewolfVote(data: WerewolfVoteData & { gameId: string }): void {
+    // Only handle events for this specific game instance
+    if (data.gameId !== this.gameId) return;
+
     const { gameId, voterId, targetId } = data;
     console.log(`Werewolf ${voterId} voted to kill player ${targetId}`);
 
@@ -84,6 +91,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
     playerId: string;
     targetId: string;
   }): void {
+    // Only handle events for this specific game instance
+    if (data.gameId !== this.gameId) return;
+
     const { gameId, playerId, targetId } = data;
     const game = this.gameService.getGame(gameId);
 
@@ -107,6 +117,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
 
   @OnGameEvent('phase:night:end')
   handleNightEnd(data: { gameId: string }): void {
+    // Only handle events for this specific game instance
+    if (data.gameId !== this.gameId) return;
+
     console.log(`Night phase ended for game ${data.gameId}`);
 
     // Process any remaining votes if needed

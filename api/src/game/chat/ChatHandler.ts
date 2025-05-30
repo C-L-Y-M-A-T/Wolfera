@@ -1,6 +1,6 @@
 import { GameContext } from '../classes/GameContext';
 import { IncomingMessage } from './chat.types';
-import { ChatChannel } from './ChatChannel';
+import { ChatChannel } from './chatChannel';
 import { DeadChannel } from './dead/dead.channel';
 import { GeneralChannel } from './general/general.channel';
 import { WerewolfChannel } from './werewolf/werewolf.channel';

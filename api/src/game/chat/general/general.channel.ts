@@ -1,7 +1,7 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
 import { IncomingMessage } from '../chat.types';
-import { ChatChannel } from '../ChatChannel';
+import { ChatChannel } from '../chatChannel';
 
 export class GeneralChannel extends ChatChannel {
   constructor(context: GameContext) {
