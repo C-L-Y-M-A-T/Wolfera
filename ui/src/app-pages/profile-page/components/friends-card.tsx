@@ -23,7 +23,7 @@ export function FriendsCard({ friends }: FriendsCardProps) {
       <Card className={theme.gameStyles.cards.profile}>
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-xl text-red-400 flex items-center">
+            <CardTitle className="text-xl text-red-500 flex items-center">
               <Heart className="w-5 h-5 mr-2 text-red-500" />
               Friends
             </CardTitle>

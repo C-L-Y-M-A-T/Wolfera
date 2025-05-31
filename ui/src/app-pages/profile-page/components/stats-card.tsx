@@ -23,8 +23,8 @@ export function StatsCard({ stats }: StatsCardProps) {
     <motion.div variants={theme.variants.card}>
       <Card className={theme.gameStyles.cards.profile}>
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl text-red-400 flex items-center">
-            <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
+          <CardTitle className={`text-xl text-red-500 flex items-center`}>
+            <Trophy className="w-5 h-5 mr-2 text-red-500" />
             Player Stats
           </CardTitle>
         </CardHeader>
