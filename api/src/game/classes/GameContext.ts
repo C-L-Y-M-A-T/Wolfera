@@ -6,7 +6,6 @@ import { User } from 'src/temp/temp.user';
 
 import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
-import { registerGameEventHandlers } from '../event-emitter/decorators/game-event.decorator';
 import { GameEventEmitter } from '../event-emitter/GameEventEmitter';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
@@ -57,8 +56,8 @@ export class GameContext {
   /**
    * Register a class that contains @OnGameEvent handlers
    */
-  registerEventHandler(handler: any): void {
-    registerGameEventHandlers(handler, this.gameEventEmitter.getEventEmitter());
+  registerEventHandlers(handler: any): void {
+    this.gameEventEmitter.registerGameEventHandlers(handler);
   }
 
   isEmpty() {

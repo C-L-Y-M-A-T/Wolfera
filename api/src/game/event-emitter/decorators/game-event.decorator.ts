@@ -38,34 +38,3 @@ export function OnGameEvent(event: string | string[]) {
 export interface GameEventHandler {
   // This interface is a marker for classes that handle game events
 }
-
-/**
- * Function to register event handlers in a class instance to a game context
- *
- * @param instance The instance containing @OnGameEvent handlers
- * @param gameEventEmitter The EventEmitter2 instance from the game context
- */
-export function registerGameEventHandlers(
-  instance: any,
-  gameEventEmitter: any,
-): void {
-  // Get metadata from the instance's constructor
-  const metadata = Reflect.getMetadata(
-    GAME_EVENT_METADATA,
-    instance.constructor,
-  );
-
-  if (!metadata) {
-    return;
-  }
-  // Register each handler
-  for (const { events, methodName } of metadata) {
-    const handler = instance[methodName].bind(instance);
-
-    for (const event of events) {
-      gameEventEmitter.on(event, (data: any) => {
-        handler(data);
-      });
-    }
-  }
-}

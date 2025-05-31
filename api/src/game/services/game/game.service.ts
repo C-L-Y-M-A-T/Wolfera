@@ -3,10 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Socket } from 'socket.io';
 import { GameOptions } from 'src/game/classes/types';
-import {
-  GameEventHandler,
-  registerGameEventHandlers,
-} from 'src/game/event-emitter/decorators/game-event.decorator';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../../classes/GameContext';
 import { GameHandlerRegistry } from '../event-handler-registry.service';
@@ -14,7 +10,6 @@ import { GameHandlerRegistry } from '../event-handler-registry.service';
 @Injectable()
 export class GameService {
   private games: Map<string, GameContext> = new Map();
-  private gameEventHandlers: Map<string, GameEventHandler[]> = new Map();
 
   constructor(
     private moduleRef: ModuleRef,
@@ -40,14 +35,14 @@ export class GameService {
     handlerInstances.forEach(({ instance, className }) => {
       console.log(`Registering ${className} for game ${game.gameId}`);
 
-      registerGameEventHandlers(instance, game.gameEventEmitter);
+      game.gameEventEmitter.registerGameEventHandlers(instance);
     });
 
-    // Store handlers and cleanup functions for later cleanup
-    this.gameEventHandlers.set(game.gameId, handlerInstances);
-
     // i want to log for each game each event handlers :
-    console.log(this.gameEventHandlers);
+    this.games.forEach((game) => {
+      console.log(game.gameId);
+      console.log(game.gameEventEmitter.getHandlers());
+    });
 
     return game;
   }
@@ -88,9 +83,6 @@ export class GameService {
       if (gameContext.isEmpty()) {
         gameContext.stop();
         this.games.delete(gameId);
-
-        // Clean up game-specific event handlers
-        this.gameEventHandlers.delete(gameId);
       }
     }
   }
