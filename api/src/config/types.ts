@@ -7,12 +7,6 @@ type DatabaseConfig = {
   uri?: string;
 };
 
-type SupabaseConfig = {
-  url: string;
-  serviceRoleKey: string;
-  jwtSecret: string;
-};
-
 export type Config = {
   apiHost: string;
   apiPort: number;
@@ -22,11 +16,6 @@ export type Config = {
   uiPort: number;
   uiBaseUrl: string;
 
-  corsOrigin: string;
-
   postgres: DatabaseConfig;
-
-  supabase: SupabaseConfig;
-
   env: string;
 };

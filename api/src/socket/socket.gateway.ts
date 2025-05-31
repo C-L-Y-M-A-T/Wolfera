@@ -9,22 +9,12 @@ import { Socket } from 'socket.io';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
-import { JwtSocket } from './jwt-socket';
 
+//TODO: requqire authentication
 @Injectable()
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true,
-  },
-})
+@WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(
-    private gameService: GameService,
-    private readonly jwtSocket: JwtSocket,
-  ) {}
+  constructor(private gameService: GameService) {}
 
   @SubscribeMessage('start-game')
   startGame(client: GameSocket, payload: any) {
@@ -67,13 +57,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  async handleConnection(client: Socket) {
+  handleConnection(client: Socket) {
     const gameId = client.handshake.query.gameId as string; //TODO add validation
-
-    const user = await this.jwtSocket.authenticate(
-      client.handshake.query.token as string,
-    );
-    this.gameService.connectPlayer(user, gameId, client);
+    const tempUserId = client.handshake.query.tempUserId as string; //TODO to remove, just for testing. get user from auth
+    this.gameService.connectPlayer({ id: tempUserId || '123' }, gameId, client);
     console.log('Client ' + client.id + ' connected to game ' + gameId);
   }
 
