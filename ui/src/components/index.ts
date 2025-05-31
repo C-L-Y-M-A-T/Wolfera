@@ -5,3 +5,4 @@ export * from "./create-game-modal";
 export * from "./game-access-modal";
 export * from "./language-switcher";
 export * from "./navbar";
+export * from "./button";

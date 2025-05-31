@@ -7,6 +7,7 @@ export default function FeaturesSection() {
 
   const features = [
     {
+      id: "strategic",
       title: t("home.features.strategic.title"),
       description: t("home.features.strategic.description"),
       icon: <EyeIcon className="h-12 w-12 text-purple-500" />,
@@ -14,6 +15,7 @@ export default function FeaturesSection() {
       iconBg: "bg-purple-900/30",
     },
     {
+      id: "roles",
       title: t("home.features.roles.title"),
       description: t("home.features.roles.description"),
       icon: <UsersIcon className="h-12 w-12 text-blue-500" />,
@@ -21,6 +23,7 @@ export default function FeaturesSection() {
       iconBg: "bg-blue-900/30",
     },
     {
+      id: "cycles",
       title: t("home.features.cycles.title"),
       description: t("home.features.cycles.description"),
       icon: <MoonIcon className="h-12 w-12 text-yellow-500" />,
@@ -50,7 +53,7 @@ export default function FeaturesSection() {
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
-              key={index}
+              key={feature.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

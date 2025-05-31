@@ -43,14 +43,20 @@ export function AchievementDetailsDialog({
         >
           <div className="flex justify-center mb-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center shadow-lg shadow-yellow-500/20">
-              <Trophy className="h-12 w-12 text-black" />
+              <Trophy
+                className="h-12 w-12 text-black"
+                aria-hidden="true"
+                role="img"
+              />
             </div>
           </div>
 
           <p className="text-center mb-4">{achievement.description}</p>
 
           <div className="text-center text-sm text-yellow-400">
-            Unlocked on {achievement.date}
+            {achievement.date
+              ? `Unlocked on ${achievement.date}`
+              : "Not yet unlocked"}
           </div>
 
           <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">

@@ -4,11 +4,12 @@ import AnimatedText from "@/components/animated-text";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/providers/theme-provider";
+import { UserData } from "@/types/profile/profile-header.types";
 import { motion } from "framer-motion";
 import { Calendar, Camera, Edit, Skull, Trophy } from "lucide-react";
 
 interface ProfileHeaderProps {
-  userData: any;
+  userData: UserData;
   onEditProfile: () => void;
   onEditAvatar: () => void;
   avatarUrl: string;
@@ -145,7 +146,7 @@ function ProfileXpBar({ level, xp }: ProfileXpBarProps) {
       <div className={theme.gameStyles.progressBar.container}>
         <motion.div
           initial={{ width: 0 }}
-          animate={{ width: `${xp}%` }}
+          animate={{ width: `${Math.min(Math.max(xp, 0), 100)}%` }}
           transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
           className={theme.gameStyles.progressBar.fill}
         />

@@ -58,7 +58,13 @@ export function FriendsCard({ friends }: FriendsCardProps) {
                       className={theme.gameStyles.friends.avatar}
                     />
                     <div
-                      className={`${theme.gameStyles.friends.statusDot.base} ${theme.colors.status[friend.status as keyof typeof theme.colors.status]}`}
+                      className={`${theme.gameStyles.friends.statusDot.base} ${
+                        Object.keys(theme.colors.status).includes(friend.status)
+                          ? theme.colors.status[
+                              friend.status as keyof typeof theme.colors.status
+                            ]
+                          : theme.colors.status.offline
+                      }`}
                     />
                   </div>
                   <div className="ml-3">

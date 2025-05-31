@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/providers/theme-provider";
+import React from "react";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -32,6 +33,13 @@ export function EditProfileDialog({
   onSave,
 }: EditProfileDialogProps) {
   const theme = useTheme();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleSave = () => {
+    setIsLoading(true);
+    onSave();
+    setIsLoading(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -49,6 +57,10 @@ export function EditProfileDialog({
               value={profile.username}
               onChange={(e) => onProfileChange("username", e.target.value)}
               className="bg-gray-800 border-gray-700"
+              required
+              minLength={3}
+              maxLength={20}
+              pattern="^[a-zA-Z0-9_]+$"
             />
           </div>
           <div className="space-y-2">
@@ -59,7 +71,14 @@ export function EditProfileDialog({
               value={profile.email}
               onChange={(e) => onProfileChange("email", e.target.value)}
               className="bg-gray-800 border-gray-700"
+              required
+              aria-describedby="email-error"
             />
+            {!profile.email.includes("@") && profile.email.length > 0 && (
+              <div id="email-error" className="text-red-400 text-sm mt-1">
+                Please enter a valid email address
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="bio">Bio</label>
@@ -74,10 +93,11 @@ export function EditProfileDialog({
         </div>
         <DialogFooter>
           <Button
-            onClick={onSave}
+            onClick={handleSave}
             className={`bg-gradient-to-r ${theme.colors.gradients.redToRed} border-none`}
+            disabled={isLoading}
           >
-            Save Changes
+            {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

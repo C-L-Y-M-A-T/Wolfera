@@ -25,7 +25,7 @@ export default function ClientLayout({
 
   return mounted ? (
     <body className="font-sans bg-background text-foreground min-h-screen">
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <ThemeProvider>
         <div className="flex flex-col min-h-screen">{children}</div>
       </ThemeProvider>
     </body>

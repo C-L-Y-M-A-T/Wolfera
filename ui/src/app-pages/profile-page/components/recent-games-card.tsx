@@ -47,9 +47,11 @@ export function RecentGamesCard({ games }: RecentGamesCardProps) {
                 key={game.id}
                 variants={theme.variants.item}
                 whileHover={{ scale: 1.02 }}
-                className={`relative overflow-hidden rounded-lg border border-gray-700 transition-all duration-300 hover:border-${
-                  game.result === "Win" ? "green" : "red"
-                }-500/50`}
+                className={`relative overflow-hidden rounded-lg border border-gray-700 transition-all duration-300 ${
+                  game.result === "Win"
+                    ? "hover:border-green-500/50"
+                    : "hover:border-red-500/50"
+                }`}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-800/50 " />
                 <div className="relative p-3 flex items-center justify-between">
@@ -62,7 +64,7 @@ export function RecentGamesCard({ games }: RecentGamesCardProps) {
                     <div>
                       <div className={`font-medium flex items-center `}>
                         <span
-                          className={`${getRoleColorClass(game.role)} rounded-full p-1`}
+                          className={`${getRoleColorClass(game.role)} rounded-full p-1 pl-3 pr-3`}
                         >
                           {game.role}
                         </span>
@@ -91,6 +93,12 @@ export function RecentGamesCard({ games }: RecentGamesCardProps) {
           <Button
             variant="ghost"
             className="w-full mt-4 text-gray-400 hover:text-white hover:bg-gray-800"
+            onClick={() => {
+              // Add navigation to games history page
+              window.location.href = "/profile/games";
+              // or using Next.js router:
+              // router.push("/profile/games");
+            }}
           >
             View All Games
             <ChevronRight className="h-4 w-4 ml-1" />

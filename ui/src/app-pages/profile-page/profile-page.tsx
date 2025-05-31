@@ -41,8 +41,16 @@ export default function ProfilePage() {
 
   const handleSaveProfile = () => {
     // In a real app, this would save the profile to the server
-    console.log("Saving profile:", profile);
-    setEditProfileOpen(false);
+    try {
+      console.log("Saving profile:", profile);
+      // Replace with actual API call
+      // e.g., await saveProfileToAPI(profile);
+      setEditProfileOpen(false);
+      // Consider showing a success notification
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      // Show error notification or handle gracefully
+    }
   };
 
   const handleSaveAvatar = (newAvatarData: any) => {
