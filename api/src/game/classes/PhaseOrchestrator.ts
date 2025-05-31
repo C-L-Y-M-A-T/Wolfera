@@ -1,7 +1,7 @@
+import { PlayerAction } from 'src/roles';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
 import { Player } from './Player';
-import { PlayerAction } from './types';
 
 export abstract class PhaseOrchestrator<TInput = any, TOutput = any> {
   protected currentPhase?: GamePhase;

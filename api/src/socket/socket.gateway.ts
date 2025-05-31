@@ -10,6 +10,7 @@ import { Socket } from 'socket.io';
 import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
 import { GameService } from 'src/game/services/game/game.service';
+import { PlayerAction } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 import { SocketGame } from './decorators/socketGame.decorator';
@@ -35,8 +36,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handlePlayerAction(
     @SocketGame() game: GameContext,
     @SocketPlayer() player: Player,
-    payload: any,
+    payload: PlayerAction,
   ) {
+    // TODO: test object payload in ws
     const tempPlayerAction = {
       personToKill: 'sallemi',
     };
@@ -70,16 +72,16 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     try {
-    const gameId = client.handshake.query.gameId;
+      const gameId = client.handshake.query.gameId;
 
-    if (!gameId || typeof gameId !== 'string')
-      throw new WsException('Missing or invalid gameId');
+      if (!gameId || typeof gameId !== 'string')
+        throw new WsException('Missing or invalid gameId');
 
-    const user = await this.jwtSocket.authenticate(
-      client.handshake.query.token as string,
-    );
-    this.gameService.connectPlayer(user, gameId, client);
-    console.log('Client ' + client.id + ' connected to game ' + gameId);
+      const user = await this.jwtSocket.authenticate(
+        client.handshake.query.token as string,
+      );
+      this.gameService.connectPlayer(user, gameId, client);
+      console.log('Client ' + client.id + ' connected to game ' + gameId);
     } catch (error) {
       client.emit('error', {
         message: error.message || 'An error occurred during connection',

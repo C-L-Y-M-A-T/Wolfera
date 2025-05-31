@@ -13,7 +13,7 @@ export enum PhaseState {
 
 //TODO: to think about the options we want to add
 export type GameOptions = {
-  roles: Record<RoleName, number>;
+  roles: Partial<Record<RoleName, number>>;
   totalPlayers: number;
 };
 
@@ -22,6 +22,3 @@ export type PhaseConstructor<T extends ChainableGamePhase = GamePhase> = new (
 ) => T;
 
 export type PhaseName = `${string}-phase`;
-
-//TODO: to implement type
-export type PlayerAction = { action: string; data?: any };

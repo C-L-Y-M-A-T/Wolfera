@@ -3,13 +3,13 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import seerRole, { SeerActionPayload } from '.';
+import witchRole, { WitchActionPayload } from '.';
 import { PlayerAction } from '..';
 
 //TODO: consider creating a base class for night actions if they share common logic
-export class SeerNightPhase extends RolePhase<SeerActionPayload> {
+export class WitchNightPhase extends RolePhase<WitchActionPayload> {
   constructor(context: GameContext) {
-    super(context, seerRole);
+    super(context, witchRole);
   }
 
   get phaseDuration(): number {
@@ -19,32 +19,29 @@ export class SeerNightPhase extends RolePhase<SeerActionPayload> {
   validatePlayerAction(
     player: Player,
     action: PlayerAction,
-  ): action is PlayerAction<SeerActionPayload> {
+  ): action is PlayerAction<WitchActionPayload> {
     return true;
   }
 
   async onStart() {
-    this.context.emmit('seer:night:start', {
+    this.context.emmit('witch:night:start', {
       message: 'Choose a victim...',
     });
-    console.log('seer night phase started');
+    console.log('witch night phase started');
   }
   async onEnd() {
-    this.context.emmit('seer:night:end', {
+    this.context.emmit('witch:night:end', {
       message: 'Night phase is over.',
     });
-    console.log('seer night phase ended');
+    console.log('witch night phase ended');
   }
 
   async processPlayerAction(
     player: Player,
-    payload: PlayerAction<SeerActionPayload>,
+    action: PlayerAction<WitchActionPayload>,
   ) {
-    console.log(
-      `seer called by ${player.id} with action:`,
-      payload.phasePayload.targetId,
-    );
-    this.output = [payload];
+    console.log(`witch called by ${player.id} with action:`, action);
+    this.output = [action];
     this.end();
   }
 }

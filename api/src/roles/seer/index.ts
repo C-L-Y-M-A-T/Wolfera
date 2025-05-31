@@ -21,4 +21,8 @@ const seerRole: GameRole = {
   },
 };
 
+export type SeerActionPayload = {
+  targetId: string;
+};
+
 export default seerRole;

@@ -1,8 +1,9 @@
+import { PlayerAction } from 'src/roles';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseName, PhaseState, PlayerAction } from './types';
+import { PhaseName, PhaseState } from './types';
 
-export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
+export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
   constructor(protected context: GameContext) {}
   abstract readonly phaseName: PhaseName;
@@ -88,7 +89,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
 
   public async handlePlayerAction(
     player: Player,
-    action: PlayerAction,
+    action: PlayerAction<A>,
   ): Promise<void> {
     if (this.phaseState !== PhaseState.Active) {
       throw new Error(
@@ -96,7 +97,7 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
       ); //TODO:  handle this error
     }
     this.validatePlayerAction?.(player, action);
-    this.processPlayerAction?.(player, action as A);
+    this.processPlayerAction?.(player, action);
   }
   /**
    *  This function validates:
@@ -114,11 +115,11 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
   protected validatePlayerAction?(
     player: Player,
     action: PlayerAction,
-  ): action is A;
+  ): action is PlayerAction<A>;
 
   protected async processPlayerAction?(
     player: Player,
-    action: A,
+    action: PlayerAction<A>,
   ): Promise<void>;
 
   private delay(ms: number) {

@@ -3,9 +3,10 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import werewolfRole, { WerewolfAction } from '.';
+import werewolfRole, { WerewolfActionPayload } from '.';
+import { PlayerAction } from '..';
 
-export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
+export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   constructor(context: GameContext) {
     super(context, werewolfRole);
   }
@@ -13,7 +14,10 @@ export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
     return 0;
   }
 
-  validatePlayerAction(player: Player, action: any): action is WerewolfAction {
+  validatePlayerAction(
+    player: Player,
+    action: PlayerAction,
+  ): action is PlayerAction<WerewolfActionPayload> {
     // Validate:
     // 1. Player is a werewolf
     // 2. Target is valid (alive, not another werewolf)
@@ -38,13 +42,16 @@ export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
     console.log('Werewolf night phase ended');
   }
 
-  async processPlayerAction(player: Player, action: WerewolfAction) {
+  async processPlayerAction(
+    player: Player,
+    payload: PlayerAction<WerewolfActionPayload>,
+  ) {
     // Register the werewolf's kill vote
     //this.context.addNightAction('kill', action.targetId);
     console.log(
-      `Werewolf ${player.profile.id} chose to kill ${action.personToKill}`,
+      `Werewolf ${player.profile.id} chose to kill ${payload.phasePayload.targetId}`,
     );
-    this.output = [action];
+    this.output = [payload];
     this.end();
   }
 }
