@@ -1,0 +1,55 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+enum Badge {
+  FIRST_WIN
+  MOON_SURVIVOR
+  NEW_PLAYER
+  VILLAGE_HERO
+  WEREWOLF_WIN
+}
+
+type FriendDto {
+  avatar_url: String
+  badges: [Badge!]!
+  email: String!
+  gamesAsVillager: Float!
+  gamesAsWerewolf: Float!
+  gamesPlayed: Float!
+  gamesWon: Float!
+  id: String!
+  username: String!
+}
+
+type Query {
+  allUsers: [UserDto!]!
+  me: UserDto!
+  userProfile(username: String!): UserDto!
+}
+
+type User {
+  avatar_url: String
+  badges: [Badge!]!
+  email: String!
+  friends: [User!]
+  gamesAsVillager: Float!
+  gamesAsWerewolf: Float!
+  gamesPlayed: Float!
+  gamesWon: Float!
+  id: String!
+  username: String!
+}
+
+type UserDto {
+  avatar_url: String
+  badges: [Badge!]!
+  email: String!
+  friends: [FriendDto!]
+  gamesAsVillager: Float!
+  gamesAsWerewolf: Float!
+  gamesPlayed: Float!
+  gamesWon: Float!
+  id: String!
+  username: String!
+}

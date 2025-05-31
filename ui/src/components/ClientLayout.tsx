@@ -24,9 +24,9 @@ export default function ClientLayout({
   }, [i18n, i18n.language]);
 
   return mounted ? (
-    <body className={`min-h-screen bg-background font-sans antialiased`}>
+    <body className="font-sans bg-background text-foreground min-h-screen">
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        {children}
+        <div className="flex flex-col min-h-screen">{children}</div>
       </ThemeProvider>
     </body>
   ) : (
