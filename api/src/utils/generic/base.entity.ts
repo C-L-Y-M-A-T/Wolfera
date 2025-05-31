@@ -15,13 +15,13 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn('uuid')
   readonly id: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn()
   readonly createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
+  @UpdateDateColumn()
   readonly updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+  @DeleteDateColumn({ nullable: true })
   @Exclude({ toPlainOnly: true })
   readonly deletedAt: Date | null;
 

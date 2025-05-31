@@ -24,7 +24,9 @@ export type Config = {
 
   corsOrigin: string;
 
-  postgres: DatabaseConfig;
+  dbType: 'postgres' | 'mysql';
+
+  db: DatabaseConfig;
 
   supabase: SupabaseConfig;
 

@@ -20,9 +20,11 @@ export const config: Config = {
 
   corsOrigin: process.env.UI_BASE_URL || 'http://localhost:3000',
 
-  postgres: {
-    user: process.env.POSTGRES_USER || 'user',
-    password: process.env.POSTGRES_PASSWORD || 'pass',
+  dbType: (process.env.DB_TYPE as 'postgres' | 'mysql') || 'postgres',
+
+  db: {
+    user: process.env.POSTGRES_USER || 'postgres',
+    password: process.env.POSTGRES_PASSWORD || '',
     dbName: process.env.POSTGRES_DB || 'postgres',
     host: process.env.POSTGRES_HOST || 'localhost',
     port: parseInt(process.env.POSTGRES_PORT || '5432'),

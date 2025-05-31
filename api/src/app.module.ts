@@ -11,14 +11,15 @@ import { UserModule } from './users/user.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: config.postgres.host,
-      port: config.postgres.port,
-      username: config.postgres.user,
-      password: config.postgres.password,
-      database: config.postgres.dbName,
+      type: config.dbType,
+      host: config.db.host,
+      port: config.db.port,
+      username: config.db.user,
+      password: config.db.password,
+      database: config.db.dbName,
       synchronize: config.env === 'development',
       autoLoadEntities: true,
+      logging: true,
     }),
     GameModule,
     SocketModule,

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsOptional, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsBoolean, IsDate, IsOptional, IsUUID } from 'class-validator';
 
 /**
  * Base DTO with common entity fields
@@ -12,14 +12,16 @@ export class BaseEntityDto {
   id: string;
 
   @ApiProperty({ description: 'Creation date' })
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
-  createdAt: Date;
+  createdAt?: Date;
 
   @ApiProperty({ description: 'Last update date' })
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @ApiPropertyOptional({ description: 'Deletion date (if soft deleted)' })
   @IsOptional()
@@ -30,7 +32,7 @@ export class BaseEntityDto {
   @ApiPropertyOptional({ description: 'Entity active status' })
   @IsOptional()
   @IsBoolean()
-  isActive: boolean;
+  isActive?: boolean;
 
   @ApiPropertyOptional({ description: 'User ID who created the entity' })
   @IsOptional()
