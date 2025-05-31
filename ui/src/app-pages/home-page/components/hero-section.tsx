@@ -91,6 +91,8 @@ export default function HeroSection() {
                       className="h-5 w-5 ml-2"
                       viewBox="0 0 20 20"
                       fill="currentColor"
+                      aria-hidden="true"
+                      role="img"
                     >
                       <path
                         fillRule="evenodd"
