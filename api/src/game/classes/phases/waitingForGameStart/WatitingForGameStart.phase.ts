@@ -1,9 +1,8 @@
-import { PlayerAction } from 'src/roles';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
 import { NightPhase } from '../night.phase';
-import { PhaseConstructor } from './../../types';
+import { PhaseConstructor, PlayerAction } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
   waitingForGameStartPlayerActionSchema,

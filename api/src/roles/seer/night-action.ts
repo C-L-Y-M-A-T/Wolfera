@@ -3,8 +3,8 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
+import { PlayerAction } from 'src/game/classes/types';
 import seerRole, { SeerActionPayload, SeerActionPayloadSchema } from '.';
-import { PlayerAction } from '..';
 
 //TODO: consider creating a base class for night actions if they share common logic
 export class SeerNightPhase extends RolePhase<SeerActionPayload> {

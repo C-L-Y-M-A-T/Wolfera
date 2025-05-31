@@ -6,7 +6,7 @@ import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
-import { GameOptions } from './types';
+import { GameOptions, PlayerAction, PlayerActionSchema } from './types';
 
 @Injectable()
 export class GameContext {
@@ -100,7 +100,11 @@ export class GameContext {
   }
 
   handlePlayerAction(player: Player, action: any): void {
-    this.orchestrator.handlePlayerAction(player, action);
+    const ValidatedAction: PlayerAction = PlayerActionSchema.parse(
+      action,
+    ) as PlayerAction;
+
+    this.orchestrator.handlePlayerAction(player, ValidatedAction);
   }
 
   //TODO: to remove this function (just for testing)

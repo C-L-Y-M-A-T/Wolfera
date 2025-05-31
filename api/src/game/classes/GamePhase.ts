@@ -1,9 +1,8 @@
 import { WsException } from '@nestjs/websockets';
-import { PlayerAction } from 'src/roles';
 import { z } from 'zod';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseName, PhaseState } from './types';
+import { PhaseName, PhaseState, PlayerAction } from './types';
 
 export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;

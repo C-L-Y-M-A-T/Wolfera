@@ -1,9 +1,9 @@
-import { GameRole, PlayerAction } from 'src/roles';
+import { GameRole } from 'src/roles';
 import { ChainableGamePhase } from '../chainablePhase';
 import { PhaseOrchestrator } from '../PhaseOrchestrator';
 import { Player } from '../Player';
 import { SequentialPhaseOrchestrator } from '../SequentialPhaseOrchestrator';
-import { PhaseConstructor } from '../types';
+import { PhaseConstructor, PlayerAction } from '../types';
 import { WaitingForGameStartPhase } from './waitingForGameStart/WatitingForGameStart.phase';
 
 export class NightPhase extends ChainableGamePhase {

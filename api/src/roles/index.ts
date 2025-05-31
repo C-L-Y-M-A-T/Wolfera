@@ -55,9 +55,3 @@ export const RoleSchema = z
     nightPhase: RoleNightPhaseSchema.optional(),
   })
   .strict();
-
-export type PlayerAction<ActionPayload = any> = {
-  activePhase: string;
-  timestamp: number;
-  phasePayload: ActionPayload;
-};
