@@ -63,4 +63,11 @@ export class NightPhase extends ChainableGamePhase {
         (b.nightPhase?.nightPriority ?? -1),
     );
   }
+
+  protected validatePlayerPermissions(
+    player: Player,
+    action: PlayerAction<any>,
+  ): void {
+    return;
+  }
 }

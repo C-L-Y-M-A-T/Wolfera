@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { GameRole } from '..';
 import { SeerNightPhase } from './night-action';
 
@@ -21,8 +22,10 @@ const seerRole: GameRole = {
   },
 };
 
-export type SeerActionPayload = {
-  targetId: string;
-};
+export const SeerActionPayloadSchema = z.object({
+  targetId: z.string(),
+});
+
+export type SeerActionPayload = z.infer<typeof SeerActionPayloadSchema>;
 
 export default seerRole;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -36,13 +37,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handlePlayerAction(
     @SocketGame() game: GameContext,
     @SocketPlayer() player: Player,
-    payload: PlayerAction,
+    @MessageBody() payload: PlayerAction,
   ) {
     // TODO: test object payload in ws
-    const tempPlayerAction = {
-      personToKill: 'sallemi',
-    };
-    game.handlePlayerAction(player, tempPlayerAction);
+    console.log('player-action event received', payload);
+    game.handlePlayerAction(player, payload);
   }
 
   @SubscribeMessage('start-dummy-game')

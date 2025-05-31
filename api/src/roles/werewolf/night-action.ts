@@ -3,26 +3,15 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import werewolfRole, { WerewolfActionPayload } from '.';
+import werewolfRole, { WerewolfActionPayload, werewolfActionScema } from '.';
 import { PlayerAction } from '..';
 
 export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   constructor(context: GameContext) {
-    super(context, werewolfRole);
+    super(context, werewolfRole, werewolfActionScema);
   }
   get phaseDuration(): number {
     return 0;
-  }
-
-  validatePlayerAction(
-    player: Player,
-    action: PlayerAction,
-  ): action is PlayerAction<WerewolfActionPayload> {
-    // Validate:
-    // 1. Player is a werewolf
-    // 2. Target is valid (alive, not another werewolf)
-
-    return true;
   }
 
   async onStart() {

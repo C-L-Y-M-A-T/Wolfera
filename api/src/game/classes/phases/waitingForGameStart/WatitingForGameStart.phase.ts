@@ -1,11 +1,18 @@
 import { PlayerAction } from 'src/roles';
 import { ChainableGamePhase } from '../../chainablePhase';
+import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
 import { NightPhase } from '../night.phase';
 import { PhaseConstructor } from './../../types';
-import { WaitingForGameStartPlayerAction } from './types';
+import {
+  WaitingForGameStartPlayerAction,
+  waitingForGameStartPlayerActionSchema,
+} from './types';
 
 export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameStartPlayerAction> {
+  constructor(context: GameContext) {
+    super(context, waitingForGameStartPlayerActionSchema);
+  }
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
     return NightPhase;
   }
@@ -32,18 +39,17 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     console.log('WaitingForGameStartPhase: onEnd');
   }
 
-  protected validatePlayerAction(
-    player: Player,
-    action: PlayerAction,
-  ): action is PlayerAction<WaitingForGameStartPlayerAction> {
-    return action.phasePayload?.action === 'start-game';
-  }
-
   protected async processPlayerAction(
     player: Player,
     action: PlayerAction<WaitingForGameStartPlayerAction>,
   ): Promise<void> {
     this.context.tempAsignRoles();
     this.end();
+  }
+  protected validatePlayerPermissions(
+    player: Player,
+    action: PlayerAction<WaitingForGameStartPlayerAction>,
+  ): void {
+    return;
   }
 }

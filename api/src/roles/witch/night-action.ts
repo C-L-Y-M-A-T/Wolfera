@@ -3,24 +3,17 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import witchRole, { WitchActionPayload } from '.';
+import witchRole, { WitchActionPayload, witchActionSchema } from '.';
 import { PlayerAction } from '..';
 
 //TODO: consider creating a base class for night actions if they share common logic
 export class WitchNightPhase extends RolePhase<WitchActionPayload> {
   constructor(context: GameContext) {
-    super(context, witchRole);
+    super(context, witchRole, witchActionSchema);
   }
 
   get phaseDuration(): number {
     return 0;
-  }
-
-  validatePlayerAction(
-    player: Player,
-    action: PlayerAction,
-  ): action is PlayerAction<WitchActionPayload> {
-    return true;
   }
 
   async onStart() {

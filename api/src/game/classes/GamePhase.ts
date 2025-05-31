@@ -1,11 +1,16 @@
+import { WsException } from '@nestjs/websockets';
 import { PlayerAction } from 'src/roles';
+import { z } from 'zod';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
 import { PhaseName, PhaseState } from './types';
 
 export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
-  constructor(protected context: GameContext) {}
+  constructor(
+    protected context: GameContext,
+    protected playerActionPayloadSchema?: z.ZodSchema,
+  ) {}
   abstract readonly phaseName: PhaseName;
 
   public startTime: number;
@@ -89,33 +94,58 @@ export abstract class GamePhase<A = any> {
 
   public async handlePlayerAction(
     player: Player,
-    action: PlayerAction<A>,
+    action: PlayerAction,
   ): Promise<void> {
     if (this.phaseState !== PhaseState.Active) {
-      throw new Error(
+      throw new WsException(
         `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
-      ); //TODO:  handle this error
+      );
     }
-    this.validatePlayerAction?.(player, action);
-    this.processPlayerAction?.(player, action);
+    action = this.validatePlayerAction(player, action);
+    this.validatePlayerPermissions?.(player, action);
+    await this.processPlayerAction?.(player, action);
   }
+
   /**
-   *  This function validates:
-   *  - If the player performing the action has the right to do it
-   *  - If the action is valid for the current phase
-   *  - If the action format is valid
-   *
-   *  If the action is valid, it is of type A.
-   *  If not, it throws an error.
-   *
-   * @param player
-   * @param action
-   * @param processPlayerAction
+   * Validates the player action using Zod schema
+   * @param player - The player performing the action
+   * @param action - The raw action to validate
+   * @returns The validated and typed action
+   * @throws Error if validation fails or player doesn't have permission
    */
-  protected validatePlayerAction?(
+  protected validatePlayerAction(
     player: Player,
     action: PlayerAction,
-  ): action is PlayerAction<A>;
+  ): PlayerAction<A> {
+    if (!this.playerActionPayloadSchema) {
+      // If no schema provided, assume action is valid and cast it
+      return action as PlayerAction<A>;
+    }
+
+    try {
+      action.phasePayload = this.playerActionPayloadSchema.parse(
+        action.phasePayload,
+      ) as A;
+      return action;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new WsException(
+          `Invalid action format: ${error.errors.map((e) => e.message).join(', ')}`,
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Override this method to add custom player permission validation
+   * @param player - The player performing the action
+   * @param action - The raw action
+   */
+  protected abstract validatePlayerPermissions(
+    player: Player,
+    action: PlayerAction<A>,
+  ): void;
 
   protected async processPlayerAction?(
     player: Player,

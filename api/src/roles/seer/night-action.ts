@@ -3,24 +3,17 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import seerRole, { SeerActionPayload } from '.';
+import seerRole, { SeerActionPayload, SeerActionPayloadSchema } from '.';
 import { PlayerAction } from '..';
 
 //TODO: consider creating a base class for night actions if they share common logic
 export class SeerNightPhase extends RolePhase<SeerActionPayload> {
   constructor(context: GameContext) {
-    super(context, seerRole);
+    super(context, seerRole, SeerActionPayloadSchema);
   }
 
   get phaseDuration(): number {
     return 0;
-  }
-
-  validatePlayerAction(
-    player: Player,
-    action: PlayerAction,
-  ): action is PlayerAction<SeerActionPayload> {
-    return true;
   }
 
   async onStart() {

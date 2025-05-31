@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
@@ -108,6 +107,6 @@ export class GameContext {
   tempAsignRoles(): void {
     this.players.get('123')!.role =
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
-    this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
+    //this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
   }
 }

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { GameRole } from '..';
 import { WitchNightPhase } from './night-action';
 
@@ -25,9 +26,11 @@ enum WitchAction {
   KILL = 'kill',
   SAVE = 'save',
 }
-export type WitchActionPayload = {
-  targetId: string;
-  action: WitchAction;
-};
+
+export const witchActionSchema = z.object({
+  targetId: z.string(),
+  action: z.nativeEnum(WitchAction),
+});
+export type WitchActionPayload = z.infer<typeof witchActionSchema>;
 
 export default witchRole;
