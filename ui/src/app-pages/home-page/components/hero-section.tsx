@@ -104,22 +104,21 @@ export default function HeroSection() {
             />
           </motion.div>
         </div>
-
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex flex-col items-center mt-16 animate-bounce"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.7 }}
-          transition={{ delay: 1.5, duration: 1 }}
-        >
-          <span className="text-sm text-gray-300 mb-2" id="scroll-label">
-            Scroll to discover
-          </span>
-          <ArrowDownIcon
-            className="h-6 w-6 text-red-500"
-            aria-labelledby="scroll-label"
-            role="img"
-          />
-        </motion.div>
+      </motion.div>
+      <motion.div
+        className=" bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex flex-col items-center mt-16 animate-bounce"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.7 }}
+        transition={{ delay: 1.5, duration: 1 }}
+      >
+        <span className="text-sm text-gray-300 mb-2" id="scroll-label">
+          Scroll to discover
+        </span>
+        <ArrowDownIcon
+          className="h-6 w-6 text-red-500"
+          aria-labelledby="scroll-label"
+          role="img"
+        />
       </motion.div>
     </section>
   );
