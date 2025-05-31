@@ -1,6 +1,8 @@
 "use client";
 
+import { ScrollArea } from "@/components/ui";
 import { useTheme } from "@/providers/theme-provider";
+import { Player } from "@/types/waiting-room/player";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
@@ -37,7 +39,7 @@ const mockGameData = {
   },
 };
 
-const mockPlayers = [
+const mockPlayers: Player[] = [
   {
     id: "1",
     username: "WolfHunter",
@@ -127,7 +129,9 @@ export default function WaitingRoomPage() {
     players.length >= gameData.minPlayers && allPlayersReady && gameData.isHost;
 
   return (
-    <div className={`${theme.gameStyles.backgrounds.page} pb-10`}>
+    <ScrollArea
+      className={`${theme.gameStyles.backgrounds.page} overflow-auto backdrop-brightness-[0.2]`}
+    >
       <div>
         {/* Host Navbar - Only visible to hosts */}
         {gameData.isHost && (
@@ -190,6 +194,6 @@ export default function WaitingRoomPage() {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </ScrollArea>
   );
 }
