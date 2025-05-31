@@ -69,6 +69,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket) {
+    try {
     const gameId = client.handshake.query.gameId;
 
     if (!gameId || typeof gameId !== 'string')
@@ -79,6 +80,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     this.gameService.connectPlayer(user, gameId, client);
     console.log('Client ' + client.id + ' connected to game ' + gameId);
+    } catch (error) {
+      client.emit('error', {
+        message: error.message || 'An error occurred during connection',
+      });
+      client.disconnect();
+    }
   }
 
   handleDisconnect(client: GameSocket) {

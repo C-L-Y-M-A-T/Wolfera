@@ -20,6 +20,9 @@ export class Player {
     return this.socket !== undefined && this.socket.connected;
   }
   connect(socket: Socket): void {
+    if (this.socket) {
+      throw new Error('Player is already connected to the game');
+    }
     this.socket = socket;
     this.socket.data.player = this;
     this.socket.data.game = this.context;
