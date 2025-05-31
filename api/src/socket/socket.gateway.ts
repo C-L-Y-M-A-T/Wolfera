@@ -4,11 +4,16 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { GameContext } from 'src/game/classes/GameContext';
+import { Player } from 'src/game/classes/Player';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
+import { SocketGame } from './decorators/socketGame.decorator';
+import { SocketPlayer } from './decorators/socketPlayer.decorator';
 import { JwtSocket } from './jwt-socket';
 
 @Injectable()
@@ -26,20 +31,16 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly jwtSocket: JwtSocket,
   ) {}
 
-  @SubscribeMessage('start-game')
-  startGame(client: GameSocket, payload: any) {
-    //TODO: add interceptor to exctract game and player from client (same in websocket)
-    console.log('start-game', payload);
-    //client.data.game.start();
-  }
-
   @SubscribeMessage('player-action')
-  handlePlayerAction(client: GameSocket, payload: any) {
-    //TODO: read and validate player action
+  handlePlayerAction(
+    @SocketGame() game: GameContext,
+    @SocketPlayer() player: Player,
+    payload: any,
+  ) {
     const tempPlayerAction = {
       personToKill: 'sallemi',
     };
-    client.data.game.handlePlayerAction(client.data.player, tempPlayerAction);
+    game.handlePlayerAction(player, tempPlayerAction);
   }
 
   @SubscribeMessage('start-dummy-game')
@@ -68,7 +69,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket) {
-    const gameId = client.handshake.query.gameId as string; //TODO add validation
+    const gameId = client.handshake.query.gameId;
+
+    if (!gameId || typeof gameId !== 'string')
+      throw new WsException('Missing or invalid gameId');
 
     const user = await this.jwtSocket.authenticate(
       client.handshake.query.token as string,
