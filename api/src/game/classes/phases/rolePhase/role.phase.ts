@@ -20,7 +20,7 @@ export abstract class RolePhase<A = any> extends GamePhase<A> {
     action: PlayerAction<A>,
   ): void {
     if (!player.role || player.role.roleData.name !== this.role.roleData.name) {
-      throw new WsException('Player does not have the Witch role');
+      throw new WsException(`Player is not a ${this.role.roleData.name}.`);
     }
   }
 

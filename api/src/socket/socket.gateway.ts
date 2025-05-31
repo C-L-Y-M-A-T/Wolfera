@@ -76,9 +76,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!gameId || typeof gameId !== 'string')
         throw new WsException('Missing or invalid gameId');
 
-      const user = await this.jwtSocket.authenticate(
-        client.handshake.query.token as string,
-      );
+      // const user = await this.jwtSocket.authenticate(
+      //   client.handshake.query.token as string,
+      // );
+      const user: User = {
+        id: client.handshake.query.userId as string,
+        // Add other user properties if needed
+      };
       this.gameService.connectPlayer(user, gameId, client);
       console.log('Client ' + client.id + ' connected to game ' + gameId);
     } catch (error) {

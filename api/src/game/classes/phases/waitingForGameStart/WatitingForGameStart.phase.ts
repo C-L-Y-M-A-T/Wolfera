@@ -1,3 +1,4 @@
+import { WsException } from '@nestjs/websockets';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
@@ -42,6 +43,12 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     player: Player,
     action: PlayerAction<WaitingForGameStartPlayerAction>,
   ): Promise<void> {
+    if (this.context.players.size !== this.context.gameOptions.totalPlayers) {
+      throw new WsException(
+        `Waiting for ${this.context.gameOptions.totalPlayers} players to join. Current players: ${this.context.players.size}.`,
+      );
+    }
+
     this.context.tempAsignRoles();
     this.end();
   }
@@ -49,6 +56,10 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     player: Player,
     action: PlayerAction<WaitingForGameStartPlayerAction>,
   ): void {
-    return;
+    if (!this.context.owner || player.id !== this.context.owner.id) {
+      throw new WsException(
+        'Only the game owner can start the game from the waiting phase.',
+      );
+    }
   }
 }
