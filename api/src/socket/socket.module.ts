@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GameModule } from 'src/game/game.module';
+import { GameModule } from 'src/game/modules/game.module';
 import { SocketGateway } from './socket.gateway';
 
 @Module({
