@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@/providers/theme-provider";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
