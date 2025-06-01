@@ -9,9 +9,11 @@ export enum NotificationType {
 export class NotificationPayload {
   @IsEnum(NotificationType)
   type: NotificationType;
+
   @IsString()
   @IsNotEmpty()
   title: string;
+
   @IsString()
   @IsNotEmpty()
   description: string;

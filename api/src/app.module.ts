@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { config } from './config';
 import { GameModule } from './game/modules/game.module';
+import { NotificationModule } from './notifications/notifications.module';
 import { SocketModule } from './socket/socket.module';
 import { UserModule } from './users/user.module';
 

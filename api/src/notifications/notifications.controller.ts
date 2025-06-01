@@ -1,5 +1,16 @@
-import { Body, Controller, Param, Post, Sse } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Sse,
+} from '@nestjs/common';
 import { finalize, map, Observable } from 'rxjs';
+import { GetNotificationsQueryDto } from './dto/notification-param.dto';
 import { NotificationPayload } from './notification-payload';
 import { NotificationService } from './notifications.service';
 
@@ -40,5 +51,34 @@ export class NotificationController {
 
   onModuleDestroy() {
     this.notificationService.cleanupAllStreams();
+  }
+
+  @Patch(':notificationId/read')
+  markAsRead(@Param('notificationId') id: string) {
+    return this.notificationService.markAsRead(id);
+  }
+
+  @Patch(':notificationId/unread')
+  markAsUnread(@Param('notificationId') id: string) {
+    return this.notificationService.markAsUnread(id);
+  }
+
+  @Delete(':notificationId')
+  deleteNotification(@Param('notificationId') id: string) {
+    return this.notificationService.deleteOne({ id });
+  }
+
+  @Get(':userId')
+  getNotifications(
+    @Param('userId') userId: string,
+    @Query() query: GetNotificationsQueryDto,
+  ) {
+    const { filter, ...paginationParams } = query;
+
+    return this.notificationService.getUserNotifications(
+      userId,
+      filter,
+      paginationParams,
+    );
   }
 }

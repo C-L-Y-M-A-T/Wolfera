@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, Subject } from 'rxjs';
-import { Repository } from 'typeorm';
+import { PaginationParams } from 'src/utils/dto/pagination.dto';
+import { BaseService } from 'src/utils/generic/base.service';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Notification, NotificationType } from './entities/notification.entity';
 import { NotificationPayload } from './notification-payload';
 
 @Injectable()
-export class NotificationService {
+export class NotificationService extends BaseService<
+  Notification,
+  NotificationPayload,
+  Partial<Notification>
+> {
   private streams: Map<string, Subject<Notification>> = new Map();
 
   constructor(
     @InjectRepository(Notification)
     private readonly notifRepo: Repository<Notification>,
-  ) {}
+  ) {
+    super(notifRepo);
+  }
 
   getNotificationStream(userId: string): Observable<Notification> {
     if (!this.streams.has(userId)) {
@@ -55,5 +63,33 @@ export class NotificationService {
 
   onModuleDestroy() {
     this.cleanupAllStreams();
+  }
+
+  markAsRead(notificationId: string, userId?: string) {
+    return this.updateOne({ id: notificationId }, { read: true }, { userId });
+  }
+
+  markAsUnread(notificationId: string, userId?: string) {
+    return this.updateOne({ id: notificationId }, { read: false }, { userId });
+  }
+
+  async getUserNotifications(
+    userId: string,
+    filter: 'all' | 'read' | 'unread' = 'all',
+    paginationParams: PaginationParams,
+  ) {
+    const where:
+      | FindOptionsWhere<Notification>
+      | FindOptionsWhere<Notification>[] = {
+      recipientId: userId,
+    };
+
+    if (filter === 'read') where.read = true;
+    else if (filter === 'unread') where.read = false;
+
+    return this.findAllPaginated(paginationParams, {
+      where,
+      order: { createdAt: 'DESC' },
+    });
   }
 }
