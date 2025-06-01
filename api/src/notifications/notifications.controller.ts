@@ -10,6 +10,8 @@ import {
   Sse,
 } from '@nestjs/common';
 import { finalize, map, Observable } from 'rxjs';
+import { NotificationExistsPipe } from './customPipes/notification-exists.pipe';
+import { UserExistsPipe } from './customPipes/user-exists.pipe';
 import { GetNotificationsQueryDto } from './dto/notification-param.dto';
 import { NotificationPayload } from './notification-payload';
 import { NotificationService } from './notifications.service';
@@ -54,23 +56,25 @@ export class NotificationController {
   }
 
   @Patch(':notificationId/read')
-  markAsRead(@Param('notificationId') id: string) {
+  markAsRead(@Param('notificationId', NotificationExistsPipe) id: string) {
     return this.notificationService.markAsRead(id);
   }
 
   @Patch(':notificationId/unread')
-  markAsUnread(@Param('notificationId') id: string) {
+  markAsUnread(@Param('notificationId', NotificationExistsPipe) id: string) {
     return this.notificationService.markAsUnread(id);
   }
 
   @Delete(':notificationId')
-  deleteNotification(@Param('notificationId') id: string) {
+  deleteNotification(
+    @Param('notificationId', NotificationExistsPipe) id: string,
+  ) {
     return this.notificationService.deleteOne({ id });
   }
 
   @Get(':userId')
   getNotifications(
-    @Param('userId') userId: string,
+    @Param('userId', UserExistsPipe) userId: string,
     @Query() query: GetNotificationsQueryDto,
   ) {
     const { filter, ...paginationParams } = query;

@@ -73,6 +73,10 @@ export class NotificationService extends BaseService<
     return this.updateOne({ id: notificationId }, { read: false }, { userId });
   }
 
+  findById(id: string) {
+    return this.findOne({ id });
+  }
+
   async getUserNotifications(
     userId: string,
     filter: 'all' | 'read' | 'unread' = 'all',
