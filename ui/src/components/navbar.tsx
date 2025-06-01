@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-import Image from "next/image";
 import { LanguageSwitcher } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +9,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Bell, HelpCircle, Home, Skull, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -107,12 +107,18 @@ function NavLink({
   );
 }
 
-interface User {
+interface UserInfo {
   name: string;
   avatar?: string;
 }
 
-function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
+function UserMenu({
+  user,
+  onLogout,
+}: {
+  user: UserInfo;
+  onLogout: () => void;
+}) {
   const { t } = useTranslation();
 
   return (

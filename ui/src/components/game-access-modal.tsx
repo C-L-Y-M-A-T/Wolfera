@@ -24,7 +24,6 @@ import { Unlock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-// Mock data for public games
 const publicGames = [
   {
     id: "game1",
@@ -54,6 +53,9 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
   const [gameCode, setGameCode] = useState("");
   const [createGameOpen, setCreateGameOpen] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState("");
 
   const handleJoinGame = (gameId: string) => {
     try {
@@ -64,17 +66,24 @@ export function GameAccessModal({ trigger }: { trigger: React.ReactNode }) {
       // TODO: Add proper error handling
       console.error("Failed to join game:", error);
       // Display error message to user
+      setError(
+        `Failed to join game: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
   const handleJoinByCode = () => {
     const trimmedCode = gameCode.trim();
+    setValidationError("");
     // Check if code follows expected format (e.g., alphanumeric and minimum length)
     if (trimmedCode && /^[A-Za-z0-9]{6,}$/.test(trimmedCode)) {
       handleJoinGame(gameCode);
     } else {
       // TODO: Display validation error to user
       console.error("Invalid game code format");
+      setValidationError(
+        "Please enter a valid game code (at least 6 alphanumeric characters)",
+      );
     }
   };
 

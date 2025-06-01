@@ -39,6 +39,32 @@ export abstract class GamePhase<A = any> {
   // or
   // const prePhaseDuration = 1000;
 
+  /**
+   * Emits a phase-specific event through the game event emitter
+   * @param event The event to emit
+   * @param data The data to include with the event
+   */
+  protected emitPhaseEvent(event: string, data: any = {}): void {
+    this.context.gameEventEmitter.emit(event, {
+      ...data,
+      phase: this.phaseName,
+      phaseState: this.phaseState,
+    });
+  }
+
+  /**
+   * Broadcasts a phase event to all connected players
+   * @param event The event to broadcast
+   * @param data The data to include with the event
+   */
+  protected broadcastPhaseEvent(event: string, data: any = {}): void {
+    this.context.gameEventEmitter.broadcastToPlayers(event, {
+      ...data,
+      phase: this.phaseName,
+      phaseState: this.phaseState,
+    });
+  }
+
   public async executeAsync(input: any = {}): Promise<any> {
     return await new Promise((resolve) => {
       this.execute(input, (output) => {
@@ -59,6 +85,7 @@ export abstract class GamePhase<A = any> {
     }
     this.startTime = Date.now();
 
+    this.context.gameEventEmitter.emit(`phase:start:${this.phaseName}`, this);
     // 1. Pre-phase
     this.phaseState = PhaseState.Pre;
     await this.onPrePhase?.();
@@ -82,6 +109,7 @@ export abstract class GamePhase<A = any> {
     }
     await this.onEnd();
     this.phaseState = PhaseState.Post;
+    this.context.gameEventEmitter.emit(`phase:end:${this.phaseName}`, this);
 
     // 3. Post-phase
     if (this.postPhaseDuration > 0) await this.delay(this.postPhaseDuration);
