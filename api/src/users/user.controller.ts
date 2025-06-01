@@ -1,3 +1,4 @@
+import { AvatarConfigType } from './../../../ui/src/types/avatar-builder/avatarConfig';
 // src/users/users.controller.ts
 
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
@@ -32,7 +33,7 @@ export class UsersController extends BaseController<
     body: {
       email: string;
       username?: string;
-      avatar_url?: string;
+      avatar?: Record<keyof AvatarConfigType, number>;
     },
   ) {
     const userId =

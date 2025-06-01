@@ -1,8 +1,11 @@
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 @Entity('users')
 export class User extends BaseEntity {
+  @PrimaryColumn()
+  declare id: string;
   @Column({ unique: true })
   email: string;
 
@@ -10,5 +13,5 @@ export class User extends BaseEntity {
   username: string;
 
   @Column({ nullable: true })
-  avatar_url?: string;
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
 }

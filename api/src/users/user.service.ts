@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { AvatarConfigType, options } from './types/AvatarOptions';
 
 @Injectable()
 export class UsersService extends BaseService<
@@ -25,21 +26,21 @@ export class UsersService extends BaseService<
     id: string,
     {
       email,
-      avatar_url,
       username,
+      avatar,
     }: {
       email: string;
       username?: string;
-      avatar_url?: string;
+      avatar?: Record<keyof AvatarConfigType, number>;
     },
   ): Promise<User> {
-    console.log('Syncing user', id, email, avatar_url, username);
+    console.log('Syncing user', id, email, username);
     // if user exists update it
     const existingUser = await this.findOne({ id });
     if (existingUser) {
       const updatedData: UpdateUserDto = {
-        avatar_url: avatar_url || existingUser.avatar_url,
         username: username || existingUser.username || email.split('@')[0],
+        avatarOptions: avatar || existingUser.avatarOptions,
       };
       return this.updateOne({ id }, updatedData);
     }
@@ -51,11 +52,15 @@ export class UsersService extends BaseService<
     ) {
       finalUsername += Math.floor(Math.random() * 10000);
     }
+    const defaultAvatarOptions = Object.fromEntries(
+      Object.keys(options).map((key) => [key, 0]),
+    ) as Record<keyof AvatarConfigType, number>;
+    const finalAvatar = avatar || defaultAvatarOptions;
     const newUserDto: CreateUserDto = {
       id,
       email,
+      avatarOptions: finalAvatar,
       username: finalUsername,
-      avatar_url,
     };
 
     return this.createOne(newUserDto);
