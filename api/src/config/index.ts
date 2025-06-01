@@ -28,11 +28,9 @@ export const config: Config = {
     port: parseInt(process.env.POSTGRES_PORT || '5432'),
   },
 
-  supabase: {
-    url: process.env.SUPABASE_URL || 'https://your-supabase-url.supabase.co',
-    serviceRoleKey:
-      process.env.SUPABASE_SERVICE_ROLE_KEY || 'your-supabase-key',
-    jwtSecret: process.env.SUPABASE_JWT_SECRET || 'your-supabase-jwt-secret',
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-jwt-secret',
+    expirationTime: process.env.JWT_EXPIRATION_TIME || '1h',
   },
 
   env: process.env.ENV || 'development',
