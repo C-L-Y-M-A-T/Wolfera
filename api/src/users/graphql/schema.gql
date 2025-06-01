@@ -22,23 +22,6 @@ type FriendDto {
   username: String!
 }
 
-type Notification {
-  data: String
-  description: String!
-  imageUrl: String
-  read: Boolean!
-  recipient: User!
-  recipientId: String!
-  title: String!
-  type: NotificationType!
-}
-
-enum NotificationType {
-  FRIEND_REQUEST
-  GAME_INVITE
-  NEW_ACHIEVEMENT
-}
-
 type Query {
   allUsers: [UserDto!]!
   me: UserDto!
@@ -55,7 +38,6 @@ type User {
   gamesPlayed: Float!
   gamesWon: Float!
   id: String!
-  notifications: [Notification!]
   username: String!
 }
 

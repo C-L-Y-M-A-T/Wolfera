@@ -56,7 +56,6 @@ export class User {
   friends?: User[];
 
   // ---- Notifications ----
-  @Field(() => [Notification], { nullable: true })
   @OneToMany(() => Notification, (notification) => notification.recipient)
   notifications?: Notification[];
 
