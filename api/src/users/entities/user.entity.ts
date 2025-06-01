@@ -1,9 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -52,6 +54,11 @@ export class User {
     },
   })
   friends?: User[];
+
+  // ---- Notifications ----
+  @Field(() => [Notification], { nullable: true })
+  @OneToMany(() => Notification, (notification) => notification.recipient)
+  notifications?: Notification[];
 
   // ---- Game Stats ----
   @Field()
