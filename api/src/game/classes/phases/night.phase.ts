@@ -4,11 +4,11 @@ import { PhaseOrchestrator } from '../PhaseOrchestrator';
 import { Player } from '../Player';
 import { SequentialPhaseOrchestrator } from '../SequentialPhaseOrchestrator';
 import { PhaseConstructor, PlayerAction } from '../types';
-import { WaitingForGameStartPhase } from './waitingForGameStart/WatitingForGameStart.phase';
+import { DayPhase } from './dayPhase/day.phase';
 
 export class NightPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
-    return WaitingForGameStartPhase;
+    return DayPhase;
   }
   protected async onEnd(): Promise<void> {}
   readonly phaseName = 'Night-phase';

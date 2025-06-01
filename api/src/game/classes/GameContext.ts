@@ -41,6 +41,7 @@ export class GameContext {
     if (socket) {
       player.connect(socket);
     }
+    // TODO: emit player connected event
     return player;
   }
   setOptions(options: any): void {
