@@ -34,14 +34,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   @SubscribeMessage('player-action')
-  handlePlayerAction(
+  async handlePlayerAction(
     @SocketGame() game: GameContext,
     @SocketPlayer() player: Player,
     @MessageBody() payload: PlayerAction,
   ) {
     // TODO: test object payload in ws
     console.log('player-action event received', payload);
-    game.handlePlayerAction(player, payload);
+    await game.handlePlayerAction(player, payload);
   }
 
   @SubscribeMessage('start-dummy-game')

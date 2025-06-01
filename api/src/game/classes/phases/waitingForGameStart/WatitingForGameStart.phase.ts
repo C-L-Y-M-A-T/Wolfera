@@ -66,6 +66,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
 
     // Broadcast to all players that the game is starting
     this.broadcastToPlayers('game-started', {
+      //TODO: save event names in string constants
       gameId: this.context.gameId,
       startedBy: player.id,
       playerCount: this.context.players.size,

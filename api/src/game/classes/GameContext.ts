@@ -157,7 +157,8 @@ export class GameContext {
     this.gameEventEmitter.broadcastToPlayers(event, data);
   }
 
-  handlePlayerAction(player: Player, action: any): void {
+  //TODO: use async and await in all websocket triggered functions so that WsException can be thrown
+  async handlePlayerAction(player: Player, action: any): Promise<void> {
     const ValidatedAction: PlayerAction = PlayerActionSchema.parse(
       action,
     ) as PlayerAction;
@@ -167,7 +168,7 @@ export class GameContext {
       ValidatedAction,
     });
 
-    this.orchestrator.handlePlayerAction(player, ValidatedAction);
+    await this.orchestrator.handlePlayerAction(player, ValidatedAction);
   }
 
   //TODO: to remove this function (just for testing)
@@ -176,10 +177,5 @@ export class GameContext {
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
     this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
     this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
-  }
-
-  assignRoles(): void {
-    const players = this.getAlivePlayers();
-    this.rolesService.assignRoles(players);
   }
 }

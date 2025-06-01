@@ -100,8 +100,10 @@ export abstract class GamePhase<A = any> {
         `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
       );
     }
-    if (this.phaseName === action.activePhase) {
-      throw new WsException(`Phase ${this.phaseName} is not the active phase`);
+    if (this.phaseName !== action.activePhase) {
+      throw new WsException(
+        `event received for phase ${action.activePhase}, but the active phase is ${this.phaseName}`,
+      );
     }
 
     if (!player.isAlive)
@@ -185,11 +187,13 @@ export abstract class GamePhase<A = any> {
    * @param event - The event name to broadcast
    * @param payload - The payload to send to players
    */
-  protected broadcastToPlayers(event: string, payload: any): void {
+  protected broadcastToPlayers(
+    event: string,
+    payload: any,
+    filter: (player: Player) => boolean = () => true,
+  ) {
     this.context.players.forEach((player) => {
-      if (player.isConnected() && player.socket) {
-        player.socket.emit(event, payload);
-      }
+      if (filter(player)) this.emitToPlayer(player, event, payload);
     });
   }
 
