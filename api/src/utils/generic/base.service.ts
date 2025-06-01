@@ -12,10 +12,10 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { BaseFilterParams } from '../dto/base.filter.dto';
 import { PaginationParams } from '../dto/pagination.dto';
 import { paginate, PaginationResponse } from '../paginator';
-import { BaseFilterParams } from '../dto/base.filter.dto';
+import { BaseEntity } from './base.entity';
 
 export abstract class BaseService<
   T extends BaseEntity,
@@ -93,7 +93,8 @@ export abstract class BaseService<
     const entity = await this.repository.findOne(findOptions);
 
     if ((!entity || entity === null) && withException) {
-      throw new NotFoundException(`${this.repository.metadata.name} not found`);
+      // throw new NotFoundException(`${this.repository.metadata.name} not found`);
+      return null;
     }
     return entity;
   }

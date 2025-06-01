@@ -14,63 +14,24 @@ export class UsersService extends BaseService<
 > {
   constructor(
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {
-    super(userRepo);
+    super(userRepository);
   }
-
-  // async syncUser(
-  //   id: string,
-  //   {
-  //     email,
-  //     avatar_url,
-  //     username,
-  //   }: {
-  //     email: string;
-  //     username?: string;
-  //     avatar_url?: string;
-  //   },
-  // ): Promise<User> {
-  //   console.log('Syncing user', id, email, avatar_url, username);
-  //   // if user exists update it
-  //   const existingUser = await this.userRepo.findOne({ where: { id } });
-  //   if (existingUser) {
-  //     existingUser.email = email || existingUser.email;
-  //     existingUser.avatar_url = avatar_url || existingUser.avatar_url;
-  //     existingUser.username = username || email.split('@')[0];
-  //     return this.userRepo.save(existingUser);
-  //   }
-
-  //   // if user does not exist create it
-  //   let finalUsername = username || email.split('@')[0];
-  //   while (
-  //     await this.userRepo.findOne({ where: { username: finalUsername } })
-  //   ) {
-  //     finalUsername += Math.floor(Math.random() * 10000);
-  //   }
-  //   const newUser = this.userRepo.create({
-  //     id,
-  //     email,
-  //     username: finalUsername,
-  //     avatar_url,
-  //   });
-  //   return this.userRepo.save(newUser);
-  // }
-
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.userRepo.findOne({
-      where: { email: createUserDto.email },
+    const existingUser = await this.findOne({
+      email: createUserDto.email,
     });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
 
-    const user = this.userRepo.create(createUserDto);
-    return this.userRepo.save(user);
+    const user = await this.createOne(createUserDto);
+    return user;
   }
 
   async findById(id: string) {
-    const user = await this.userRepo.findOne({ where: { id } });
+    const user = await this.findOne({ id });
     if (!user) {
       return null;
     }
@@ -79,7 +40,7 @@ export class UsersService extends BaseService<
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    const user = await this.userRepo.findOne({ where: { username } });
+    const user = await this.findOne({ username });
     if (!user) {
       return null;
     }
@@ -87,7 +48,7 @@ export class UsersService extends BaseService<
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = await this.userRepo.findOne({ where: { email } });
+    const user = await this.findOne({ email });
     if (!user) {
       return null;
     }
@@ -95,7 +56,7 @@ export class UsersService extends BaseService<
   }
 
   findAll(): Promise<User[]> {
-    return this.userRepo.find();
+    return this.findAll();
   }
 
   async awardBadges(user: User): Promise<User> {
@@ -118,6 +79,6 @@ export class UsersService extends BaseService<
     if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
       user.badges.push(Badge.MOON_SURVIVOR);
     }
-    return this.userRepo.save(user);
+    return this.updateOne({ id: user.id }, user);
   }
 }

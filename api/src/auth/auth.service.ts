@@ -35,27 +35,23 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload) };
   }
 
-  async signup(user: SignupDto): Promise<AccessToken> {
-    const existingEmail = await this.usersService.findByEmail(user.email);
+  async signup(signupDto: SignupDto): Promise<AccessToken> {
+    const existingEmail = await this.usersService.findByEmail(signupDto.email);
     if (existingEmail) {
       throw new BadRequestException('email already exists');
     }
 
     const existingUsername = await this.usersService.findByUsername(
-      user.username,
+      signupDto.username,
     );
     if (existingUsername) {
       throw new BadRequestException('username already exists');
     }
 
-    const hashedPassword: string = await bcrypt.hash(user.password, 10);
-    const newUser = {
-      email: user.email,
-      username: user.username,
-      hashedPassword,
-    };
-    await this.usersService.create(newUser);
-    const createdUser = await this.usersService.findByEmail(user.email);
+    const hashedPassword: string = await bcrypt.hash(signupDto.password, 10);
+
+    await this.usersService.create({ ...signupDto, hashedPassword });
+    const createdUser = await this.usersService.findByEmail(signupDto.email);
     if (!createdUser) {
       throw new BadRequestException('User creation failed');
     }
