@@ -1,7 +1,7 @@
 // src/game/classes/GameEventEmitter.ts
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import 'reflect-metadata';
-import { Player } from '../classes/Player';
+import { Player } from '../../classes/Player';
 import {
   GAME_EVENT_METADATA,
   GameEventHandler,

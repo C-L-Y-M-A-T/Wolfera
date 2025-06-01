@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { GAME_HANDLER_FACTORY_METADATA } from '../event-emitter/decorators/event-handler.decorator';
-import { GAME_EVENT_METADATA } from '../event-emitter/decorators/game-event.decorator';
+import { GAME_HANDLER_FACTORY_METADATA } from '../events/event-emitter/decorators/event-handler.decorator';
+import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
 
 export interface GameHandlerClass {
   new (gameService: any, gameId: string, ...args: any[]): any;
@@ -41,7 +41,7 @@ export class GameHandlerRegistry implements OnModuleInit {
     // Import handler classes dynamically or statically
     const {
       NightPhaseEventHandler,
-    } = require('../event-emitter/event-handlers/NightPhaseEventHandler');
+    } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
 
     return [
       NightPhaseEventHandler,

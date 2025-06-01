@@ -2,7 +2,7 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { GAME_EVENT_METADATA } from '../event-emitter/decorators/game-event.decorator';
+import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
 
 /**
  * Module that discovers and manages game event handlers across the application

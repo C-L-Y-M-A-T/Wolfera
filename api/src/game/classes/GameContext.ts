@@ -6,7 +6,7 @@ import { User } from 'src/temp/temp.user';
 
 import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
-import { GameEventEmitter } from '../event-emitter/GameEventEmitter';
+import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
