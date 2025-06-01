@@ -1,8 +1,7 @@
-// src/game/event-emitter/event-handlers/NightPhaseEventHandler.ts
 import { GameService } from 'src/game/services/game/game.service';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
-import { Player } from '../../classes/Player';
-import { GameContext } from '../../classes/GameContext';
+import { GameContext } from '../../../classes/GameContext';
+import { Player } from '../../../classes/Player';
 import { EventHandlerFactory } from '../decorators/event-handler.decorator';
 import {
   GameEventHandler,
@@ -21,15 +20,13 @@ interface SeerActionData {
 
 @EventHandlerFactory()
 export class NightPhaseEventHandler implements GameEventHandler {
-  // This handler is specific to ONE game, so we only need a simple Map for votes
-  private werewolfVotes: Map<string, string> = new Map(); // voterId -> targetId
+  private werewolfVotes: Map<string, string> = new Map();
   private game: GameContext;
 
   constructor(
     private readonly gameService: GameService,
     private readonly gameId: string,
   ) {
-    // Get the game instance once and store it
     const game = this.gameService.getGame(this.gameId);
     if (!game) {
       throw new Error(`Game ${gameId} not found during handler initialization`);
@@ -37,7 +34,7 @@ export class NightPhaseEventHandler implements GameEventHandler {
     this.game = game;
   }
 
-  @OnGameEvent('phase:night:start')
+  @OnGameEvent('game:phase:night:start')
   handleNightStart(): void {
     console.log(`Night phase started for game ${this.gameId}`);
 
