@@ -1,5 +1,6 @@
 import { WsException } from '@nestjs/websockets';
 import { z } from 'zod';
+import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
 import { PhaseName, PhaseState, PlayerAction } from './types';
@@ -67,6 +68,10 @@ export abstract class GamePhase<A = any> {
     // 2. Main phase
     this.phaseState = PhaseState.Active;
     await this.onStart();
+    this.context.gameEventEmitter.emit(
+      events.GAME.PHASE.START(this.phaseName),
+      this,
+    );
 
     if (this.phaseDuration > 0) {
       await this.delay(this.phaseDuration);
@@ -81,6 +86,10 @@ export abstract class GamePhase<A = any> {
       ); //TODO: handle this error
     }
     await this.onEnd();
+    this.context.gameEventEmitter.emit(
+      events.GAME.PHASE.END(this.phaseName),
+      this,
+    );
     this.phaseState = PhaseState.Post;
 
     // 3. Post-phase
