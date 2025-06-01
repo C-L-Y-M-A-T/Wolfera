@@ -1,12 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-
-export enum NotificationType {
-  FRIEND_REQUEST = 'FRIEND_REQUEST',
-  NEW_ACHIEVEMENT = 'NEW_ACHIEVEMENT',
-  GAME_INVITE = 'GAME_INVITE',
-}
+import { NotificationType } from '../Constants/notification-type.enum';
 
 @Entity()
 export class Notification extends BaseEntity {

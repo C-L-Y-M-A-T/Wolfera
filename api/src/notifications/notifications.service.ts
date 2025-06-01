@@ -4,8 +4,9 @@ import { Observable, Subject } from 'rxjs';
 import { PaginationParams } from 'src/utils/dto/pagination.dto';
 import { BaseService } from 'src/utils/generic/base.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { Notification, NotificationType } from './entities/notification.entity';
-import { NotificationPayload } from './notification-payload';
+import { NotificationType } from './Constants/notification-type.enum';
+import { NotificationPayload } from './dto/notification-payload';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService extends BaseService<
@@ -29,24 +30,43 @@ export class NotificationService extends BaseService<
     return this.streams.get(userId)!.asObservable();
   }
 
+  private readonly PERSISTENT_NOTIFICATION_TYPES = [
+    NotificationType.FRIEND_REQUEST,
+    NotificationType.NEW_ACHIEVEMENT,
+  ];
+
   async sendNotification(
     userId: string,
     notificationData: NotificationPayload,
-  ) {
+  ): Promise<{ persisted: boolean; streamed: boolean }> {
     const notification = this.notifRepo.create({
       ...notificationData,
       recipientId: userId,
     });
-    const persist = [
-      NotificationType.FRIEND_REQUEST,
-      NotificationType.NEW_ACHIEVEMENT,
-    ].includes(notification.type);
+    const persist = this.PERSISTENT_NOTIFICATION_TYPES.includes(
+      notification.type,
+    );
+    let persisted = false;
+    let streamed = false;
     if (persist) {
-      await this.notifRepo.save(notification);
+      try {
+        await this.notifRepo.save(notification);
+        persisted = true;
+      } catch (error) {
+        console.error('Failed to persist notification:', error);
+        throw error;
+      }
     }
-    if (this.streams.has(userId)) {
-      this.streams.get(userId)!.next(notification);
+    const stream = this.streams.get(userId);
+    if (stream) {
+      try {
+        stream.next(notification);
+        streamed = true;
+      } catch (error) {
+        console.error('Failed to stream notification:', error);
+      }
     }
+    return { persisted, streamed };
   }
 
   cleanupStream(userId: string): void {

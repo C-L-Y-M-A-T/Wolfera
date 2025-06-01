@@ -10,10 +10,11 @@ import {
   Sse,
 } from '@nestjs/common';
 import { finalize, map, Observable } from 'rxjs';
+import { Paginated } from 'src/utils/decorators/paginated.decorator';
 import { NotificationExistsPipe } from './customPipes/notification-exists.pipe';
 import { UserExistsPipe } from './customPipes/user-exists.pipe';
 import { GetNotificationsQueryDto } from './dto/notification-param.dto';
-import { NotificationPayload } from './notification-payload';
+import { NotificationPayload } from './dto/notification-payload';
 import { NotificationService } from './notifications.service';
 
 @Controller('notifications')
@@ -22,7 +23,7 @@ export class NotificationController {
 
   @Post(':userId/send')
   async sendNotification(
-    @Param('userId') userId: string,
+    @Param('userId', UserExistsPipe) userId: string,
     @Body() notificationdto: NotificationPayload,
   ) {
     await this.notificationService.sendNotification(userId, notificationdto);
@@ -30,7 +31,7 @@ export class NotificationController {
 
   @Sse(':userId/stream')
   streamNotifications(
-    @Param('userId') userId: string,
+    @Param('userId', UserExistsPipe) userId: string,
   ): Observable<MessageEvent> {
     return this.notificationService.getNotificationStream(userId).pipe(
       map((notification) => {
@@ -55,16 +56,19 @@ export class NotificationController {
     this.notificationService.cleanupAllStreams();
   }
 
+  //add injection of CurrentUserId + AuthGuard
   @Patch(':notificationId/read')
   markAsRead(@Param('notificationId', NotificationExistsPipe) id: string) {
     return this.notificationService.markAsRead(id);
   }
 
+  //add injection of CurrentUserId + AuthGuard
   @Patch(':notificationId/unread')
   markAsUnread(@Param('notificationId', NotificationExistsPipe) id: string) {
     return this.notificationService.markAsUnread(id);
   }
 
+  //add injection of CurrentUserId + AuthGuard
   @Delete(':notificationId')
   deleteNotification(
     @Param('notificationId', NotificationExistsPipe) id: string,
@@ -72,7 +76,9 @@ export class NotificationController {
     return this.notificationService.deleteOne({ id });
   }
 
+  //add injection of CurrentUserId + AuthGuard
   @Get(':userId')
+  @Paginated()
   getNotifications(
     @Param('userId', UserExistsPipe) userId: string,
     @Query() query: GetNotificationsQueryDto,
