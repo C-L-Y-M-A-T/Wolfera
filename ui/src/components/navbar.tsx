@@ -8,12 +8,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AvatarConfigType,
+  initialState,
+  options,
+} from "@/types/avatar-builder/avatarConfig";
 import { Bell, HelpCircle, Home, Skull, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AvatarPreview } from "./avatar-builder/components";
 
 // Mock authentication state - in a real app, this would come from your auth provider
 const useAuth = () => {
@@ -25,7 +31,7 @@ const useAuth = () => {
     login: () => setIsLoggedIn(true),
     logout: () => setIsLoggedIn(false),
     user: isLoggedIn
-      ? { name: "WolfHunter", avatar: "/placeholder.svg?height=32&width=32" }
+      ? { name: "WolfHunter", avatarOptions: initialState }
       : null,
   };
 };
@@ -109,7 +115,7 @@ function NavLink({
 
 interface UserInfo {
   name: string;
-  avatar?: string;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 }
 
 function UserMenu({
@@ -128,12 +134,11 @@ function UserMenu({
           variant="ghost"
           className="flex items-center space-x-2 hover:bg-gray-800"
         >
-          <Image
-            src={user.avatar || "/placeholder.svg"}
-            alt={user.name}
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-full border-2 border-red-500 object-cover"
+          <AvatarPreview
+            currentOptions={user.avatarOptions}
+            className={
+              "w-8 h-8 rounded-full border-2 border-red-500 object-cover"
+            }
           />
           <span className="hidden md:inline">{user.name}</span>
         </Button>

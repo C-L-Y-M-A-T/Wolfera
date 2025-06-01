@@ -9,6 +9,8 @@ import {
   Min,
 } from 'class-validator';
 import { Badge } from '../entities/user.entity';
+import { IsAvatarConfig } from '../decorators/is-avatar-options.decorators';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 @ObjectType({ isAbstract: true })
 export abstract class BaseUserDto {
@@ -25,9 +27,9 @@ export abstract class BaseUserDto {
   username: string;
 
   @Field({ nullable: true })
-  @IsString()
+  @IsAvatarConfig()
   @IsOptional()
-  avatar_url?: string;
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
 
   @Field(() => [Badge])
   @IsEnum(Badge, { each: true })

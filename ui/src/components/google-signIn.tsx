@@ -62,7 +62,6 @@ const OneTapComponent = () => {
                 data?.user?.id,
                 data?.user?.email,
                 undefined,
-                data?.user?.user_metadata?.avatar_url,
               );
 
               console.log("Session data: ", data);

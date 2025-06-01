@@ -1,8 +1,10 @@
 "use client";
 
+import { AvatarPreview } from "@/components/avatar-builder/components";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTheme } from "@/providers/theme-provider";
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { motion } from "framer-motion";
 import { Heart, MessageSquare } from "lucide-react";
 
@@ -11,7 +13,7 @@ interface FriendsCardProps {
     id: string;
     username: string;
     status: string;
-    avatar: string;
+    avatarOptions: Record<keyof AvatarConfigType, number>;
   }>;
 }
 
@@ -52,11 +54,11 @@ export function FriendsCard({ friends }: FriendsCardProps) {
               >
                 <div className="flex items-center">
                   <div className="relative">
-                    <img
-                      src={friend.avatar || "/placeholder.svg"}
-                      alt={friend.username}
+                    <AvatarPreview
                       className={theme.gameStyles.friends.avatar}
+                      currentOptions={friend.avatarOptions}
                     />
+
                     <div
                       className={`${theme.gameStyles.friends.statusDot.base} ${
                         Object.keys(theme.colors.status).includes(friend.status)

@@ -3,6 +3,7 @@
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import api from "@/services/api";
 import { getSupabaseFrontendClient } from "@/services/supabase/client";
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { Session } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -11,7 +12,7 @@ type AppUser = {
   id: string;
   email: string;
   username: string;
-  avatar_url?: string;
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
   created_at: string;
 };
 

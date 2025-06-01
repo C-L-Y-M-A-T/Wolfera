@@ -3,7 +3,15 @@
   "email": "wolf.hunter@example.com",
   "bio": "I love playing as the Seer and uncovering the truth!",
   "joinDate": "January 2023",
-  "avatar": "/placeholder.svg?height=128&width=128",
+  "avatarOptions": {
+    "hair": 0,
+    "eyes": 0,
+    "eyebrows": 0,
+    "mouth": 0,
+    "skinColor": 0,
+    "hairColor": 0,
+    "backgroundColor": 0
+  },
   "avatarData": {},
   "level": 24,
   "xp": 75,
@@ -99,19 +107,43 @@
       "id": "f1",
       "username": "MoonHowler",
       "status": "online",
-      "avatar": "/placeholder.svg?height=40&width=40&text=MH"
+      "avatarOptions": {
+        "hair": 0,
+        "eyes": 0,
+        "eyebrows": 0,
+        "mouth": 0,
+        "skinColor": 0,
+        "hairColor": 0,
+        "backgroundColor": 0
+      }
     },
     {
       "id": "f2",
       "username": "VillageProtector",
       "status": "offline",
-      "avatar": "/placeholder.svg?height=40&width=40&text=VP"
+      "avatarOptions": {
+        "hair": 0,
+        "eyes": 0,
+        "eyebrows": 0,
+        "mouth": 0,
+        "skinColor": 0,
+        "hairColor": 0,
+        "backgroundColor": 0
+      }
     },
     {
       "id": "f3",
       "username": "NightStalker",
       "status": "in-game",
-      "avatar": "/placeholder.svg?height=40&width=40&text=NS"
+      "avatarOptions": {
+        "hair": 0,
+        "eyes": 0,
+        "eyebrows": 0,
+        "mouth": 0,
+        "skinColor": 0,
+        "hairColor": 0,
+        "backgroundColor": 0
+      }
     }
   ]
 }

@@ -47,9 +47,7 @@ export class UsersService extends BaseService<
 
     // if user does not exist create it
     let finalUsername = username || email.split('@')[0];
-    while (
-      await this.userRepo.findOne({ where: { username: finalUsername } })
-    ) {
+    while (await this.findOne({ username: finalUsername })) {
       finalUsername += Math.floor(Math.random() * 10000);
     }
     const defaultAvatarOptions = Object.fromEntries(

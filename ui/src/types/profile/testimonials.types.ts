@@ -1,8 +1,10 @@
+import { AvatarConfigType } from "../avatar-builder/avatarConfig";
+
 export interface Testimonial {
   name: string;
   role: string;
   content: string;
-  avatar: string;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 }
 
 export interface TestimonialsSectionProps {

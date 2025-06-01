@@ -1,3 +1,4 @@
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import apiClient from "./client";
 
 const api = {
@@ -6,14 +7,14 @@ const api = {
       accessToken: string,
       email?: string,
       username?: string,
-      avatar_url?: string,
+      avatarOptions?: Record<keyof AvatarConfigType, number>,
     ) => {
       const data = await apiClient.post(
         "/users/sync",
         {
           email,
           username,
-          avatar_url,
+          avatarOptions,
         },
         {
           headers: {
