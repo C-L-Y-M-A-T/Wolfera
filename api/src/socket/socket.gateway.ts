@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -24,12 +24,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private gameService: GameService,
     private readonly jwtSocket: JwtSocket,
+    private readonly loggerService: LoggerService,
   ) {}
 
   @SubscribeMessage('start-game')
   startGame(client: GameSocket, payload: any) {
     //TODO: add interceptor to exctract game and player from client (same in websocket)
-    console.log('start-game', payload);
+    this.loggerService.log('start-game', payload);
     //client.data.game.start();
   }
 
@@ -44,7 +45,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('start-dummy-game')
   createDummyGame(client: GameSocket, payload: any) {
-    console.log('start-dummy-game event received');
+    this.loggerService.log('start-dummy-game event received'); 
     const dummyPlayers: User[] = [
       {
         id: '456',
@@ -74,11 +75,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.handshake.query.token as string,
     );
     this.gameService.connectPlayer(user, gameId, client);
-    console.log('Client ' + client.id + ' connected to game ' + gameId);
+    this.loggerService.log('Client ' + client.id + ' connected to game ' + gameId);
   }
 
   handleDisconnect(client: GameSocket) {
     //TODO: Handle disconnect
-    console.log('Client disconnected:', client.id);
+    this.loggerService.log('Client disconnected:', client.id);
   }
 }

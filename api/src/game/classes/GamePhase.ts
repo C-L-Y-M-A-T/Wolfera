@@ -72,7 +72,10 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
     this.input = input;
     this.onComplete = onComplete;
 
-    console.log('Executing phase:', this.phaseName);
+    this.context.loggerService.log(
+      `Executing phase: ${this.phaseName} with input:`,
+      this.input,
+    );
     if (this.phaseState !== PhaseState.Pending) {
       throw new Error(
         `Phase ${this.phaseName} is already running or completed.`,

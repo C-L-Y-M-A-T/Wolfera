@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, LoggerService} from '@nestjs/common';
 import { GAME_HANDLER_FACTORY_METADATA } from '../events/event-emitter/decorators/event-handler.decorator';
 import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
 
@@ -10,7 +10,9 @@ export interface GameHandlerClass {
 export class GameHandlerRegistry implements OnModuleInit {
   private handlerClasses: GameHandlerClass[] = [];
 
-  constructor() {}
+  constructor(
+    private readonly loggerService: LoggerService,
+  ) {}
 
   onModuleInit() {
     // Register handler classes manually
@@ -28,7 +30,7 @@ export class GameHandlerRegistry implements OnModuleInit {
         Reflect.getMetadata(GAME_EVENT_METADATA, HandlerClass)
       ) {
         this.handlerClasses.push(HandlerClass);
-        console.log(`Registered game handler factory: ${HandlerClass.name}`);
+        this.loggerService.log(`Registered game handler factory: ${HandlerClass.name}`);
       }
     });
   }

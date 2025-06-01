@@ -1,6 +1,5 @@
 // Updated GameContext.ts with event handling
-import { Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { Injectable, LoggerService } from '@nestjs/common';
 import { GameSocket } from 'src/socket/socket.types';
 import { User } from 'src/temp/temp.user';
 
@@ -28,7 +27,7 @@ export class GameContext {
 
   constructor(
     public rolesService: RoleService,
-    private moduleRef: ModuleRef,
+    public loggerService: LoggerService,
   ) {
     this.gameId = this.generateGameId();
     // Initialize game event emitter
@@ -65,7 +64,7 @@ export class GameContext {
   }
 
   addPlayer(user: User): Player {
-    console.log('Adding player:', user);
+    this.loggerService.log('Adding player:', user);
     const player = new Player(user, this);
     this.players.set(user.id, player);
     this.gameEventEmitter.emit('player:join', {

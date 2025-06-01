@@ -6,6 +6,7 @@ import {
   GAME_EVENT_METADATA,
   GameEventHandler,
 } from './decorators/game-event.decorator';
+import { LoggerService } from '@nestjs/common';
 
 /**
  * Game-specific event emitter that handles events within a game context
@@ -14,7 +15,9 @@ export class GameEventEmitter {
   private eventEmitter: EventEmitter2;
   private handlers: GameEventHandler[];
 
-  constructor() {
+  constructor(
+    private readonly loggerService: LoggerService,
+  ) {
     this.eventEmitter = new EventEmitter2({
       wildcard: true,
       delimiter: ':',
@@ -35,7 +38,7 @@ export class GameEventEmitter {
     );
 
     if (!metadata) {
-      console.warn(
+      this.loggerService.warn(
         `No game event metadata found for ${instance.constructor.name}`,
       );
       return;
@@ -50,14 +53,13 @@ export class GameEventEmitter {
           try {
             handler(data);
           } catch (error) {
-            console.error(
-              `Error in game event handler ${methodName} for event ${event}:`,
-              error,
+            this.loggerService.error(
+              `Error in game event handler ${methodName} for event ${event}: ${error.message}`,
             );
           }
         });
 
-        console.log(
+        this.loggerService.log(
           `Registered handler ${instance.constructor.name}.${methodName} for event '${event}'`,
         );
       }
@@ -139,6 +141,6 @@ export class GameEventEmitter {
   cleanup(): void {
     this.eventEmitter.removeAllListeners();
     this.handlers.length = 0;
-    console.log(`Event emitter cleaned up`);
+    this.loggerService.log(`GameEventEmitter cleaned up`);
   }
 }

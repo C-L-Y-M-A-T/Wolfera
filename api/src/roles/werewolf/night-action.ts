@@ -28,20 +28,20 @@ export class WerewolfNightPhase extends RolePhase<WerewolfAction> {
     this.context.emit('werewolf:night:start', {
       message: 'Choose a victim...',
     });
-    console.log('Werewolf night phase started');
+    this.context.loggerService.log('Werewolf night phase started');
   }
   async onEnd() {
     // Notify werewolves the night phase is over
     this.context.emit('werewolf:night:end', {
       message: 'Night phase is over.',
     });
-    console.log('Werewolf night phase ended');
+    this.context.loggerService.log('Werewolf night phase ended');
   }
 
   async processPlayerAction(player: Player, action: WerewolfAction) {
     // Register the werewolf's kill vote
     //this.context.addNightAction('kill', action.targetId);
-    console.log(
+    this.context.loggerService.log(
       `Werewolf ${player.profile.id} chose to kill ${action.personToKill}`,
     );
     this.output = [action];

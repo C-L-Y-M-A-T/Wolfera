@@ -29,7 +29,7 @@ export class UsersController {
       throw new Error('User ID is missing or invalid');
     }
     const user = await this.usersService.syncUser(userId, body);
-    console.log('User synced', user);
+    console.log('User synced', user); //TODO remove log
     return { success: true };
   }
 

@@ -31,19 +31,31 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected async onPrePhase(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onPrePhase');
+    this.context.loggerService.log(
+      'WaitingForGameStartPhase: onPrePhase',
+      this.context.gameId,
+      this.context.players.size,
+    );
     this.context.gameEventEmitter.emit('game:lobby:open', {
       gameId: this.context.gameId,
     });
   }
   protected async onPostPhase(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onPostPhase');
+    this.context.loggerService.log(
+      'WaitingForGameStartPhase: onPostPhase',
+      this.context.gameId,
+      this.context.players.size,
+    );
     this.context.gameEventEmitter.emit('game:lobby:closed', {
       gameId: this.context.gameId,
     });
   }
   protected async onEnd(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onEnd');
+    this.context.loggerService.log(
+      'WaitingForGameStartPhase: onEnd',
+      this.context.gameId,
+      this.context.players.size,
+    );
     this.context.gameEventEmitter.emit('game:starting', {
       gameId: this.context.gameId,
       playerCount: this.context.players.size,

@@ -1,5 +1,5 @@
 // src/game/modules/game-events.module.ts
-import { Module, OnModuleInit } from '@nestjs/common';
+import { LoggerService, Module, OnModuleInit } from '@nestjs/common';
 import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
@@ -12,7 +12,10 @@ import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-eve
   providers: [],
 })
 export class GameEventsModule implements OnModuleInit {
-  constructor(private readonly discoveryService: DiscoveryService) {}
+  constructor(
+    private readonly discoveryService: DiscoveryService,
+    private readonly loggerService: LoggerService
+  ) {}
 
   onModuleInit() {
     // Find all providers that implement GameEventHandler
@@ -23,7 +26,9 @@ export class GameEventsModule implements OnModuleInit {
 
     // Log discovered handlers
     if (gameEventHandlers.length) {
-      console.log(`Found ${gameEventHandlers.length} game event handlers`);
+      this.loggerService.log(
+        `Found ${gameEventHandlers.length} game event handlers`
+      );
     }
   }
 

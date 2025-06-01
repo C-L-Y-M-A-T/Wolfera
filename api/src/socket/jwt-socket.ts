@@ -4,7 +4,9 @@ import { UsersService } from 'src/users/user.service';
 
 @Injectable()
 export class JwtSocket {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService
+  ) {}
 
   async authenticate(token: string) {
     if (!token || typeof token !== 'string') {
@@ -13,7 +15,7 @@ export class JwtSocket {
 
     try {
       const { data, error } = await supabaseAdmin.auth.getUser(token);
-      console.log('Supabase getUser response:', data, error);
+      console.log('Supabase getUser response:', data, error); //TODO remove log
       if (error || !data?.user) {
         throw new UnauthorizedException('Token invalide');
       }

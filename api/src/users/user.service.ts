@@ -22,7 +22,7 @@ export class UsersService {
       avatar_url?: string;
     },
   ): Promise<User> {
-    console.log('Syncing user', id, email, avatar_url, username);
+    console.log('Syncing user', id, email, avatar_url, username); //TODO remove log
     // if user exists update it
     const existingUser = await this.userRepo.findOne({ where: { id } });
     if (existingUser) {

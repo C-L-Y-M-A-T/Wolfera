@@ -28,7 +28,9 @@ export class ChatHandler {
     if (channel) {
       channel.handleIncomingMessage(message);
     } else {
-      console.error(`Channel ${message.channel} not found`);
+      this.context.loggerService.error(
+        `ChatHandler:handleIncomingMessage - Channel ${message.channel} not found`,
+      );
     }
   }
 }
