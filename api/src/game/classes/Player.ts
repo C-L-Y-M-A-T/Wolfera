@@ -42,4 +42,8 @@ export class Player {
     this.isAlive = false;
     this.context.gameEventEmitter.emit('player:die', this);
   }
+
+  assignRole(role: GameRole): void {
+    this.role = role;
+  }
 }

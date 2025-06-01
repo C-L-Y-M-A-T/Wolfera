@@ -16,24 +16,27 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
     return 0;
   }
 
-  onStart(): void {
-    // TODO: Assign roles to players
+  async onStart(): Promise<void> {
+    this.context.assignRoles();
+    await this.end();
   }
 
-  protected async onPrePhase(): Promise<void> {
-    // TODO: Notify players that roles are being assigned
-  }
-  protected async onPostPhase(): Promise<void> {
-    // No specific post-phase actions for role assignment
-  }
-  protected async onEnd(): Promise<void> {
-    // TODO: inform players about their roles
+  protected onEnd(): void {
+    // Notify players of their assigned roles
+    this.context.getplayers().forEach((player) => {
+      this.emitToPlayer(player, 'role-assigned', {
+        role: player.role?.roleData.name,
+      });
+    });
   }
 
-  protected async processPlayerAction(): Promise<void> {
-    // No player actions are processed during role assignment phase
+  protected validatePlayerAction(): void {
+    // No player actions are expected in this phase
+    throw new Error(`Player action is not allowed in ${this.phaseName} phase.`);
   }
+
   protected validatePlayerPermissions(): void {
-    // No specific permissions needed for role assignment phase
+    // No player actions are expected in this phase
+    throw new Error(`Player action is not allowed in ${this.phaseName} phase.`);
   }
 }

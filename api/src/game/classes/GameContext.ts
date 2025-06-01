@@ -80,6 +80,14 @@ export class GameContext {
       player.connect(socket);
     }
     // TODO: emit player connected event
+    // TODO: emit to all connected players is temporary
+    this.players.forEach((p) => {
+      if (p.isConnected() && p.id !== player.id) {
+        p.socket.emit('joined', {
+          player: player.profile.id,
+        });
+      }
+    });
     return player;
   }
 
@@ -168,5 +176,10 @@ export class GameContext {
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
     this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
     this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
+  }
+
+  assignRoles(): void {
+    const players = this.getAlivePlayers();
+    this.rolesService.assignRoles(players);
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { GameRole } from 'src/roles';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { PhaseOrchestrator } from '../../PhaseOrchestrator';
@@ -89,10 +90,7 @@ export class NightPhase extends ChainableGamePhase {
     });
   }
 
-  protected validatePlayerPermissions(
-    player: Player,
-    action: PlayerAction<any>,
-  ): void {
-    return;
+  protected validatePlayerPermissions(): void {
+    return; // No specific permissions needed for night phase
   }
 }

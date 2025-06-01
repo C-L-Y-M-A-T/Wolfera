@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
 import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
-import { PhaseConstructor, PlayerAction } from './../../types';
+import { PhaseConstructor } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
   waitingForGameStartPlayerActionSchema,
@@ -22,6 +23,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   onStart(): void {
+    console.log('WaitingForGameStartPhase: onStart');
     this.context.gameEventEmitter.broadcastToPlayers(
       'game:waitingForGameStart',
       {
@@ -38,7 +40,6 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected async onPrePhase(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onPrePhase');
     this.context.gameEventEmitter.emit('game:lobby:open', {
       gameId: this.context.gameId,
     });
@@ -50,30 +51,30 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     });
   }
   protected async onEnd(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onEnd');
     this.context.gameEventEmitter.emit('game:starting', {
       gameId: this.context.gameId,
       playerCount: this.context.players.size,
     });
   }
 
-  protected async processPlayerAction(
-    player: Player,
-    action: PlayerAction<WaitingForGameStartPlayerAction>,
-  ): Promise<void> {
+  protected async processPlayerAction(player: Player): Promise<void> {
     this.context.gameEventEmitter.emit('game:started', {
       startedBy: player.id,
       gameId: this.context.gameId,
       playerCount: this.context.players.size,
     });
 
-    this.context.tempAsignRoles();
-    this.end();
+    // Broadcast to all players that the game is starting
+    this.broadcastToPlayers('game-started', {
+      gameId: this.context.gameId,
+      startedBy: player.id,
+      playerCount: this.context.players.size,
+    });
+
+    await this.end();
   }
-  protected validatePlayerPermissions(
-    player: Player,
-    action: PlayerAction<WaitingForGameStartPlayerAction>,
-  ): void {
+
+  protected validatePlayerPermissions(player: Player): void {
     // Validate that the player is the game owner
     if (player.id !== this.context.owner?.id) {
       this.context.gameEventEmitter.emitToPlayer(player, 'error', {
