@@ -10,7 +10,7 @@ export const inter = Inter({
 
 // Define our display font (Creepster - a spooky font for horror theme)
 export const creepster = Creepster({
-  weight: ["400"],
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
   variable: "--font-creepster",

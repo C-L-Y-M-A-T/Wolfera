@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -89,8 +90,15 @@ export function CreateGameModal({
 
   const handleCreateGame = () => {
     if (!gameName.trim()) {
-      // Show an error message or toast notification
-      console.error("Game name is required");
+      // Use a toast notification or inline error
+      const errorMessage = t(
+        "errors.gameNameRequired",
+        "Game name is required",
+      );
+      toast({
+        title: errorMessage,
+        variant: "destructive",
+      });
       return;
     }
     // Validate minimum role selection (could use a constant for min roles)
