@@ -1,4 +1,3 @@
-// src/game/decorators/gameEvent.decorator.ts
 import 'reflect-metadata';
 
 export const GAME_EVENT_METADATA = 'gameEventMetadata';

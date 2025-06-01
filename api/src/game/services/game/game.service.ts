@@ -4,9 +4,9 @@ import { ModuleRef } from '@nestjs/core';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { GameOptions } from 'src/game/classes/types';
+import { GameHandlerRegistry } from 'src/game/events/event-handler-registry.service';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../../classes/GameContext';
-import { GameHandlerRegistry } from '../event-handler-registry.service';
 
 @Injectable()
 export class GameService {

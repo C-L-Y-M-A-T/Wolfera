@@ -1,5 +1,6 @@
 import { Controller, Get, Injectable, Post } from '@nestjs/common';
 import { tempGameOptions } from 'src/dummyData/gameParams';
+import { events } from '../events/event.types';
 import { GameService } from '../services/game/game.service';
 
 @Injectable()
@@ -15,7 +16,7 @@ export class GameController {
     const tempUser = { id: '123' };
     const gameOptions = tempGameOptions;
     const game = await this.gameService.createGame(tempUser, gameOptions);
-    game.gameEventEmitter.emit('phase:night:start', {
+    game.gameEventEmitter.emit(events.GAME.CREATE, {
       gameId: game.gameId,
     });
     return {
