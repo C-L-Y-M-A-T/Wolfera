@@ -39,6 +39,7 @@ export default function ProfilePage() {
     newAvatarOptions: Record<keyof AvatarConfigType, number>,
   ) => {
     setAvatarOptions(newAvatarOptions);
+
     // Call the parent callback if provided (e.g., to save to database)
     /* if (onAvatarUpdate) {
       onAvatarUpdate(newAvatarOptions);

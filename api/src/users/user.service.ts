@@ -65,7 +65,7 @@ export class UsersService extends BaseService<
   }
 
   async findByUsername(username: string): Promise<User> {
-    const user = await this.userRepo.findOne({ where: { username } });
+    const user = await this.findOne({ username });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -73,7 +73,7 @@ export class UsersService extends BaseService<
   }
 
   findAll(): Promise<User[]> {
-    return this.userRepo.find();
+    return this.findAll();
   }
 
   async awardBadges(user: User): Promise<User> {
@@ -96,6 +96,8 @@ export class UsersService extends BaseService<
     if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
       user.badges.push(Badge.MOON_SURVIVOR);
     }
-    return this.userRepo.save(user);
+    return this.updateOne({ id: user.id }, {
+      badges: user.badges,
+    } as UpdateUserDto);
   }
 }
