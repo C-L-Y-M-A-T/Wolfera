@@ -39,32 +39,6 @@ export abstract class GamePhase<A = any> {
   // or
   // const prePhaseDuration = 1000;
 
-  /**
-   * Emits a phase-specific event through the game event emitter
-   * @param event The event to emit
-   * @param data The data to include with the event
-   */
-  protected emitPhaseEvent(event: string, data: any = {}): void {
-    this.context.gameEventEmitter.emit(event, {
-      ...data,
-      phase: this.phaseName,
-      phaseState: this.phaseState,
-    });
-  }
-
-  /**
-   * Broadcasts a phase event to all connected players
-   * @param event The event to broadcast
-   * @param data The data to include with the event
-   */
-  protected broadcastPhaseEvent(event: string, data: any = {}): void {
-    this.context.gameEventEmitter.broadcastToPlayers(event, {
-      ...data,
-      phase: this.phaseName,
-      phaseState: this.phaseState,
-    });
-  }
-
   public async executeAsync(input: any = {}): Promise<any> {
     return await new Promise((resolve) => {
       this.execute(input, (output) => {
@@ -85,7 +59,6 @@ export abstract class GamePhase<A = any> {
     }
     this.startTime = Date.now();
 
-    this.context.gameEventEmitter.emit(`phase:start:${this.phaseName}`, this);
     // 1. Pre-phase
     this.phaseState = PhaseState.Pre;
     await this.onPrePhase?.();
@@ -109,7 +82,6 @@ export abstract class GamePhase<A = any> {
     }
     await this.onEnd();
     this.phaseState = PhaseState.Post;
-    this.context.gameEventEmitter.emit(`phase:end:${this.phaseName}`, this);
 
     // 3. Post-phase
     if (this.postPhaseDuration > 0) await this.delay(this.postPhaseDuration);
@@ -128,8 +100,17 @@ export abstract class GamePhase<A = any> {
         `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
       );
     }
-    action = this.validatePlayerAction(player, action);
+    if (this.phaseName === action.activePhase) {
+      throw new WsException(`Phase ${this.phaseName} is not the active phase`);
+    }
+
+    if (!player.isAlive)
+      throw new WsException(
+        `Player ${player.id /* TODO: change to name istead of id */} is not alive and cannot perform actions.`,
+      );
+    action = this.validateActionSchema(player, action);
     this.validatePlayerPermissions?.(player, action);
+    this.validatePlayerAction?.(player, action);
     await this.processPlayerAction?.(player, action);
   }
 
@@ -140,7 +121,7 @@ export abstract class GamePhase<A = any> {
    * @returns The validated and typed action
    * @throws Error if validation fails or player doesn't have permission
    */
-  protected validatePlayerAction(
+  protected validateActionSchema(
     player: Player,
     action: PlayerAction,
   ): PlayerAction<A> {
@@ -174,10 +155,25 @@ export abstract class GamePhase<A = any> {
     action: PlayerAction<A>,
   ): void;
 
+  /**
+   * Override this method to process player actions
+   * @param player - The player performing the action
+   * @param action - The action to process
+   */
   protected async processPlayerAction?(
     player: Player,
     action: PlayerAction<A>,
   ): Promise<void>;
+
+  /**
+   * Override this method to add custom player action validation
+   * @param player - The player performing the action
+   * @param action - The action to validate
+   */
+  protected validatePlayerAction?(
+    player: Player,
+    action: PlayerAction<A>,
+  ): void;
 
   private delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
