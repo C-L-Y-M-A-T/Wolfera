@@ -1,6 +1,12 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -60,6 +66,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'User successfully logged out' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -69,6 +76,7 @@ export class AuthController {
   }
 
   @Get('profile')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user profile' })
   @ApiResponse({
     status: 200,
@@ -76,7 +84,6 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getProfile(@CurrentUser() user): any {
-    console.log('Current user:', user);
     return user;
   }
 }
