@@ -1,10 +1,10 @@
 import { WsException } from '@nestjs/websockets';
 import { GameRole } from 'src/roles';
 import { z } from 'zod';
-import { GameContext } from '../../GameContext';
-import { GamePhase } from '../../GamePhase';
-import { Player } from '../../Player';
-import { PlayerAction } from '../../types';
+import { GameContext } from '../../../GameContext';
+import { GamePhase } from '../../../GamePhase';
+import { Player } from '../../../Player';
+import { PlayerAction } from '../../../types';
 
 export abstract class RolePhase<A = any> extends GamePhase<A> {
   constructor(

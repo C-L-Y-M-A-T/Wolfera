@@ -1,7 +1,7 @@
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
-import { NightPhase } from '../night.phase';
+import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
 import { PhaseConstructor, PlayerAction } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
@@ -13,7 +13,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     super(context, waitingForGameStartPlayerActionSchema);
   }
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
-    return NightPhase;
+    return RoleAssignmentPhase;
   }
 
   readonly phaseName = 'WaitingForGameStart-phase';

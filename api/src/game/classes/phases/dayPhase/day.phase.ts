@@ -3,7 +3,7 @@ import { PhaseOrchestrator } from '../../PhaseOrchestrator';
 import { Player } from '../../Player';
 import { SequentialPhaseOrchestrator } from '../../SequentialPhaseOrchestrator';
 import { PhaseConstructor, PlayerAction } from '../../types';
-import { NightPhase } from '../night.phase';
+import { NightPhase } from '../nightPhase/night.phase';
 import { DayResultsPhase } from './dayResultsPhase/dayResults.phase';
 import { NightResultsPhase } from './nightResultsPhase/nightResults.phase';
 import { VotingPhase } from './votingPhase/voting.phase';

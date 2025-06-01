@@ -1,10 +1,10 @@
 import { GameRole } from 'src/roles';
-import { ChainableGamePhase } from '../chainablePhase';
-import { PhaseOrchestrator } from '../PhaseOrchestrator';
-import { Player } from '../Player';
-import { SequentialPhaseOrchestrator } from '../SequentialPhaseOrchestrator';
-import { PhaseConstructor, PlayerAction } from '../types';
-import { DayPhase } from './dayPhase/day.phase';
+import { ChainableGamePhase } from '../../chainablePhase';
+import { PhaseOrchestrator } from '../../PhaseOrchestrator';
+import { Player } from '../../Player';
+import { SequentialPhaseOrchestrator } from '../../SequentialPhaseOrchestrator';
+import { PhaseConstructor, PlayerAction } from '../../types';
+import { DayPhase } from '../dayPhase/day.phase';
 
 export class NightPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
