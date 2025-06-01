@@ -34,7 +34,7 @@ export class NightPhaseEventHandler implements GameEventHandler {
     this.game = game;
   }
 
-  @OnGameEvent('phase:night:start')
+  @OnGameEvent('game:phase:night:start')
   handleNightStart(): void {
     console.log(`Night phase started for game ${this.gameId}`);
 
