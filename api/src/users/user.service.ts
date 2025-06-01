@@ -19,9 +19,12 @@ export class UsersService extends BaseService<
     super(userRepository);
   }
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.findOne({
-      email: createUserDto.email,
-    });
+    const existingUser = await this.findOne(
+      {
+        email: createUserDto.email,
+      },
+      { withException: false },
+    );
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -31,16 +34,12 @@ export class UsersService extends BaseService<
   }
 
   async findById(id: string) {
-    const user = await this.findOne({ id });
-    if (!user) {
-      return null;
-    }
-
+    const user = await this.findOne({ id }, { withException: false });
     return user; // or omit sensitive fields if needed
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    const user = await this.findOne({ username });
+    const user = await this.findOne({ username }, { withException: false });
     if (!user) {
       return null;
     }
@@ -48,7 +47,7 @@ export class UsersService extends BaseService<
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = await this.findOne({ email });
+    const user = await this.findOne({ email }, { withException: false });
     if (!user) {
       return null;
     }

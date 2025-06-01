@@ -93,8 +93,7 @@ export abstract class BaseService<
     const entity = await this.repository.findOne(findOptions);
 
     if ((!entity || entity === null) && withException) {
-      // throw new NotFoundException(`${this.repository.metadata.name} not found`);
-      return null;
+      throw new NotFoundException(`${this.repository.metadata.name} not found`);
     }
     return entity;
   }
