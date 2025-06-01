@@ -4,7 +4,7 @@ import "@/i18n/i18n";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../styles/globals.css";
-import { ThemeProvider } from "./theme-provider";
+import { ThemeProvider } from "../providers/theme-provider";
 
 export default function ClientLayout({
   children,
@@ -25,7 +25,7 @@ export default function ClientLayout({
 
   return mounted ? (
     <body className="font-sans bg-background text-foreground min-h-screen">
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <ThemeProvider>
         <div className="flex flex-col min-h-screen">{children}</div>
       </ThemeProvider>
     </body>
