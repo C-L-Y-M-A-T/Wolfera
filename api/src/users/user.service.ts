@@ -100,4 +100,12 @@ export class UsersService extends BaseService<
       badges: user.badges,
     } as UpdateUserDto);
   }
+  async findById(id: string) {
+    const user = await this.userRepo.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user; // or omit sensitive fields if needed
+  }
 }
