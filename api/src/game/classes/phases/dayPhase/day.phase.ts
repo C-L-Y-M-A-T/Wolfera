@@ -21,7 +21,7 @@ export class DayPhase extends ChainableGamePhase {
   }
 
   async onStart(): Promise<void> {
-    this.context.emmit('game:day:start', undefined);
+    // this.context.emmit('game:day:start', undefined);
     this.output = await this.orchestrator.execute();
     this.end();
   }

@@ -17,16 +17,17 @@ export class WitchNightPhase extends RolePhase<WitchActionPayload> {
   }
 
   async onStart() {
-    this.context.emmit('witch:night:start', {
-      message: 'Choose a victim...',
-    });
+    // this.context.emmit('witch:night:start', {
+    // 'Choose a victim...',
+    // }
+    // );
     console.log('witch night phase started');
   }
   async onEnd() {
-    this.context.emmit('witch:night:end', {
-      message: 'Night phase is over.',
-    });
-    console.log('witch night phase ended');
+    // this.context.emmit('witch:night:end', {
+    //   message: 'Night phase is over.',
+    // });
+    // console.log('witch night phase ended');
   }
 
   async processPlayerAction(
