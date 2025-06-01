@@ -10,15 +10,7 @@ import { GameEventsModule } from './game-events.module';
 
 @Module({
   imports: [DiscoveryModule, GameEventsModule],
-  providers: [
-    GameService,
-    RoleService,
-    GameHandlerRegistry,
-    // {
-    //   provide: 'NightPhaseEventHandler_CLASS',
-    //   useValue: NightPhaseEventHandler,
-    // },
-  ],
+  providers: [GameService, RoleService, GameHandlerRegistry],
   controllers: [GameController],
   exports: [GameService],
 })
