@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
