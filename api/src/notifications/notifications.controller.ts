@@ -10,6 +10,7 @@ import {
   Sse,
 } from '@nestjs/common';
 import { finalize, map, Observable } from 'rxjs';
+import { CurrentUser } from 'src/utils/decorators/current-user';
 import { Paginated } from 'src/utils/decorators/paginated.decorator';
 import { NotificationExistsPipe } from './customPipes/notification-exists.pipe';
 import { UserExistsPipe } from './customPipes/user-exists.pipe';
@@ -56,31 +57,37 @@ export class NotificationController {
     this.notificationService.cleanupAllStreams();
   }
 
-  //add injection of CurrentUserId + AuthGuard
   @Patch(':notificationId/read')
-  markAsRead(@Param('notificationId', NotificationExistsPipe) id: string) {
-    return this.notificationService.markAsRead(id);
+  markAsRead(
+    @Param('notificationId', NotificationExistsPipe) id: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.notificationService.markAsRead(id, userId);
   }
 
-  //add injection of CurrentUserId + AuthGuard
   @Patch(':notificationId/unread')
-  markAsUnread(@Param('notificationId', NotificationExistsPipe) id: string) {
-    return this.notificationService.markAsUnread(id);
+  markAsUnread(
+    @Param('notificationId', NotificationExistsPipe) id: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.notificationService.markAsUnread(id, userId);
   }
 
-  //add injection of CurrentUserId + AuthGuard
   @Delete(':notificationId')
   deleteNotification(
     @Param('notificationId', NotificationExistsPipe) id: string,
+    @CurrentUser() userId: string,
   ) {
-    return this.notificationService.deleteOne({ id });
+    return this.notificationService.deleteOne(
+      { id, recipientId: userId },
+      userId,
+    );
   }
 
-  //add injection of CurrentUserId + AuthGuard
-  @Get(':userId')
+  @Get()
   @Paginated()
   getNotifications(
-    @Param('userId', UserExistsPipe) userId: string,
+    @CurrentUser() userId: string,
     @Query() query: GetNotificationsQueryDto,
   ) {
     const { filter, ...paginationParams } = query;

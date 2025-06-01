@@ -85,11 +85,11 @@ export class NotificationService extends BaseService<
     this.cleanupAllStreams();
   }
 
-  markAsRead(notificationId: string, userId?: string) {
+  markAsRead(notificationId: string, userId: string) {
     return this.updateOne({ id: notificationId }, { read: true }, { userId });
   }
 
-  markAsUnread(notificationId: string, userId?: string) {
+  markAsUnread(notificationId: string, userId: string) {
     return this.updateOne({ id: notificationId }, { read: false }, { userId });
   }
 
