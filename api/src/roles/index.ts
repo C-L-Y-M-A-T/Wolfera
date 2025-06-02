@@ -2,6 +2,10 @@ import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { PhaseConstructor } from 'src/game/classes/types';
 import { z } from 'zod';
+import seerRole from './seer';
+import villagerRole from './villager';
+import werewolfRole from './werewolf';
+import witchRole from './witch';
 //TODO: explain why I used zod instead of class-validator
 
 declare global {
@@ -10,6 +14,12 @@ declare global {
   }
 }
 export type RoleName = keyof RoleNameMap;
+export const roleDetails = [
+  werewolfRole,
+  seerRole,
+  villagerRole,
+  witchRole,
+] as GameRole[];
 
 //TODO: add lovers
 export type Team = 'villagers' | 'werewolves';
@@ -24,12 +34,13 @@ export type RoleNightPhase = {
   isActiveTonight: (context: GameContext) => boolean;
   nightPriority: number;
 };
-
 export type RoleData = {
   name: RoleName;
   team: Team;
   description: string;
   maxPlayers?: number; // Maximum number of players with this role, not define or 0 means unlimited
+  minPlayers?: number; // Minimum number of players with this role, not define or 0 means unlimited
+  //coefficient: number; // Coefficient for the role, used for balancing
 };
 
 export const RoleDataSchema = z
@@ -38,6 +49,7 @@ export const RoleDataSchema = z
     team: z.enum(['villagers', 'werewolves']),
     description: z.string(),
     maxPlayers: z.number().optional(),
+    minPlayers: z.number().optional(),
   })
   .strict();
 

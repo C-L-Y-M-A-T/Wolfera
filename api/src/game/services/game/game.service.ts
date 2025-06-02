@@ -7,6 +7,7 @@ import { GameOptions } from 'src/game/classes/types';
 import { GameHandlerRegistry } from 'src/game/events/event-handler-registry.service';
 import { User } from 'src/temp/temp.user';
 import { GameContext } from '../../classes/GameContext';
+import { GameOptionsValidatorService } from './game-options-validator.service';
 
 @Injectable()
 export class GameService {
@@ -15,6 +16,7 @@ export class GameService {
   constructor(
     private moduleRef: ModuleRef,
     private handlerRegistry: GameHandlerRegistry,
+    private gameContextValidator: GameOptionsValidatorService,
   ) {}
 
   getGame(gameId: string): GameContext | undefined {
@@ -52,6 +54,8 @@ export class GameService {
     gameOwner: User,
     options: GameOptions,
   ): Promise<GameContext> {
+    // Validate game options
+    this.gameContextValidator.validateGameOptions(options);
     const gameContext = await this.moduleRef.create(GameContext);
     // Initialize the game
     gameContext.setOptions(options);

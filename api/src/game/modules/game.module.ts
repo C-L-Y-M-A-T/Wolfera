@@ -7,10 +7,16 @@ import { GameService } from '../services/game/game.service';
 import { RoleService } from '../services/role/role.service';
 import { GameEventsModule } from './game-events.module';
 import { GameHandlerRegistry } from '../events/event-handler-registry.service';
+import { GameOptionsValidatorService } from '../services/game/game-options-validator.service';
 
 @Module({
   imports: [DiscoveryModule, GameEventsModule],
-  providers: [GameService, RoleService, GameHandlerRegistry],
+  providers: [
+    GameService,
+    RoleService,
+    GameHandlerRegistry,
+    GameOptionsValidatorService,
+  ],
   controllers: [GameController],
   exports: [GameService],
 })

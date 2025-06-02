@@ -5,6 +5,7 @@ export const tempGameOptions: GameOptions = {
     Werewolf: 1,
     Seer: 1,
     Villager: 3,
+    Witch: 0,
   },
   totalPlayers: 5,
 };

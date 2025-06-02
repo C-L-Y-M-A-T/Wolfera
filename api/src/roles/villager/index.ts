@@ -9,6 +9,7 @@ const villagerRole = {
     name: VILLAGER_ROLE_NAME,
     team: 'villagers',
     description: 'You are a villager. You have no special abilities.',
+    minPlayers: 1,
   },
 };
 export default villagerRole;
