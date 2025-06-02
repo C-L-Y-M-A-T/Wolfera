@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const fetchUser = async () => {
-      const { data, error } = await api.auth.profile(); // Automatically uses Authorization header
+      const { data, error } = await api.auth.profile(token); // Automatically uses Authorization header
       if (data) {
         setUser(data as AppUser);
       } else {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (token: string) => {
     localStorage.setItem("access_token", token);
-    const { data, error } = await api.auth.profile();
+    const { data, error } = await api.auth.profile(token);
     if (data) {
       setUser(data as AppUser);
     } else {

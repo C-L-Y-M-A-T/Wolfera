@@ -23,8 +23,15 @@ const api = {
     logout: async () => {
       return request(apiClient.post("/auth/logout"));
     },
-    profile: async () => {
-      return request(apiClient.get("/auth/profile"));
+
+    profile: async (access_token: string) => {
+      return request(
+        apiClient.get("/auth/profile", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }),
+      );
     },
   },
 };
