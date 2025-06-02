@@ -29,10 +29,9 @@ export abstract class BaseUserDto {
   @IsString()
   username: string;
 
-  @Expose()
   @Field(() => GraphQLJSONObject, { nullable: true })
   @Column('json', { nullable: true })
-  avatarOptions: Record<string, number>;
+  avatarOptions?: Record<string, number>;
 
   @Expose()
   @Field(() => [Badge])

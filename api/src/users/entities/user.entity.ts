@@ -1,4 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
@@ -30,7 +31,7 @@ export class User extends BaseEntity {
   @Field()
   @Column()
   hashedPassword: string;
-
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   @Column('json', { nullable: true })
   avatarOptions?: Record<string, number>;
