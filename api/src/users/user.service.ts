@@ -54,10 +54,6 @@ export class UsersService extends BaseService<
     return user;
   }
 
-  findAll(): Promise<User[]> {
-    return this.findAll();
-  }
-
   async awardBadges(user: User): Promise<User> {
     if (user.gamesWon >= 1 && !user.badges.includes(Badge.FIRST_WIN)) {
       user.badges.push(Badge.FIRST_WIN);
