@@ -1,3 +1,4 @@
+import { EventSourcePolyfill } from "event-source-polyfill";
 import { useEffect } from "react";
 import { useToast } from "./use-toast";
 
@@ -8,8 +9,14 @@ export function useNotificationStream(userId: string) {
   useEffect(() => {
     if (!userId) return;
 
+    const token = localStorage.getItem("access_token") || "";
+
     const streamUrl = `${baseURL}/notifications/${userId}/stream`;
-    const eventSource = new EventSource(streamUrl);
+    const eventSource = new EventSourcePolyfill(streamUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     eventSource.addEventListener("notification", (event) => {
       try {
@@ -26,13 +33,15 @@ export function useNotificationStream(userId: string) {
 
     eventSource.onerror = (err) => {
       console.error("SSE connection error:", err);
-      // Optionally: eventSource.close(); and retry logic here
     };
 
     return () => {
       eventSource.close();
       fetch(`${baseURL}/notifications/${userId}/disconnect`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }).catch(() => {
         console.warn("Failed to notify server of SSE disconnect.");
       });
