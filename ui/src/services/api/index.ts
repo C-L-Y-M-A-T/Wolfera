@@ -24,14 +24,8 @@ const api = {
       return request(apiClient.post("/auth/logout"));
     },
 
-    profile: async (access_token: string) => {
-      return request(
-        apiClient.get("/auth/profile", {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }),
-      );
+    profile: async () => {
+      return request(apiClient.get("/auth/profile"));
     },
   },
 };

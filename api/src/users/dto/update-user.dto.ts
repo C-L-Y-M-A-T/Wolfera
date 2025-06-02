@@ -1,6 +1,5 @@
-// update-user.dto.ts
-import { IsObject, IsOptional, IsString } from 'class-validator';
-import { AvatarConfigType } from '../types/AvatarOptions';
+import { IsOptional, IsString } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -15,7 +14,7 @@ export class UpdateUserDto {
   @IsString()
   email?: string;
 
+  @Column('json', { nullable: true })
   @IsOptional()
-  @IsObject()
-  avatarOptions?: Record<keyof AvatarConfigType, number>;
+  avatarOptions?: Record<string, number>;
 }
