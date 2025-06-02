@@ -21,7 +21,7 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   }
 
   get phaseDuration(): number {
-    return 120000;
+    return 10 * 1000;
   }
 
   async onStart(): Promise<void> {
@@ -58,7 +58,10 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
     );
 
     // Broadcast vote update to werewolves
-    this.emitToWerewolves(events.GAME.WEREWOLF.VOTE, voteUpdate);
+    this.emitToWerewolves(
+      events.GAME.WEREWOLF.VOTE,
+      Array.from(voteUpdate.votes.values()),
+    );
   }
 
   /**

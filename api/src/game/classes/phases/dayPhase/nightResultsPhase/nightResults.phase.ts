@@ -100,33 +100,31 @@ export class NightResultsPhase extends GamePhase {
 
   private processWerewolvesActions(): void {
     // TODO: process night actions
-    const werewolvesResults = this.input.initialData[
+    const werewolvesResults = this.input.initialData[phaseNames.NIGHT][
       phaseNames.ROLES(WEREWOLF_ROLE_NAME)
     ] as WerewolfNightEndPayload | undefined;
 
-    if (werewolvesResults) {
-      if (werewolvesResults.result.action === 'kill') {
-        const target = werewolvesResults.result.target;
-        if (target) {
-          const witchResults = this.input.initialData[phaseNames.NIGHT][
-            phaseNames.ROLES(WITCH_ROLE_NAME)
-          ] as WitchNightEndPayload | undefined;
-          if (witchResults) {
-            if (witchResults.result.action === 'save') {
-              this.nightResultsOutput.protectedPlayers.add(target);
-              this.nightResultsOutput.eliminatedPlayers.delete(target);
-            } else {
-              this.nightResultsOutput.eliminatedPlayers.add(target);
-              this.nightResultsOutput.wasAnyoneEliminated = true;
-            }
-          }
-        }
-      }
+    if (!werewolvesResults) return;
+
+    if (werewolvesResults.result.action !== 'kill') return;
+
+    const target = werewolvesResults.result.target;
+    if (!target) return;
+
+    const witchResults = this.input.initialData[phaseNames.NIGHT][
+      phaseNames.ROLES(WITCH_ROLE_NAME)
+    ] as WitchNightEndPayload | undefined;
+    if (witchResults && witchResults.result.action === 'save') {
+      this.nightResultsOutput.protectedPlayers.add(target);
+      this.nightResultsOutput.eliminatedPlayers.delete(target);
+    } else {
+      this.nightResultsOutput.eliminatedPlayers.add(target);
+      this.nightResultsOutput.wasAnyoneEliminated = true;
     }
   }
 
   processWitchActions(): void {
-    const witchResults = this.input.initialData[
+    const witchResults = this.input.initialData[phaseNames.NIGHT][
       phaseNames.ROLES(WITCH_ROLE_NAME)
     ] as WitchNightEndPayload | undefined;
     if (witchResults) {

@@ -29,7 +29,10 @@ export class GameContext {
   public gameId: string;
   private _owner: Player;
   public gameEventEmitter: GameEventEmitter;
-  public gameResults: GameResult;
+  public gameResults: GameResult = {
+    winner: null,
+    message: '',
+  };
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
@@ -151,37 +154,39 @@ export class GameContext {
   }
 
   checkGameEndConditions(): void {
+    let results: GameResult | undefined = undefined;
     // TODO: check game end conditions
     const alivePlayers = this.getAlivePlayers();
     if (alivePlayers.length === 0) {
-      this.gameResults.winner = 'werewolves';
-      this.gameResults.message =
-        'The werewolves have won! The village is overrun!';
+      results = {
+        winner: 'werewolves',
+        message: 'The werewolves have won! The village is overrun!',
+      };
     } else {
       const werewolves = alivePlayers.filter(
         (player) => player.role?.roleData.name === WEREWOLF_ROLE_NAME,
       );
       if (werewolves.length === 0) {
-        this.gameResults.winner = 'villagers';
-        this.gameResults.message =
-          'The villagers have won! The werewolves are extinct!';
+        results = {
+          winner: 'villagers',
+          message: 'The villagers have won! The werewolves are extinct!',
+        };
       } else if (werewolves.length === alivePlayers.length) {
-        this.gameResults.winner = 'werewolves';
-        this.gameResults.message =
-          'The werewolves have won! The village is overrun!';
+        results = {
+          winner: 'werewolves',
+          message: 'The werewolves have won! The village is overrun!',
+        };
       }
     }
 
-    if (this.gameResults.winner) {
+    if (results) {
+      this.gameResults = results;
       this.stop();
     }
   }
 
   stop(): void {
-    this.broadcastToPlayers(serverSocketEvent.gameEnded, {
-      winner: this.gameResults.winner,
-      message: this.gameResults.message,
-    });
+    this.broadcastToPlayers(serverSocketEvent.gameEnded, this.gameResults);
     this.players.forEach((player) => {
       player.disconnect();
     });

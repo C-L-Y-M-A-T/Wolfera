@@ -15,7 +15,7 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
   readonly phaseName = 'RoleAssignment-phase';
 
   get phaseDuration(): number {
-    return 10;
+    return 10 * 1000;
   }
 
   async onStart(): Promise<void> {

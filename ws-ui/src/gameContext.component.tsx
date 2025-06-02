@@ -320,9 +320,7 @@ export function ActivePhaseComponent(activePhase: Phase) {
   console.log("112 Active Phase Component Rendered:", activePhase);
   if (!activePhase.phaseDuration || !activePhase.startTime) return null;
 
-  const endDate = new Date(
-    activePhase.startTime + activePhase.phaseDuration * 1000,
-  );
+  const endDate = new Date(activePhase.startTime + activePhase.phaseDuration);
   console.log("111 Active Phase End Date:", endDate);
   return (
     <div className="active-phase-container">

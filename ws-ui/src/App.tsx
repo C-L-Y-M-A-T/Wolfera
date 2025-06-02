@@ -20,6 +20,7 @@ import {
   User,
   WsException,
 } from "./types";
+import WerewolfPhase, { WerewolfVote } from "./werewolf.component";
 
 const containerStyle: React.CSSProperties = {
   padding: "1.5rem",
@@ -79,9 +80,7 @@ const hrStyle: React.CSSProperties = {
 };
 export const tempGameOptions: GameOptions = {
   roles: {
-    Werewolf: 2,
-    Seer: 0,
-    Villager: 1,
+    Werewolf: 1,
   },
   totalPlayers: 3,
 };
@@ -99,6 +98,7 @@ export default function WerewolfGame(): JSX.Element {
   const [creatorGameId, setCreatorGameId] = useState<string>("");
   const [joinedMessages, setJoinedMessages] = useState<string[]>([]);
   const [activePhase, setActivePhase] = useState<Phase | null>(null);
+  const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
 
   const handleCreateGame = async (): Promise<void> => {
     try {
@@ -106,6 +106,19 @@ export default function WerewolfGame(): JSX.Element {
         `${BACKEND_URL}/game/create`,
         {
           userId: "123",
+          username: "123",
+          gameOptions: {
+            ...gameOptions,
+            roles: {
+              ...gameOptions.roles,
+              Villager:
+                gameOptions.totalPlayers -
+                Object.values(gameOptions.roles).reduce(
+                  (sum, val) => sum + val,
+                  0,
+                ),
+            },
+          },
         },
       );
       setUser({ id: "123", username: "123" });
@@ -173,6 +186,39 @@ export default function WerewolfGame(): JSX.Element {
       setPlayerRole(playerId, role);
     });
 
+    sock.on("game:werewolf:vote", (votes: WerewolfVote[]) => {
+      setwerewolfesVotes(votes);
+      console.log("225 votes: ", votes);
+    });
+
+    sock.on("game-ended", (data: any) => {
+      console.log("Game ended:", data);
+      showToast(data.message, "info");
+      setGameData(null);
+      setActivePhase(null);
+      setRole("");
+      setwerewolfesVotes([]);
+    });
+
+    sock.on("round-results", (result: any) => {
+      console.log(
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \n777 Round results:",
+        result,
+      );
+      showToast(
+        result.message +
+          `\n eliminated player ${result.eliminatedPlayers
+            .map(
+              (p: { id: string; username: string }) => `${p.username} (${p.id}
+        )`,
+            )
+            .join(", ")}\nRound: ${result.round + 1}`,
+        "info",
+      );
+
+      //{ round, eliminatedPlayers, message, ..rest }
+    });
+
     setSocket(sock);
   };
 
@@ -210,6 +256,55 @@ export default function WerewolfGame(): JSX.Element {
           <button style={buttonStyle} onClick={handleCreateGame}>
             Create Game (as user 123)
           </button>
+          <div style={{ marginTop: "1rem" }}>
+            <label style={labelStyle}>
+              Number of Werewolves:
+              <input
+                type="number"
+                min={1}
+                max={gameOptions.totalPlayers - 1}
+                style={inputStyle}
+                value={gameOptions.roles.Werewolf}
+                onChange={(e) => {
+                  const werewolfCount = Math.max(
+                    1,
+                    Math.min(
+                      Number(e.target.value),
+                      gameOptions.totalPlayers - 1,
+                    ),
+                  );
+                  setGameOptions((prev) => ({
+                    ...prev,
+                    roles: { ...prev.roles, Werewolf: werewolfCount },
+                  }));
+                }}
+              />
+            </label>
+            <label style={labelStyle}>
+              Number of Players:
+              <input
+                type="number"
+                min={2}
+                max={20}
+                style={inputStyle}
+                value={gameOptions.totalPlayers}
+                onChange={(e) => {
+                  const total = Math.max(
+                    3,
+                    Math.min(Number(e.target.value), 20),
+                  );
+                  setGameOptions((prev) => ({
+                    ...prev,
+                    totalPlayers: total,
+                    roles: {
+                      ...prev.roles,
+                      Werewolf: Math.min(prev.roles.Werewolf, total - 1),
+                    },
+                  }));
+                }}
+              />
+            </label>
+          </div>
           {creatorGameId && (
             <p style={{ marginTop: "0.7rem" }}>
               Created Game ID:{" "}
@@ -341,55 +436,15 @@ export default function WerewolfGame(): JSX.Element {
           </div>
         )}
         {gameData && activePhase?.phaseName === "Werewolf-phase" && (
-          <div style={sectionStyle}>
-            <h3>🐺 Werewolf Phase</h3>
-            {(() => {
-              const currentPlayer = gameData.players.find(
-                (p) => p.id === user.id,
-              );
-              if (currentPlayer?.role === "Werewolf") {
-                // Alive, non-werewolf players
-                const targets = gameData.players.filter(
-                  (p) => p.isAlive && p.role !== "Werewolf",
-                );
-                return (
-                  <>
-                    <p>Select a player to eliminate:</p>
-                    <ul>
-                      {targets.map((p) => (
-                        <li key={p.id} style={{ marginBottom: "0.5rem" }}>
-                          <button
-                            style={buttonStyle}
-                            onClick={() => {
-                              if (socket) {
-                                const payload: PlayerActionPayload = {
-                                  activePhase: "Werewolf-phase",
-                                  timestamp: Date.now(),
-                                  phasePayload: {
-                                    action: "werewolf-vote",
-                                    targetId: p.id,
-                                  },
-                                };
-                                socket.emit("player-action", payload);
-                                showToast(
-                                  `Voted to eliminate ${p.username}`,
-                                  "info",
-                                );
-                              }
-                            }}
-                          >
-                            {p.username || p.id}{" "}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                );
-              } else {
-                return <p>Waiting for werewolves to act...</p>;
-              }
-            })()}
-          </div>
+          <WerewolfPhase
+            gameData={gameData}
+            user={user}
+            socket={socket}
+            votes={werewolfesVotes}
+            setVotes={setwerewolfesVotes}
+            sectionStyle={sectionStyle}
+            buttonStyle={buttonStyle}
+          ></WerewolfPhase>
         )}
       </div>
     </>

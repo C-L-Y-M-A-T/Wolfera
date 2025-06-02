@@ -10,7 +10,7 @@ export class DayResultsPhase extends GamePhase {
     return 'DayResults-phase';
   }
   get phaseDuration(): number {
-    return 0; // No specific duration, ends when all actions are processed
+    return 4; // No specific duration, ends when all actions are processed
   }
   protected async onStart(): Promise<void> {
     console.log('DayResultsPhase started');

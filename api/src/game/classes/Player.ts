@@ -24,7 +24,8 @@ export class Player {
   }
   connect(socket: Socket): void {
     if (this.socket) {
-      throw new Error('Player is already connected to the game');
+      //throw new Error('Player is already connected to the game');
+      this.socket.disconnect();
     }
     this.socket = socket;
     this.socket.data.player = this;

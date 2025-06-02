@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, Post } from '@nestjs/common';
+import { Body, Controller, Get, Injectable, Post } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { tempGameOptions } from 'src/dummyData/gameParams';
 import { User } from 'src/users/entities/user.entity';
@@ -12,12 +12,15 @@ export class GameController {
 
   @Public()
   @Post('create')
-  async createGame() {
+  async createGame(@Body() body: any) {
     //TODO: read user and game options from request, and validate them
     // user is the active user from auth
     // game option are from the request body
-    const tempUser: User = { id: '123', username: 'Temp User' } as User; // This should be replaced with actual user retrieval logic
-    const gameOptions = tempGameOptions;
+    const tempUser: User = {
+      id: body.userId,
+      username: body.username || 'Temp User',
+    } as User; // This should be replaced with actual user retrieval logic
+    const gameOptions = body.gameOptions || tempGameOptions; // This should be replaced with actual game options retrieval logic and validation
     const game = await this.gameService.createGame(tempUser, gameOptions);
     game.gameEventEmitter.emit(events.GAME.CREATE, {
       gameId: game.gameId,

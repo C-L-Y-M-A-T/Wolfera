@@ -31,7 +31,7 @@ export type PlayerAction<ActionPayload = any> = {
 };
 
 export type GameResult = {
-  winner: 'werewolves' | 'villagers';
+  winner: 'werewolves' | 'villagers' | null;
   message: string;
 };
 
