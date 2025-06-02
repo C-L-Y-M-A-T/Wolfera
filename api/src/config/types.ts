@@ -7,10 +7,9 @@ type DatabaseConfig = {
   uri?: string;
 };
 
-type SupabaseConfig = {
-  url: string;
-  serviceRoleKey: string;
-  jwtSecret: string;
+type JwtConfig = {
+  secret: string;
+  expirationTime: string;
 };
 
 export type Config = {
@@ -26,7 +25,7 @@ export type Config = {
 
   postgres: DatabaseConfig;
 
-  supabase: SupabaseConfig;
+  jwt: JwtConfig;
 
   env: string;
 };
