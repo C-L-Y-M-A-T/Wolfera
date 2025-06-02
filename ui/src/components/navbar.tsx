@@ -8,31 +8,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/auth-context";
 import { Bell, HelpCircle, Home, Skull, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-// Mock authentication state - in a real app, this would come from your auth provider
-const useAuth = () => {
-  // For demo purposes, let's assume the user is not logged in initially
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  return {
-    isLoggedIn,
-    login: () => setIsLoggedIn(true),
-    logout: () => setIsLoggedIn(false),
-    user: isLoggedIn
-      ? { name: "WolfHunter", avatar: "/placeholder.svg?height=32&width=32" }
-      : null,
-  };
-};
 
 export function Navbar() {
   const { t } = useTranslation();
-  const { isLoggedIn, user, logout } = useAuth();
+  const { user, checkingSession, logout } = useAuth();
+  const isLoggedIn = !!user;
+
+  if (checkingSession) return null;
 
   return (
     <nav className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 py-4 sticky top-0 z-50">
@@ -70,9 +58,15 @@ export function Navbar() {
           <LanguageSwitcher />
 
           {isLoggedIn && user ? (
-            <UserMenu user={user} onLogout={logout} />
+            <UserMenu
+              user={{
+                name: user.username,
+                avatar: user.avatar_url || "/placeholder.svg",
+              }}
+              onLogout={logout}
+            />
           ) : (
-            <Link href="/connect">
+            <Link href="/auth">
               <Button
                 variant="outline"
                 className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
