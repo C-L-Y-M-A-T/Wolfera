@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
@@ -14,6 +14,7 @@ import {
   GameOptions,
   JoinedEvent,
   Phase,
+  Player,
   PlayerActionPayload,
   RoleAssignedEvent,
   RoleRevealvent,
@@ -100,6 +101,13 @@ export default function WerewolfGame(): JSX.Element {
   const [activePhase, setActivePhase] = useState<Phase | null>(null);
   const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
 
+  const gameDataRef = useRef<GameData | null>(null);
+
+  useEffect(() => {
+    gameDataRef.current = gameData;
+  }, [gameData]);
+
+  const getGameData = () => gameData;
   const handleCreateGame = async (): Promise<void> => {
     try {
       const res = await axios.post<CreateGameResponse>(
@@ -163,6 +171,7 @@ export default function WerewolfGame(): JSX.Element {
         ...prev,
         `${player} joined the game`,
       ]);
+      showToast(`${player} joined the game`, "success");
     });
 
     sock.on("game-started", (data: GameData) => {
@@ -201,22 +210,31 @@ export default function WerewolfGame(): JSX.Element {
     });
 
     sock.on("round-results", (result: any) => {
-      console.log(
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \n777 Round results:",
-        result,
-      );
-      showToast(
-        result.message +
-          `\n eliminated player ${result.eliminatedPlayers
-            .map(
-              (p: { id: string; username: string }) => `${p.username} (${p.id}
-        )`,
-            )
-            .join(", ")}\nRound: ${result.round + 1}`,
-        "info",
-      );
+      debugger;
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
 
-      //{ round, eliminatedPlayers, message, ..rest }
+        const eliminatedPlayers = result.eliminatedPlayers.map(
+          (eliminatedId: string) =>
+            prevGameData.players?.find((p) => p.id === eliminatedId),
+        );
+
+        // Create a new copy of the game data with updated players
+        const updatedPlayers = prevGameData.players.map((player) => {
+          if (result.eliminatedPlayers.includes(player.id)) {
+            return { ...player, isAlive: false };
+          }
+          return player;
+        });
+
+        showToast(
+          result.message +
+            `\n eliminated player ${eliminatedPlayers.map((p: Player) => p.username).join(", ")}`,
+          "info",
+        );
+
+        return { ...prevGameData, players: updatedPlayers };
+      });
     });
 
     setSocket(sock);
