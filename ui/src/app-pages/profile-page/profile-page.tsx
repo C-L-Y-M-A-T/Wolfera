@@ -81,9 +81,9 @@ export default function ProfilePage() {
       setAvatarBuilderOpen(false);
     } catch (err) {
       console.error("Error saving avatar:", err);
-      alert("Failed to save avatar");
+      // alert("Failed to save avatar");
       // Revert the local state on error
-      setAvatarOptions(user.avatarOptions || initialState);
+      // setAvatarOptions(user.avatarOptions || initialState);
     }
   };
 
