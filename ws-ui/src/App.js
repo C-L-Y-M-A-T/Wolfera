@@ -51,7 +51,7 @@ export default function WerewolfGame() {
   const handleStartGame = () => {
     if (socket) {
       const payload = {
-        activePhase: 'lobby',
+        activePhase: "WaitingForGameStart-phase",
         timestamp: Date.now(),
         phasePayload: {
           action: 'start-game'
