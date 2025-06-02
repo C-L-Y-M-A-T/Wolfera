@@ -1,12 +1,21 @@
-import { IsAlphanumeric, IsOptional, IsUrl, Length } from 'class-validator';
+// update-user.dto.ts
+import { IsObject, IsOptional, IsString } from 'class-validator';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsAlphanumeric()
-  @Length(3, 20)
+  @IsString()
   username?: string;
 
   @IsOptional()
-  @IsUrl()
-  avatar_url?: string;
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsObject()
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
 }

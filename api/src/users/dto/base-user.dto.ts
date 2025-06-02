@@ -10,6 +10,7 @@ import {
   Min,
 } from 'class-validator';
 import { Badge } from '../entities/user.entity';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 @ObjectType({ isAbstract: true })
 export abstract class BaseUserDto {
@@ -30,9 +31,9 @@ export abstract class BaseUserDto {
 
   @Expose()
   @Field({ nullable: true })
-  @IsString()
+  @IsAvatarOptions()
   @IsOptional()
-  avatar_url?: string;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 
   @Expose()
   @Field(() => [Badge])
@@ -62,4 +63,10 @@ export abstract class BaseUserDto {
   @IsNumber()
   @Min(0)
   gamesAsVillager: number;
+}
+function IsAvatarOptions(): (
+  target: BaseUserDto,
+  propertyKey: 'avatarOptions',
+) => void {
+  throw new Error('Function not implemented.');
 }
