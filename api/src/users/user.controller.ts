@@ -1,5 +1,3 @@
-// src/users/users.controller.ts
-
 import { Controller } from '@nestjs/common';
 import { UsersService } from './user.service';
 
