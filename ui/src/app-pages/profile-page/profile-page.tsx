@@ -5,6 +5,8 @@ import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/auth-context";
 import userData from "@/data/profile/user-data.mock.json";
+import { useToast } from "@/hooks/use-toast";
+import { useNotificationStream } from "@/hooks/useNotificationStream";
 import { useTheme } from "@/providers/theme-provider";
 import apiClient from "@/services/api/client";
 import {
@@ -27,7 +29,6 @@ import {
 
 export default function ProfilePage() {
   const theme = useTheme();
-  const { user } = useAuth(); // Get the logged-in user
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [avatarBuilderOpen, setAvatarBuilderOpen] = useState(false);
   const [profile, setProfile] = useState({
@@ -35,7 +36,20 @@ export default function ProfilePage() {
     bio: userData.bio,
     email: userData.email,
   });
+
   const [activeTab, setActiveTab] = useState("about");
+  const toast = useToast();
+
+  const { user } = useAuth();
+  // const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   const user = fetchUser();
+  //   setUser(user);
+  // }, []);
+  console.log("User data:", user);
+
+  useNotificationStream(user?.id);
   const [avatarOptions, setAvatarOptions] = useState(initialState);
 
   // Initialize avatar options from logged-in user
@@ -67,9 +81,9 @@ export default function ProfilePage() {
       setAvatarBuilderOpen(false);
     } catch (err) {
       console.error("Error saving avatar:", err);
-      alert("Failed to save avatar");
+      // alert("Failed to save avatar");
       // Revert the local state on error
-      setAvatarOptions(user.avatarOptions || initialState);
+      // setAvatarOptions(user.avatarOptions || initialState);
     }
   };
 

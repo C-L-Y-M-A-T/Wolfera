@@ -36,11 +36,8 @@ export class NotificationController {
     @Param('userId', UserExistsPipe) userId: string,
   ): Observable<MessageEvent> {
     return this.notificationService.getNotificationStream(userId).pipe(
-      map((notification) => {
-        const messageEvent = new MessageEvent('notification', {
-          data: notification,
-        });
-        return messageEvent;
+      map((payload) => {
+        return new MessageEvent(payload.type, { data: payload.data });
       }),
       finalize(() => {
         this.notificationService.cleanupStream(userId);
@@ -63,7 +60,7 @@ export class NotificationController {
     @Param('notificationId', NotificationExistsPipe) id: string,
     @CurrentUser() user: UserDto,
   ) {
-    const userId= user.id;
+    const userId = user.id;
     return this.notificationService.markAsRead(id, userId);
   }
 
@@ -72,7 +69,7 @@ export class NotificationController {
     @Param('notificationId', NotificationExistsPipe) id: string,
     @CurrentUser() user: UserDto,
   ) {
-    const userId= user.id;
+    const userId = user.id;
     return this.notificationService.markAsUnread(id, userId);
   }
 

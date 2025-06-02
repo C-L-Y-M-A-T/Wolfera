@@ -23,6 +23,7 @@ const api = {
     logout: async () => {
       return request(apiClient.post("/auth/logout"));
     },
+
     profile: async () => {
       return request(apiClient.get("/auth/profile"));
     },
