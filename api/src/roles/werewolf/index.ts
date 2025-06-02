@@ -22,9 +22,14 @@ export const werewolfRole: GameRole = {
   },
 };
 
-export const werewolfActionScema = z.object({
+export const werewolfActionSchema = z.object({
   targetId: z.string(),
+  action: z.union([
+    z.literal('skip'),
+    z.literal('change-vote'),
+    z.literal('vote'),
+  ]),
 });
-export type WerewolfActionPayload = z.infer<typeof werewolfActionScema>;
+export type WerewolfActionPayload = z.infer<typeof werewolfActionSchema>;
 
 export default werewolfRole;
