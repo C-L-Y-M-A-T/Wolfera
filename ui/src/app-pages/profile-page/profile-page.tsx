@@ -3,7 +3,10 @@
 import AvatarBuilder from "@/components/avatar-builder/AvatarBuilder";
 import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/auth-context";
 import userData from "@/data/profile/user-data.mock.json";
+import { useToast } from "@/hooks/use-toast";
+import { useNotificationStream } from "@/hooks/useNotificationStream";
 import { useTheme } from "@/providers/theme-provider";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Trophy, User } from "lucide-react";
@@ -28,9 +31,22 @@ export default function ProfilePage() {
     bio: userData.bio,
     email: userData.email,
   });
+
   const [avatarData, setAvatarData] = useState(userData.avatarData);
   const [avatarUrl, setAvatarUrl] = useState(userData.avatar);
   const [activeTab, setActiveTab] = useState("about");
+  const toast = useToast();
+
+  const { user } = useAuth();
+  // const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   const user = fetchUser();
+  //   setUser(user);
+  // }, []);
+  console.log("User data:", user);
+
+  useNotificationStream(user?.id);
 
   const handleProfileChange = (field: string, value: string) => {
     setProfile((prev) => ({

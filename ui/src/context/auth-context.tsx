@@ -17,6 +17,7 @@ type AuthContextType = {
   checkingSession: boolean;
   login: (token: string) => Promise<void>;
   logout: () => void;
+  fetchUser: () => Promise<AppUser | null>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,6 +49,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
+  const fetchUser = async (): Promise<AppUser | null> => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setUser(null);
+      return null;
+    }
+    const { data, error } = await api.auth.profile(token);
+    if (data) {
+      setUser(data as AppUser);
+      return data as AppUser;
+    } else {
+      console.warn("Failed to fetch user with token.");
+      localStorage.removeItem("access_token");
+      setUser(null);
+      return null;
+    }
+  };
+
   const login = async (token: string) => {
     localStorage.setItem("access_token", token);
     const { data, error } = await api.auth.profile();
@@ -67,7 +86,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, checkingSession, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, checkingSession, login, logout, fetchUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
