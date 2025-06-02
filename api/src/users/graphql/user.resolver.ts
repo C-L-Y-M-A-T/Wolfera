@@ -22,11 +22,12 @@ export class UserResolver {
   ) {}
 
   @Query(() => UserDto, { name: 'userProfile' })
-  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   async getGameProfile(@Args('username') username: string): Promise<UserDto> {
     try {
       const user = await this.userService.findByUsername(username);
-      return plainToInstance(UserDto, user);
+      return plainToInstance(UserDto, user, {
+        excludeExtraneousValues: true,
+      });
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new GraphQLError(`User with username ${username} not found`, {
@@ -41,21 +42,25 @@ export class UserResolver {
   }
 
   @Query(() => [UserDto], { name: 'allUsers' })
-  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   async getAllUsers(): Promise<UserDto[]> {
     const users = await this.userService.findAll();
-    return users.map((user) => plainToInstance(UserDto, user));
+    return users.map((user) =>
+      plainToInstance(UserDto, user, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
   @Query(() => UserDto)
-  // @UseGuards(JwtAuthGuard) to be added later (commented for testing purposes)
   me(@Context() context) {
     if (!context.req.user) {
       throw new GraphQLError('Unauthorized', {
         extensions: { code: 'UNAUTHORIZED' },
       });
     }
-    return plainToInstance(UserDto, context.req.user);
+    return plainToInstance(UserDto, context.req.user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @ResolveField('friends', () => [FriendDto], { nullable: true })

@@ -9,6 +9,8 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { Column } from 'typeorm';
 import { Badge } from '../entities/user.entity';
 
 @ObjectType({ isAbstract: true })
@@ -28,11 +30,10 @@ export abstract class BaseUserDto {
   @IsString()
   username: string;
 
-  @Expose()
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column('json', { nullable: true })
   @IsOptional()
-  avatar_url?: string;
+  avatarOptions?: Record<string, number>;
 
   @Expose()
   @Field(() => [Badge])
