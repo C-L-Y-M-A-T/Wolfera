@@ -13,6 +13,8 @@ const seerRole: GameRole = {
     name: SEER_ROLE_NAME,
     team: 'villagers',
     description: 'see role at night.',
+    maxPlayers: 1, // Only one seer can exist in the game
+    //coefficient: 2, // Coefficient for balancing, can be adjusted based on game design
   },
   nightPhase: {
     class: SeerNightPhase,

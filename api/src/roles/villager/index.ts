@@ -9,6 +9,8 @@ const villagerRole = {
     name: VILLAGER_ROLE_NAME,
     team: 'villagers',
     description: 'You are a villager. You have no special abilities.',
+    minPlayers: 1,
+    //coefficient: 1, // Coefficient for balancing, can be adjusted based on game design
   },
 };
 export default villagerRole;

@@ -13,6 +13,8 @@ export const werewolfRole: GameRole = {
     name: WEREWOLF_ROLE_NAME,
     team: 'werewolves',
     description: 'Kill villagers at night.',
+    minPlayers: 1,
+    //coefficient: 3,
   },
   nightPhase: {
     class: WerewolfNightPhase,

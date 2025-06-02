@@ -15,6 +15,9 @@ export enum PhaseState {
 export type GameOptions = {
   roles: Record<RoleName, number>;
   totalPlayers: number;
+  withMairElection?: boolean;
+  voteTimeSeconds?: number;
+  IsPrivate?: boolean;
 };
 
 export type PhaseConstructor<T extends ChainableGamePhase = GamePhase> = new (
