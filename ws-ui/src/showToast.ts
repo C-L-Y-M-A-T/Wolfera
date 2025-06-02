@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-const showToast = (msg) => {
+const showToast = (msg: string) => {
   toast.error(msg, {
     position: "top-right",
     autoClose: 5000,
