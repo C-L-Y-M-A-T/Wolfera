@@ -11,7 +11,7 @@ enum Badge {
 }
 
 type FriendDto {
-  avatar_url: String
+  avatarOptions: Record<keyof AvatarConfigType, number>
   badges: [Badge!]!
   email: String!
   gamesAsVillager: Float!
@@ -29,7 +29,7 @@ type Query {
 }
 
 type User {
-  avatar_url: String
+  avatarOptions: Record<keyof AvatarConfigType, number>
   badges: [Badge!]!
   email: String!
   friends: [User!]
@@ -42,7 +42,7 @@ type User {
 }
 
 type UserDto {
-  avatar_url: String
+  avatarOptions: Record<keyof AvatarConfigType, number>
   badges: [Badge!]!
   email: String!
   friends: [FriendDto!]

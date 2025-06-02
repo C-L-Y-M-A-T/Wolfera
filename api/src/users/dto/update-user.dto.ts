@@ -1,4 +1,6 @@
-import { IsAlphanumeric, IsOptional, IsUrl, Length } from 'class-validator';
+import { IsAlphanumeric, IsOptional, Length } from 'class-validator';
+import { IsAvatarConfig } from '../decorator/is-avatar-options.decorator';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -7,6 +9,8 @@ export class UpdateUserDto {
   username?: string;
 
   @IsOptional()
-  @IsUrl()
-  avatar_url?: string;
+  @IsAvatarConfig({
+    message: 'avatarOptions must have valid keys and number values',
+  })
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
 }

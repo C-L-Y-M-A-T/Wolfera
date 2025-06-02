@@ -61,7 +61,7 @@ export function Navbar() {
             <UserMenu
               user={{
                 name: user.username,
-                avatar: user.avatar_url || "/placeholder.svg",
+                avatar: user.avatarOptions || "/placeholder.svg",
               }}
               onLogout={logout}
             />
