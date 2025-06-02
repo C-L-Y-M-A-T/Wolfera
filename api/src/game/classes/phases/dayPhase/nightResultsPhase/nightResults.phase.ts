@@ -100,7 +100,7 @@ export class NightResultsPhase extends GamePhase {
 
   private processWerewolvesActions(): void {
     // TODO: process night actions
-    const werewolvesResults = this.input[
+    const werewolvesResults = this.input.initialData[
       phaseNames.ROLES(WEREWOLF_ROLE_NAME)
     ] as WerewolfNightEndPayload | undefined;
 
@@ -108,9 +108,9 @@ export class NightResultsPhase extends GamePhase {
       if (werewolvesResults.result.action === 'kill') {
         const target = werewolvesResults.result.target;
         if (target) {
-          const witchResults = this.input[phaseNames.ROLES(WITCH_ROLE_NAME)] as
-            | WitchNightEndPayload
-            | undefined;
+          const witchResults = this.input.initialData[phaseNames.NIGHT][
+            phaseNames.ROLES(WITCH_ROLE_NAME)
+          ] as WitchNightEndPayload | undefined;
           if (witchResults) {
             if (witchResults.result.action === 'save') {
               this.nightResultsOutput.protectedPlayers.add(target);
@@ -126,9 +126,9 @@ export class NightResultsPhase extends GamePhase {
   }
 
   processWitchActions(): void {
-    const witchResults = this.input[phaseNames.ROLES(WITCH_ROLE_NAME)] as
-      | WitchNightEndPayload
-      | undefined;
+    const witchResults = this.input.initialData[
+      phaseNames.ROLES(WITCH_ROLE_NAME)
+    ] as WitchNightEndPayload | undefined;
     if (witchResults) {
       if (witchResults.result.action === 'kill') {
         const target = witchResults.result.target;
