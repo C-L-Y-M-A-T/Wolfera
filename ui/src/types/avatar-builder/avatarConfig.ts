@@ -234,3 +234,6 @@ export const avatarFeatures: AvatarFeature[] = [
     isColor: true,
   },
 ];
+export const initialState = Object.fromEntries(
+  Object.keys(options).map((key) => [key, 0]),
+) as Record<keyof AvatarConfigType, number>;
