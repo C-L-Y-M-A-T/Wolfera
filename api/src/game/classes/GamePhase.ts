@@ -1,10 +1,15 @@
+import { WsException } from '@nestjs/websockets';
+import { z } from 'zod';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
 import { PhaseName, PhaseState, PlayerAction } from './types';
 
-export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
+export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
-  constructor(protected context: GameContext) {}
+  constructor(
+    protected context: GameContext,
+    protected playerActionPayloadSchema?: z.ZodSchema,
+  ) {}
   abstract readonly phaseName: PhaseName;
 
   public startTime: number;
@@ -91,37 +96,115 @@ export abstract class GamePhase<A extends PlayerAction = PlayerAction> {
     action: PlayerAction,
   ): Promise<void> {
     if (this.phaseState !== PhaseState.Active) {
-      throw new Error(
+      throw new WsException(
         `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
-      ); //TODO:  handle this error
+      );
     }
+    if (this.phaseName === action.activePhase) {
+      throw new WsException(`Phase ${this.phaseName} is not the active phase`);
+    }
+
+    if (!player.isAlive)
+      throw new WsException(
+        `Player ${player.id /* TODO: change to name istead of id */} is not alive and cannot perform actions.`,
+      );
+    action = this.validateActionSchema(player, action);
+    this.validatePlayerPermissions?.(player, action);
     this.validatePlayerAction?.(player, action);
-    this.processPlayerAction?.(player, action as A);
+    await this.processPlayerAction?.(player, action);
   }
+
   /**
-   *  This function validates:
-   *  - If the player performing the action has the right to do it
-   *  - If the action is valid for the current phase
-   *  - If the action format is valid
-   *
-   *  If the action is valid, it is of type A.
-   *  If not, it throws an error.
-   *
-   * @param player
-   * @param action
-   * @param processPlayerAction
+   * Validates the player action using Zod schema
+   * @param player - The player performing the action
+   * @param action - The raw action to validate
+   * @returns The validated and typed action
+   * @throws Error if validation fails or player doesn't have permission
+   */
+  protected validateActionSchema(
+    player: Player,
+    action: PlayerAction,
+  ): PlayerAction<A> {
+    if (!this.playerActionPayloadSchema) {
+      // If no schema provided, assume action is valid and cast it
+      return action as PlayerAction<A>;
+    }
+
+    try {
+      action.phasePayload = this.playerActionPayloadSchema.parse(
+        action.phasePayload,
+      ) as A;
+      return action;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new WsException(
+          `Invalid action format: ${error.errors.map((e) => e.message).join(', ')}`,
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Override this method to add custom player permission validation
+   * @param player - The player performing the action
+   * @param action - The raw action
+   */
+  protected abstract validatePlayerPermissions(
+    player: Player,
+    action: PlayerAction<A>,
+  ): void;
+
+  /**
+   * Override this method to process player actions
+   * @param player - The player performing the action
+   * @param action - The action to process
+   */
+  protected async processPlayerAction?(
+    player: Player,
+    action: PlayerAction<A>,
+  ): Promise<void>;
+
+  /**
+   * Override this method to add custom player action validation
+   * @param player - The player performing the action
+   * @param action - The action to validate
    */
   protected validatePlayerAction?(
     player: Player,
-    action: PlayerAction,
-  ): action is A;
-
-  protected async processPlayerAction?(
-    player: Player,
-    action: A,
-  ): Promise<void>;
+    action: PlayerAction<A>,
+  ): void;
 
   private delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   *
+   * Broadcasts an event to all connected players
+   * @param event - The event name to broadcast
+   * @param payload - The payload to send to players
+   */
+  protected broadcastToPlayers(event: string, payload: any): void {
+    this.context.players.forEach((player) => {
+      if (player.isConnected() && player.socket) {
+        player.socket.emit(event, payload);
+      }
+    });
+  }
+
+  /**
+   * Emits an event to a specific player
+   * @param player - The player to send the event to
+   * @param event - The event name
+   * @param payload - The payload to send
+   * @throws Error if the player is not connected
+   */
+  protected emitToPlayer(player: Player, event: string, payload: any): void {
+    if (player.isConnected() && player.socket) {
+      player.socket.emit(event, payload);
+    } else {
+      throw new WsException(`Player ${player.id} is not connected`);
+    }
   }
 }

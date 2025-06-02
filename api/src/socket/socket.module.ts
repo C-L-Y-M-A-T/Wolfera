@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { GameModule } from 'src/game/game.module';
+import { JwtModule } from '@nestjs/jwt';
+import { config } from 'src/config';
+import { GameModule } from 'src/game/modules/game.module';
+import { UserModule } from 'src/users/user.module';
+import { JwtSocket } from './jwt-socket';
 import { SocketGateway } from './socket.gateway';
 
 @Module({
-  imports: [GameModule],
-  providers: [SocketGateway],
+  imports: [
+    GameModule,
+    UserModule,
+    JwtModule.register({
+      secret: config.jwt.secret,
+      signOptions: { expiresIn: config.jwt.expirationTime },
+    }),
+  ],
+  providers: [SocketGateway, JwtSocket],
 })
 export class SocketModule {}

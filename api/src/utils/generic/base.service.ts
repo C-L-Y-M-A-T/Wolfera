@@ -12,10 +12,10 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { BaseFilterParams } from '../dto/base.filter.dto';
 import { PaginationParams } from '../dto/pagination.dto';
 import { paginate, PaginationResponse } from '../paginator';
-import { BaseFilterParams } from '../dto/base.filter.dto';
+import { BaseEntity } from './base.entity';
 
 export abstract class BaseService<
   T extends BaseEntity,
@@ -132,16 +132,19 @@ export abstract class BaseService<
       where?: FindOptionsWhere<T> | FindOptionsWhere<T>[];
       select?: FindOptionsSelect<T>;
       relations?: FindOptionsRelations<T>;
+      order?: FindOptionsOrder<T>;
       filters?: FilterDto;
       includeDeleted?: boolean;
     } = {},
   ): Promise<PaginationResponse<T>> {
-    const { where, select, relations, filters, includeDeleted } = options;
+    const { where, select, relations, filters, includeDeleted, order } =
+      options;
 
     const findOptions: FindManyOptions<T> = {
       where,
       select,
       relations,
+      order,
       withDeleted: includeDeleted,
     };
 

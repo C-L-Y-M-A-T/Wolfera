@@ -1,22 +1,13 @@
 "use client";
 
-import { getSupabaseFrontendClient } from "@/services/supabase/client";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const LogoutButton: React.FC = () => {
-  const supabase = getSupabaseFrontendClient();
   const router = useRouter();
 
   const handleLogout = () => {
-    supabase.auth.signOut().then(({ error }) => {
-      if (error) {
-        console.error("Error logging out:", error.message);
-      } else {
-        console.log("Logged out successfully");
-        router.push("/");
-      }
-    });
+    // TODO: Implement the logout logic here, such as clearing tokens or user data
   };
 
   return (

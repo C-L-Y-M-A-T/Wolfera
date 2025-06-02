@@ -1,13 +1,17 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { JwtGuard } from './auth/guards/jwt.guard';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { config } from './config';
-import { GameModule } from './game/game.module';
+import { GameModule } from './game/modules/game.module';
+import { NotificationModule } from './notifications/notifications.module';
 import { SocketModule } from './socket/socket.module';
 import { UserModule } from './users/user.module';
 
@@ -33,8 +37,16 @@ import { UserModule } from './users/user.module';
     SocketModule,
     AuthModule,
     UserModule,
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+    JwtStrategy,
+  ],
 })
 export class AppModule {}
