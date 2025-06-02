@@ -8,6 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { UserDto } from 'src/users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
@@ -83,7 +84,7 @@ export class AuthController {
     description: 'User profile retrieved successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getProfile(@CurrentUser() user): any {
+  getProfile(@CurrentUser() user: UserDto): UserDto {
     return user;
   }
 }
