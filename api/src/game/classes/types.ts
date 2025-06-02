@@ -30,6 +30,11 @@ export type PlayerAction<ActionPayload = any> = {
   phasePayload: ActionPayload;
 };
 
+export type GameResult = {
+  winner: 'werewolves' | 'villagers';
+  message: string;
+};
+
 export const PlayerActionSchema = z.object({
   activePhase: z.string(),
   timestamp: z.number(),
@@ -46,6 +51,8 @@ export const serverSocketEvent = {
   phaseStarted: 'phase-started',
   phaseEnded: 'phase-ended',
   roleRevealed: 'role-revealed',
+  gameEnded: 'game-ended',
+  roundResults: 'round-results',
 };
 
 // Payload types for each serverSocketEvent
@@ -59,4 +66,18 @@ export type ServerSocketEventPayloads = {
   [serverSocketEvent.phaseStarted]: { phase: string; state: PhaseState };
   [serverSocketEvent.phaseEnded]: { phase: string; state: PhaseState };
   [serverSocketEvent.roleRevealed]: { playerId: string; role: RoleName }; //
+  [serverSocketEvent.gameEnded]: { gameId: string };
+};
+
+export const phaseNames = {
+  ROLES: (role: string) => `${role}-phase`,
+  NIGHT: 'Night-phase',
+  DAY_PHASES: {
+    NIGHT_RESULTS: `NightResults-phase`,
+    DAY_RESULTS: `DayResults-phase`,
+    VOTE: 'Vote-phase',
+  },
+  DAY: 'Day-phase',
+  ROLE_ASSIGNMENT: 'RoleAssignment-phase',
+  WAITING_FOR_GAME_START: 'WaitingForGameStart-phase',
 };
