@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/services/api";
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -8,7 +9,7 @@ type AppUser = {
   id: string;
   email: string;
   username: string;
-  avatar_url?: string;
+  avatarOptions?: Record<keyof AvatarConfigType, number>;
   created_at: string;
 };
 
