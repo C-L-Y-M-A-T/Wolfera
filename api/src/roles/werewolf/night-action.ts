@@ -1,5 +1,3 @@
-// src/roles/werewolf/night-action.ts
-
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';

@@ -35,24 +35,3 @@ export const PlayerActionSchema = z.object({
   timestamp: z.number(),
   phasePayload: z.any(),
 });
-
-/**
- * Game events that can be emitted during gameplay
- */
-export const GameEvent = {
-  phaseStart: 'phase:start',
-  phaseEnd: 'phase:end',
-  playerAction: 'player:action',
-  playerEliminated: 'player:eliminated',
-  playerJoined: 'player:join',
-  playerLeft: 'player:leave',
-  gameStart: 'game:start',
-  gameEnd: 'game:end',
-  nightStart: 'night:start',
-  nightEnd: 'night:end',
-  dayStart: 'day:start',
-  dayEnd: 'day:end',
-  voteStart: 'vote:start',
-  voteEnd: 'vote:end',
-  roleAction: 'role:action',
-};
