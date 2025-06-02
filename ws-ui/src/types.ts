@@ -79,6 +79,6 @@ export type GameOptions = {
 export type Phase = {
   phaseName: PhaseName;
   startTime: number; // Timestamp when the phase started
-  duration: number; // Duration in seconds
+  phaseDuration: number; // Duration in seconds
   payload?: any; // Additional data for the phase
 };

@@ -6,12 +6,14 @@ interface GameContextComponentProps {
   gameData: GameData | null;
   currentUser: User;
   role: string;
+  phase: string;
 }
 
 export default function GameContextComponent({
   gameData,
   currentUser,
   role,
+  phase,
 }: GameContextComponentProps): JSX.Element {
   if (!gameData) {
     return (
@@ -42,7 +44,7 @@ export default function GameContextComponent({
         <div className="game-info">
           <div className="info-row">
             <span className="label">Phase:</span>
-            <span className="value phase-badge">{gameData.phase}</span>
+            <span className="value phase-badge">{phase}</span>
           </div>
 
           {role && (
@@ -316,13 +318,14 @@ export default function GameContextComponent({
 
 export function ActivePhaseComponent(activePhase: Phase) {
   console.log("112 Active Phase Component Rendered:", activePhase);
-  if (!activePhase.duration || !activePhase.startTime) return null;
+  if (!activePhase.phaseDuration || !activePhase.startTime) return null;
 
-  const endDate = new Date(activePhase.startTime + activePhase.duration * 1000);
+  const endDate = new Date(
+    activePhase.startTime + activePhase.phaseDuration * 1000,
+  );
   console.log("111 Active Phase End Date:", endDate);
   return (
     <div className="active-phase-container">
-      qzdqzdq
       <span className="active-phase-label">{activePhase.phaseName}</span>
       <Countdown
         date={endDate}

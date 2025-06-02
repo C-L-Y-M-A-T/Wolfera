@@ -197,6 +197,7 @@ export default function WerewolfGame(): JSX.Element {
           gameData={gameData}
           currentUser={user}
           role={role}
+          phase={activePhase?.phaseName || ""}
         />
       )}
       {activePhase && <ActivePhaseComponent {...activePhase} />}
