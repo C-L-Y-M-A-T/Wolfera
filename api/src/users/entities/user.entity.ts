@@ -31,8 +31,7 @@ export class User extends BaseEntity {
   hashedPassword: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  avatarOptions?: Record<keyof AvatarConfigType, number>;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.friends)

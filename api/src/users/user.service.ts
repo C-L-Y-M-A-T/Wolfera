@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/utils/generic/base.service';
 import { Repository } from 'typeorm';
+import { initialState } from './../../../ui/src/types/avatar-builder/avatarConfig';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Badge, User } from './entities/user.entity';
@@ -30,7 +31,8 @@ export class UsersService extends BaseService<
     }
 
     const user = await this.createOne(createUserDto);
-    return user;
+    const updateUserDto = { avatarOptions: initialState } as UpdateUserDto;
+    return this.updateOne({ id: user.id }, updateUserDto);
   }
 
   async findById(id: string) {
@@ -79,5 +81,16 @@ export class UsersService extends BaseService<
       user.badges.push(Badge.MOON_SURVIVOR);
     }
     return this.updateOne({ id: user.id }, user);
+  }
+
+  async updateProfile(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.findOne({ id: userId });
+    if (!user) {
+      throw new ConflictException('User not found');
+    }
+    return this.updateOne({ id: userId }, updateUserDto);
   }
 }
