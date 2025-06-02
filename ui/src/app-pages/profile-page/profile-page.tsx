@@ -5,6 +5,10 @@ import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import userData from "@/data/profile/user-data.mock.json";
 import { useTheme } from "@/providers/theme-provider";
+import {
+  AvatarConfigType,
+  initialState,
+} from "@/types/avatar-builder/avatarConfig";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Trophy, User } from "lucide-react";
 import { useState } from "react";
@@ -28,10 +32,19 @@ export default function ProfilePage() {
     bio: userData.bio,
     email: userData.email,
   });
-  const [avatarData, setAvatarData] = useState(userData.avatarData);
-  const [avatarUrl, setAvatarUrl] = useState(userData.avatar);
   const [activeTab, setActiveTab] = useState("about");
+  const [avatarOptions, setAvatarOptions] = useState(initialState);
 
+  const handleAvatarSave = (
+    newAvatarOptions: Record<keyof AvatarConfigType, number>,
+  ) => {
+    setAvatarOptions(newAvatarOptions);
+
+    // Call the parent callback if provided (e.g., to save to database)
+    /* if (onAvatarUpdate) {
+      onAvatarUpdate(newAvatarOptions);
+    }*/
+  };
   const handleProfileChange = (field: string, value: string) => {
     setProfile((prev) => ({
       ...prev,
@@ -53,16 +66,6 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveAvatar = (newAvatarData: any) => {
-    // In a real app, this would save the avatar data to the server
-    console.log("Saving avatar:", newAvatarData);
-    setAvatarData(newAvatarData);
-
-    // In a real implementation, the server would generate an avatar image
-    // For now, we'll just keep using the placeholder
-    setAvatarUrl(`/placeholder.svg?height=128&width=128&text=Custom`);
-  };
-
   return (
     <div className={theme.gameStyles.backgrounds.page}>
       <div className={theme.gameStyles.backgrounds.overlay}>
@@ -72,7 +75,7 @@ export default function ProfilePage() {
             userData={userData}
             onEditProfile={() => setEditProfileOpen(true)}
             onEditAvatar={() => setAvatarBuilderOpen(true)}
-            avatarUrl={avatarUrl}
+            avatarOptions={avatarOptions}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -170,7 +173,12 @@ export default function ProfilePage() {
       {avatarBuilderOpen && (
         // i want when click away from the avatar builder modal, it closes
         <Dialog open={avatarBuilderOpen} onOpenChange={setAvatarBuilderOpen}>
-          <AvatarBuilder />
+          <AvatarBuilder
+            avatarOptions={avatarOptions}
+            onAvatarSave={handleAvatarSave}
+            onClose={() => setAvatarBuilderOpen(false)}
+            setAvatarOptions={setAvatarOptions}
+          />
         </Dialog>
       )}
     </div>
