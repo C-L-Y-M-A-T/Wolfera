@@ -1,7 +1,8 @@
 import { GameRole, RoleName } from 'src/roles';
+import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
-import { PhaseConstructor } from '../../types';
+import { PhaseConstructor, serverSocketEvent } from '../../types';
 import { NightPhase } from '../nightPhase/night.phase';
 
 export class RoleAssignmentPhase extends ChainableGamePhase {
@@ -19,16 +20,27 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
 
   async onStart(): Promise<void> {
     this.assignRoles();
-  }
-
-  protected onEnd(): void {
     // Notify players of their assigned roles
     this.context.getplayers().forEach((player) => {
-      this.emitToPlayer(player, 'role-assigned', {
+      this.emitToPlayer(player, serverSocketEvent.roleAssigned, {
         role: player.role?.roleData.name,
       });
     });
+    this.shareWerewolfTeammates();
   }
+
+  private shareWerewolfTeammates(): void {
+    const werewolfPlayers = this.context
+      .getplayers()
+      .filter((player) => player.role?.roleData.name === WEREWOLF_ROLE_NAME);
+    for (const player of werewolfPlayers) {
+      for (const werewolf of werewolfPlayers) {
+        this.roleReveal(player, werewolf, WEREWOLF_ROLE_NAME);
+      }
+    }
+  }
+
+  protected onEnd(): void {}
 
   protected validatePlayerAction(): void {
     // No player actions are expected in this phase

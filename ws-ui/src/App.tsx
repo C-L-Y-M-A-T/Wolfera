@@ -4,51 +4,90 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
 import { BACKEND_URL, connectToGameSocket } from "./api";
+import GameContextComponent from "./gameContext.component";
 import showToast from "./showToast";
+import {
+  CreateGameResponse,
+  GameData,
+  JoinedEvent,
+  Phase,
+  PhaseStartEvent,
+  PlayerActionPayload,
+  RoleAssignedEvent,
+  RoleRevealvent,
+  User,
+  WsException,
+} from "./types";
 
-// Type definitions
-interface GameData {
-  gameId: string;
-  players: string[];
-  phase: string;
-  [key: string]: any; // Allow for additional properties
-}
+const containerStyle: React.CSSProperties = {
+  padding: "1.5rem",
+  fontFamily: "Arial, sans-serif",
+  background: "#f8f9fa",
+  borderRadius: "12px",
+  maxWidth: "600px",
+  margin: "2rem auto",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+};
 
-interface PlayerActionPayload {
-  activePhase: string;
-  timestamp: number;
-  phasePayload: {
-    action?: string;
-    targetId?: string;
-    [key: string]: any;
-  };
-}
+const sectionStyle: React.CSSProperties = {
+  background: "#fff",
+  borderRadius: "8px",
+  padding: "1rem",
+  marginBottom: "1.5rem",
+  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+};
 
-interface JoinedEvent {
-  player: string;
-}
+const labelStyle: React.CSSProperties = {
+  fontWeight: 500,
+  marginBottom: "0.5rem",
+  display: "block",
+};
 
-interface RoleAssignedEvent {
-  player: string;
-  role: string;
-}
+const inputStyle: React.CSSProperties = {
+  padding: "0.4rem 0.7rem",
+  borderRadius: "4px",
+  border: "1px solid #ccc",
+  marginBottom: "0.7rem",
+  width: "100%",
+  fontSize: "1rem",
+};
 
-interface WsException {
-  message?: string;
-}
+const buttonStyle: React.CSSProperties = {
+  padding: "0.5rem 1.2rem",
+  borderRadius: "5px",
+  border: "none",
+  background: "#4f8cff",
+  color: "#fff",
+  fontWeight: 600,
+  fontSize: "1rem",
+  cursor: "pointer",
+  marginTop: "0.5rem",
+};
 
-interface CreateGameResponse {
-  gameId: string;
-}
+const disabledButtonStyle: React.CSSProperties = {
+  ...buttonStyle,
+  background: "#b0c4de",
+  cursor: "not-allowed",
+};
+
+const hrStyle: React.CSSProperties = {
+  border: "none",
+  borderTop: "1px solid #e0e0e0",
+  margin: "1.5rem 0",
+};
 
 export default function WerewolfGame(): JSX.Element {
-  const [userId, setUserId] = useState<string>("");
+  const [user, setUser] = useState<User>({
+    id: "",
+    username: "",
+  });
   const [gameId, setGameId] = useState<string>("");
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [role, setRole] = useState<string>("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [creatorGameId, setCreatorGameId] = useState<string>("");
   const [joinedMessages, setJoinedMessages] = useState<string[]>([]);
+  const [activePhase, setActivePhase] = useState<Phase | null>(null);
 
   const handleCreateGame = async (): Promise<void> => {
     try {
@@ -58,29 +97,43 @@ export default function WerewolfGame(): JSX.Element {
           userId: "123",
         },
       );
-      setUserId("123");
+      setUser({ id: "123", username: "123" });
       setCreatorGameId(res.data.gameId);
+      setGameId(res.data.gameId);
     } catch (error) {
       console.error("Error creating game:", error);
-      showToast("Failed to create game");
+      showToast("Failed to create game", "error");
     }
   };
 
-  const handleJoinGame = (): void => {
-    const sock: Socket = connectToGameSocket(userId, gameId);
+  const setPlayerRole = (playerId: string, role: string): void => {
+    setGameData((prevGameData) => {
+      const player = prevGameData?.players?.find((p) => p.id === playerId);
+      console.log("Setting role for player:", player, "Role:", role);
+      console.log("Game data before setting role:", prevGameData);
+      if (prevGameData && player) {
+        player.role = role;
+        return { ...prevGameData };
+      } else {
+        console.error(`Player with ID ${playerId} not found in game data`);
+        showToast(`Player with ID ${playerId} not found`, "error");
+        return prevGameData;
+      }
+    });
+  };
 
-    // Handle connection errors
+  const handleJoinGame = (): void => {
+    const sock: Socket = connectToGameSocket(user, gameId);
+
     sock.on("exception", (err: WsException) => {
       console.error("WsException received:", err);
-      showToast(err.message || "An error occurred");
+      showToast(err.message || "An error occurred", "error");
     });
 
-    // When the client connects, emit join_game
     sock.on("connect", () => {
-      sock.emit("join_game", { userId, gameId });
+      //sock.emit("join_game", { userId, gameId });
     });
 
-    // Listen for other players joining
     sock.on("joined", ({ player }: JoinedEvent) => {
       setJoinedMessages((prev: string[]) => [
         ...prev,
@@ -88,15 +141,24 @@ export default function WerewolfGame(): JSX.Element {
       ]);
     });
 
-    // Listen for game start
     sock.on("game-started", (data: GameData) => {
+      console.log("Game started:", data);
       setGameData(data);
     });
 
-    // Listen for role assignment
-    sock.on("role-assigned", ({ player, role }: RoleAssignedEvent) => {
-      console.log(`Player ${player} assigned role: ${role}`);
+    sock.on("role-assigned", ({ role }: RoleAssignedEvent) => {
+      console.log(`Player ${user.id} assigned role: ${role}`);
+      setPlayerRole(user.id, role);
       setRole(role);
+    });
+
+    sock.on("phase-start", ({}: PhaseStartEvent) => {
+      console.log("Phase started");
+    });
+
+    sock.on("role-revealed", ({ playerId, role }: RoleRevealvent) => {
+      console.log(`Role revealed for player ${playerId}: ${role}`);
+      setPlayerRole(playerId, role);
     });
 
     setSocket(sock);
@@ -118,36 +180,73 @@ export default function WerewolfGame(): JSX.Element {
   return (
     <>
       <ToastContainer />
-      <div style={{ padding: "1rem", fontFamily: "Arial" }}>
-        <h2>🐺 Werewolf Game</h2>
-
+      {gameData && (
+        <GameContextComponent
+          gameData={gameData}
+          currentUser={user}
+          role={role}
+        />
+      )}
+      <div style={containerStyle}>
+        <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
+          🐺 Werewolf Game
+        </h2>
         {/* Create game (userId = 123) */}
-        <button onClick={handleCreateGame}>Create Game (as user 123)</button>
+        <div style={sectionStyle}>
+          <button style={buttonStyle} onClick={handleCreateGame}>
+            Create Game (as user 123)
+          </button>
+          {creatorGameId && (
+            <p style={{ marginTop: "0.7rem" }}>
+              Created Game ID:{" "}
+              <strong
+                style={{
+                  color: "#4f8cff",
+                  cursor: "pointer",
+                  userSelect: "all",
+                }}
+                title="Click to copy"
+                onClick={() => {
+                  navigator.clipboard.writeText(creatorGameId);
+                  showToast("Game ID copied!", "success");
+                }}
+              >
+                {creatorGameId}
+              </strong>
+            </p>
+          )}
+        </div>
 
-        {creatorGameId && (
-          <p>
-            Created Game ID: <strong>{creatorGameId}</strong>
-          </p>
-        )}
-
-        <hr />
+        <hr style={hrStyle} />
 
         {/* Join game */}
-        <div>
-          <label>
-            User ID:&nbsp;
+        <div style={sectionStyle}>
+          <label style={labelStyle}>
+            User ID:
             <input
-              value={userId}
+              style={inputStyle}
+              value={user.id}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setUserId(e.target.value)
+                setUser({ ...user, id: e.target.value })
               }
               placeholder="Enter your user ID"
             />
           </label>
-          <br />
-          <label>
-            Game ID:&nbsp;
+          <label style={labelStyle}>
+            Username:
             <input
+              style={inputStyle}
+              value={user.username}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setUser({ ...user, username: e.target.value })
+              }
+              placeholder="Enter your username"
+            />
+          </label>
+          <label style={labelStyle}>
+            Game ID:
+            <input
+              style={inputStyle}
               value={gameId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setGameId(e.target.value)
@@ -155,27 +254,33 @@ export default function WerewolfGame(): JSX.Element {
               placeholder="Enter game ID"
             />
           </label>
-          <br />
-          <button onClick={handleJoinGame} disabled={!userId || !gameId}>
+          <button
+            style={!user || !gameId ? disabledButtonStyle : buttonStyle}
+            onClick={handleJoinGame}
+            disabled={!user || !gameId}
+          >
             Join Game
           </button>
         </div>
 
-        <hr />
+        <hr style={hrStyle} />
 
         {/* In-game view */}
         {socket && (
-          <div>
+          <div style={sectionStyle}>
             <p>
-              Connected as <strong>{userId}</strong> in game{" "}
-              <strong>{gameId}</strong>
+              Connected as{" "}
+              <strong style={{ color: "#4f8cff" }}>{user.username}</strong> in
+              game <strong style={{ color: "#4f8cff" }}>{gameId}</strong>
             </p>
-            {userId === "123" && (
-              <button onClick={handleStartGame}>🚀 Start Game</button>
+            {user.id === "123" && (
+              <button style={buttonStyle} onClick={handleStartGame}>
+                🚀 Start Game
+              </button>
             )}
 
-            <h4>🧍 Players Joining:</h4>
-            <ul>
+            <h4 style={{ marginTop: "1.2rem" }}>🧍 Players Joining:</h4>
+            <ul style={{ marginLeft: "1.2rem" }}>
               {joinedMessages.map((msg: string, idx: number) => (
                 <li key={idx}>{msg}</li>
               ))}
@@ -183,16 +288,28 @@ export default function WerewolfGame(): JSX.Element {
             {gameData && (
               <div>
                 <h3>🎮 Game Data:</h3>
-                <pre>{JSON.stringify(gameData, null, 2)}</pre>
+                <pre
+                  style={{
+                    background: "#f4f4f4",
+                    padding: "0.8rem",
+                    borderRadius: "6px",
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  {JSON.stringify(gameData, null, 2)}
+                </pre>
               </div>
             )}
 
             {/* Display role if assigned */}
-            <h3>🔍 Role Assignment</h3>
+            <h3 style={{ marginTop: "1.5rem" }}>🔍 Role Assignment</h3>
             {role && (
               <div>
                 <h3>
-                  🧙 Your Role: <span style={{ color: "green" }}>{role}</span>
+                  🧙 Your Role:{" "}
+                  <span style={{ color: "green", fontWeight: 700 }}>
+                    {role}
+                  </span>
                 </h3>
               </div>
             )}

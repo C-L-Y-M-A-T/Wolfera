@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
-import { User } from 'src/temp/temp.user';
+
+import { User } from 'src/users/entities/user.entity';
 import { ChatChannel } from '../chat/chatChannel';
 import { GameContext } from './GameContext';
 

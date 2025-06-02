@@ -2,11 +2,14 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { GameSocket } from 'src/socket/socket.types';
-import { User } from 'src/temp/temp.user';
 
+import { WsException } from '@nestjs/websockets';
 import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
+import { User } from 'src/users/entities/user.entity';
+import { OnGameEvent } from '../events/event-emitter/decorators/game-event.decorator';
 import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
+import { events } from '../events/event.types';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
@@ -33,6 +36,7 @@ export class GameContext {
     this.gameId = this.generateGameId();
     // Initialize game event emitter
     this.gameEventEmitter = new GameEventEmitter();
+    this.registerEventHandlers(this);
     //this.setupEventListeners();
     this.orchestrator.execute();
   }
@@ -74,7 +78,7 @@ export class GameContext {
     return player;
   }
 
-  connectPlayer(user: User | Player, socket?: GameSocket): Player {
+  connectPlayer(user: User, socket?: GameSocket): Player {
     const player = this.players.get(user.id) ?? this.addPlayer(user);
     if (socket) {
       player.connect(socket);
@@ -177,5 +181,78 @@ export class GameContext {
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
     this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
     this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
+  }
+
+  @OnGameEvent(events.GAME.PHASE.START('*'))
+  async onPhaseStart(event: any): Promise<void> {
+    console.log(`Phase started: ${event.phaseName}`);
+    // Handle phase start logic here
+    // For example, you can emit an event to notify players
+    this.broadcastToPlayers('phase-start', {
+      phaseName: event.phaseName,
+      round: this.round,
+    });
+  }
+  @OnGameEvent(events.GAME.PHASE.END('*'))
+  async onPhaseEnd(event: any): Promise<void> {
+    console.log(`Phase ended: ${event.phaseName}`);
+    // Handle phase end logic here
+    // For example, you can emit an event to notify players
+    this.broadcastToPlayers('phase-end', {
+      phaseName: event.phaseName,
+      round: this.round,
+    });
+  }
+
+  /**
+   *
+   * Broadcasts an event to all connected players
+   * @param event - The event name to broadcast
+   * @param payload - The payload to send to players
+   */
+  protected broadcastToPlayers(
+    event: string,
+    payload: any,
+    filter: (player: Player) => boolean = () => true,
+  ) {
+    this.players.forEach((player) => {
+      if (filter(player)) this.emitToPlayer(player, event, payload);
+    });
+  }
+
+  /**
+   * Emits an event to a specific player
+   * @param player - The player to send the event to
+   * @param event - The event name
+   * @param payload - The payload to send
+   * @throws Error if the player is not connected
+   */
+  protected emitToPlayer(player: Player, event: string, payload: any): void {
+    if (player.isConnected() && player.socket) {
+      player.socket.emit(event, payload);
+    } else {
+      throw new WsException(`Player ${player.id} is not connected`);
+    }
+  }
+
+  /**
+   * Returns public game data to be sent to players.
+   * Sensitive information like roles is omitted.
+   */
+  getPublicGameData(): any {
+    return {
+      gameId: this.gameId,
+      round: this.round,
+      ownerId: this._owner?.id,
+      players: Array.from(this.players.values()).map((player) => ({
+        id: player.id,
+        username: player.profile?.username || 'Unknown',
+        isAlive: player.isAlive,
+        // Do not include role or other sensitive info
+      })),
+      gameOptions: this.gameOptions,
+      // Add other non-sensitive game state info as needed
+      //roles = this.gameOptions?.roles
+    };
   }
 }
