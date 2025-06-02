@@ -9,15 +9,15 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { session, checkingSession } = useAuth();
+  const { user, checkingSession } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     // Don't redirect until we've checked session
-    if (!checkingSession && session === null) {
+    if (!checkingSession && !user) {
       router.push("/auth");
     }
-  }, [checkingSession, session, router]);
+  }, [checkingSession, user, router]);
 
   if (checkingSession) return <p>Loading...</p>;
 

@@ -1,9 +1,7 @@
 import { GamePhase } from './GamePhase';
-import { PhaseConstructor, PlayerAction } from './types';
+import { PhaseConstructor } from './types';
 
-export abstract class ChainableGamePhase<
-  A extends PlayerAction = PlayerAction,
-> extends GamePhase<A> {
+export abstract class ChainableGamePhase<A = any> extends GamePhase<A> {
   /**
    * Optionally specify the next phase
    * @returns Either:
