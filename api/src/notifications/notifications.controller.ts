@@ -9,6 +9,14 @@ import {
   Query,
   Sse,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { finalize, map, Observable } from 'rxjs';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserDto } from 'src/users/dto/user.dto';
@@ -19,10 +27,39 @@ import { GetNotificationsQueryDto } from './dto/notification-param.dto';
 import { NotificationPayload } from './dto/notification-payload';
 import { NotificationService } from './notifications.service';
 
+@ApiTags('Notifications')
+@ApiBearerAuth()
 @Controller('notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
+  @ApiOperation({ summary: 'Send a notification to a user' })
+  @ApiParam({ name: 'userId', type: String, description: 'Recipient user ID' })
+  @ApiBody({
+    type: NotificationPayload,
+    examples: {
+      gameInvite: {
+        summary: 'Game Invite Notification',
+        value: {
+          type: 'GAME_INVITE',
+          title: 'Game Invite',
+          description: 'You have been invited to join a game.',
+          data: { gameId: '12345' },
+        },
+      },
+      friendRequest: {
+        summary: 'Friend Request Notification',
+        value: {
+          type: 'FRIEND_REQUEST',
+          title: 'Friend Request',
+          description: 'You have received a friend request.',
+          data: { userId: '67890' },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Notification sent successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid input or user not found' })
   @Post(':userId/send')
   async sendNotification(
     @Param('userId', UserExistsPipe) userId: string,
