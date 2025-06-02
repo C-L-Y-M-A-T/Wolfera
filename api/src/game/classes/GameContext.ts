@@ -12,6 +12,7 @@ import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { events } from '../events/event.types';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
+import { GamePhase } from './GamePhase';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
 import { GameOptions, PlayerAction, PlayerActionSchema } from './types';
@@ -183,13 +184,16 @@ export class GameContext {
     this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
   }
 
-  @OnGameEvent(events.GAME.PHASE.START('*'))
-  async onPhaseStart(event: any): Promise<void> {
-    console.log(`Phase started: ${event.phaseName}`);
+  @OnGameEvent(events.GAME.PHASE.START('*')) //TODO: add typing for payload
+  async onPhaseStart(phase: GamePhase): Promise<void> {
+    console.log(`Phase started: ${phase.phaseName}`);
     // Handle phase start logic here
     // For example, you can emit an event to notify players
     this.broadcastToPlayers('phase-start', {
-      phaseName: event.phaseName,
+      phaseName: phase.phaseName,
+      startTime: phase.startTime,
+      phaseDuration: phase.phaseDuration,
+      //payload?? //TODO: add payload if needed
       round: this.round,
     });
   }
@@ -248,6 +252,7 @@ export class GameContext {
         id: player.id,
         username: player.profile?.username || 'Unknown',
         isAlive: player.isAlive,
+        isConnected: player.isConnected(),
         // Do not include role or other sensitive info
       })),
       gameOptions: this.gameOptions,

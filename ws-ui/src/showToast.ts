@@ -5,8 +5,8 @@ const showToast = (
   logLevel: "info" | "success" | "warning" | "error" = "info",
 ) => {
   const toastOptions: ToastOptions = {
-    position: "top-right",
-    autoClose: 5000,
+    position: "bottom-left",
+    autoClose: 2500,
   };
   switch (logLevel) {
     case "info":
@@ -19,10 +19,7 @@ const showToast = (
       toast.warn(msg, toastOptions);
       break;
     case "error":
-      toast.error(msg, {
-        ...toastOptions,
-        autoClose: false, // Keep error toasts open until manually closed
-      });
+      toast.error(msg, toastOptions);
       break;
     default:
       toast(msg, toastOptions);

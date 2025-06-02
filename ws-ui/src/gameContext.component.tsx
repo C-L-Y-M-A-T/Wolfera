@@ -1,5 +1,6 @@
 import { JSX } from "react";
-import { GameData, Player, User } from "./types";
+import Countdown from "react-countdown";
+import { GameData, Phase, Player, User } from "./types";
 
 interface GameContextComponentProps {
   gameData: GameData | null;
@@ -65,7 +66,7 @@ export default function GameContextComponent({
             <div className="info-row">
               <span className="label">Owner:</span>
               <span className="value">
-                {gameData.owner.profile?.name || gameData.owner.id}
+                {gameData.owner.username || gameData.owner.id}
               </span>
             </div>
           )}
@@ -82,7 +83,7 @@ export default function GameContextComponent({
                 >
                   <div className="player-info">
                     <span className="player-name">
-                      {player.profile?.name || player.id}
+                      {player.username || player.id}
                       {player.id === currentUser.id && " (You)"}
                       {player.role && (
                         <span
@@ -306,6 +307,72 @@ export default function GameContextComponent({
             right: auto;
             max-width: 100%;
             margin-bottom: 20px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export function ActivePhaseComponent(activePhase: Phase) {
+  console.log("112 Active Phase Component Rendered:", activePhase);
+  if (!activePhase.duration || !activePhase.startTime) return null;
+
+  const endDate = new Date(activePhase.startTime + activePhase.duration * 1000);
+  console.log("111 Active Phase End Date:", endDate);
+  return (
+    <div className="active-phase-container">
+      qzdqzdq
+      <span className="active-phase-label">{activePhase.phaseName}</span>
+      <Countdown
+        date={endDate}
+        renderer={({ minutes, seconds, completed }) =>
+          completed ? (
+            <span className="active-phase-timer">00:00</span>
+          ) : (
+            <span className="active-phase-timer">
+              {minutes.toString().padStart(2, "0")}:
+              {seconds.toString().padStart(2, "0")}
+            </span>
+          )
+        }
+      />
+      <style>{`
+        .active-phase-container {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          z-index: 1100;
+          background: rgba(25, 118, 210, 0.95);
+          color: #fff;
+          padding: 10px 18px;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: Arial, sans-serif;
+        }
+        .active-phase-label {
+          letter-spacing: 1px;
+        }
+        .active-phase-timer {
+          background: #fff;
+          color: #1976d2;
+          border-radius: 6px;
+          padding: 2px 8px;
+          font-size: 14px;
+          font-family: monospace;
+          font-weight: 700;
+        }
+        @media (max-width: 768px) {
+          .active-phase-container {
+            position: relative;
+            top: auto;
+            left: auto;
+            margin-bottom: 12px;
           }
         }
       `}</style>

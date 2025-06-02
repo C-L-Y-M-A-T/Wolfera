@@ -4,14 +4,16 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
 import { BACKEND_URL, connectToGameSocket } from "./api";
-import GameContextComponent from "./gameContext.component";
+import GameContextComponent, {
+  ActivePhaseComponent,
+} from "./gameContext.component";
 import showToast from "./showToast";
 import {
   CreateGameResponse,
   GameData,
+  GameOptions,
   JoinedEvent,
   Phase,
-  PhaseStartEvent,
   PlayerActionPayload,
   RoleAssignedEvent,
   RoleRevealvent,
@@ -75,6 +77,14 @@ const hrStyle: React.CSSProperties = {
   borderTop: "1px solid #e0e0e0",
   margin: "1.5rem 0",
 };
+export const tempGameOptions: GameOptions = {
+  roles: {
+    Werewolf: 2,
+    Seer: 0,
+    Villager: 1,
+  },
+  totalPlayers: 3,
+};
 
 export default function WerewolfGame(): JSX.Element {
   const [user, setUser] = useState<User>({
@@ -82,6 +92,7 @@ export default function WerewolfGame(): JSX.Element {
     username: "",
   });
   const [gameId, setGameId] = useState<string>("");
+  const [gameOptions, setGameOptions] = useState<GameOptions>(tempGameOptions);
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [role, setRole] = useState<string>("");
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -152,8 +163,9 @@ export default function WerewolfGame(): JSX.Element {
       setRole(role);
     });
 
-    sock.on("phase-start", ({}: PhaseStartEvent) => {
-      console.log("Phase started");
+    sock.on("phase-start", (phase: Phase) => {
+      setActivePhase(phase);
+      console.log("Phase started: ", phase);
     });
 
     sock.on("role-revealed", ({ playerId, role }: RoleRevealvent) => {
@@ -187,6 +199,7 @@ export default function WerewolfGame(): JSX.Element {
           role={role}
         />
       )}
+      {activePhase && <ActivePhaseComponent {...activePhase} />}
       <div style={containerStyle}>
         <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
           🐺 Werewolf Game
@@ -216,9 +229,7 @@ export default function WerewolfGame(): JSX.Element {
             </p>
           )}
         </div>
-
         <hr style={hrStyle} />
-
         {/* Join game */}
         <div style={sectionStyle}>
           <label style={labelStyle}>
@@ -262,9 +273,7 @@ export default function WerewolfGame(): JSX.Element {
             Join Game
           </button>
         </div>
-
         <hr style={hrStyle} />
-
         {/* In-game view */}
         {socket && (
           <div style={sectionStyle}>
@@ -300,6 +309,21 @@ export default function WerewolfGame(): JSX.Element {
                 </pre>
               </div>
             )}
+            {activePhase && (
+              <div>
+                <h3>📝 Active Phase JSON:</h3>
+                <pre
+                  style={{
+                    background: "#f4f4f4",
+                    padding: "0.8rem",
+                    borderRadius: "6px",
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  {JSON.stringify(activePhase, null, 2)}
+                </pre>
+              </div>
+            )}
 
             {/* Display role if assigned */}
             <h3 style={{ marginTop: "1.5rem" }}>🔍 Role Assignment</h3>
@@ -313,6 +337,57 @@ export default function WerewolfGame(): JSX.Element {
                 </h3>
               </div>
             )}
+          </div>
+        )}
+        {gameData && activePhase?.phaseName === "Werewolf-phase" && (
+          <div style={sectionStyle}>
+            <h3>🐺 Werewolf Phase</h3>
+            {(() => {
+              const currentPlayer = gameData.players.find(
+                (p) => p.id === user.id,
+              );
+              if (currentPlayer?.role === "Werewolf") {
+                // Alive, non-werewolf players
+                const targets = gameData.players.filter(
+                  (p) => p.isAlive && p.role !== "Werewolf",
+                );
+                return (
+                  <>
+                    <p>Select a player to eliminate:</p>
+                    <ul>
+                      {targets.map((p) => (
+                        <li key={p.id} style={{ marginBottom: "0.5rem" }}>
+                          <button
+                            style={buttonStyle}
+                            onClick={() => {
+                              if (socket) {
+                                const payload: PlayerActionPayload = {
+                                  activePhase: "Werewolf-phase",
+                                  timestamp: Date.now(),
+                                  phasePayload: {
+                                    action: "werewolf-vote",
+                                    targetId: p.id,
+                                  },
+                                };
+                                socket.emit("player-action", payload);
+                                showToast(
+                                  `Voted to eliminate ${p.username}`,
+                                  "info",
+                                );
+                              }
+                            }}
+                          >
+                            {p.username || p.id}{" "}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                );
+              } else {
+                return <p>Waiting for werewolves to act...</p>;
+              }
+            })()}
           </div>
         )}
       </div>

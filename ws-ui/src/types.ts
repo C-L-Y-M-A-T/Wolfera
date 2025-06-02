@@ -57,11 +57,9 @@ export type Player = {
   id: string;
   role?: string;
   isConnected: boolean;
-  profile?: {
-    id: string;
-    name: string;
-    avatarUrl?: string;
-  };
+
+  username: string;
+
   isAlive?: boolean;
 };
 
@@ -79,7 +77,7 @@ export type GameOptions = {
 };
 
 export type Phase = {
-  name: PhaseName;
+  phaseName: PhaseName;
   startTime: number; // Timestamp when the phase started
   duration: number; // Duration in seconds
   payload?: any; // Additional data for the phase
