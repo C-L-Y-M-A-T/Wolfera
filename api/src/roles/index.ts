@@ -1,5 +1,5 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { RolePhase } from 'src/game/classes/phases/rolePhase/role.phase';
+import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { PhaseConstructor } from 'src/game/classes/types';
 import { z } from 'zod';
 //TODO: explain why I used zod instead of class-validator

@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { GameRole } from 'src/roles';
-import { ChainableGamePhase } from '../chainablePhase';
-import { PhaseOrchestrator } from '../PhaseOrchestrator';
-import { Player } from '../Player';
-import { SequentialPhaseOrchestrator } from '../SequentialPhaseOrchestrator';
-import { PhaseConstructor, PlayerAction } from '../types';
-import { WaitingForGameStartPhase } from './waitingForGameStart/WatitingForGameStart.phase';
+import { ChainableGamePhase } from '../../chainablePhase';
+import { PhaseOrchestrator } from '../../PhaseOrchestrator';
+import { Player } from '../../Player';
+import { SequentialPhaseOrchestrator } from '../../SequentialPhaseOrchestrator';
+import { PhaseConstructor, PlayerAction } from '../../types';
+import { DayPhase } from '../dayPhase/day.phase';
 
 export class NightPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
-    return WaitingForGameStartPhase;
+    return DayPhase;
   }
   protected async onEnd(): Promise<void> {
     this.context.gameEventEmitter.emit('night:end', {
@@ -87,5 +88,9 @@ export class NightPhase extends ChainableGamePhase {
         priority: role.nightPhase?.nightPriority ?? -1,
       })),
     });
+  }
+
+  protected validatePlayerPermissions(): void {
+    return; // No specific permissions needed for night phase
   }
 }

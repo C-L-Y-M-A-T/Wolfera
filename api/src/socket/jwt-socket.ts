@@ -1,28 +1,36 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { supabaseAdmin } from 'src/supabase/supabase.client';
+import { JwtService } from '@nestjs/jwt';
+import { AccessTokenPayload } from 'src/auth/types/AccessTokenPayload';
+import { config } from 'src/config';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/user.service';
 
 @Injectable()
 export class JwtSocket {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly userService: UsersService,
+  ) {}
 
-  async authenticate(token: string) {
+  async authenticate(token: string): Promise<User> {
     if (!token || typeof token !== 'string') {
-      throw new UnauthorizedException('Token manquant');
+      throw new UnauthorizedException('Token is missing');
     }
 
     try {
-      const { data, error } = await supabaseAdmin.auth.getUser(token);
-      console.log('Supabase getUser response:', data, error);
-      if (error || !data?.user) {
-        throw new UnauthorizedException('Token invalide');
+      const payload = this.jwtService.verify<AccessTokenPayload>(token, {
+        secret: config.jwt.secret,
+      });
+
+      const user = await this.userService.findById(payload.id);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
       }
 
-      return await this.userService.findById(data.user.id);
-    } catch (error: any) {
-      throw new UnauthorizedException(
-        `Erreur lors de la vérification du token`,
-      );
+      return user;
+    } catch (error) {
+      console.error('JWT verification error:', error);
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }

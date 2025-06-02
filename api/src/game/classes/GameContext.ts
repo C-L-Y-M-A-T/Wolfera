@@ -11,7 +11,7 @@ import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
-import { GameOptions } from './types';
+import { GameOptions, PlayerAction, PlayerActionSchema } from './types';
 
 @Injectable()
 export class GameContext {
@@ -79,6 +79,15 @@ export class GameContext {
     if (socket) {
       player.connect(socket);
     }
+    // TODO: emit player connected event
+    // TODO: emit to all connected players is temporary
+    this.players.forEach((p) => {
+      if (p.isConnected() && p.id !== player.id) {
+        p.socket.emit('joined', {
+          player: player.profile.id,
+        });
+      }
+    });
     return player;
   }
 
@@ -149,11 +158,16 @@ export class GameContext {
   }
 
   handlePlayerAction(player: Player, action: any): void {
+    const ValidatedAction: PlayerAction = PlayerActionSchema.parse(
+      action,
+    ) as PlayerAction;
+
     this.gameEventEmitter.emit('player:action', {
       playerId: player.id,
-      action,
+      ValidatedAction,
     });
-    this.orchestrator.handlePlayerAction(player, action);
+
+    this.orchestrator.handlePlayerAction(player, ValidatedAction);
   }
 
   //TODO: to remove this function (just for testing)
@@ -162,5 +176,10 @@ export class GameContext {
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
     this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
     this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
+  }
+
+  assignRoles(): void {
+    const players = this.getAlivePlayers();
+    this.rolesService.assignRoles(players);
   }
 }
