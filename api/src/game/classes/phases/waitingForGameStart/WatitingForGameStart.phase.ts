@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
+import { WsException } from '@nestjs/websockets';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
@@ -82,7 +83,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
         message: 'Only the game owner can start the game',
         code: 'NOT_OWNER',
       });
-      throw new Error('Not owner');
+      throw new WsException('Not owner');
     }
 
     // Validate minimum player count
@@ -92,7 +93,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
         message: 'Not enough players to start the game',
         code: 'NOT_ENOUGH_PLAYERS',
       });
-      throw new Error('Low size');
+      throw new WsException('Low size');
     }
   }
 }

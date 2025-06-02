@@ -1,10 +1,12 @@
 import { Controller, Get, Injectable, Post } from '@nestjs/common';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { tempGameOptions } from 'src/dummyData/gameParams';
 import { events } from '../events/event.types';
 import { GameService } from '../services/game/game.service';
 
 @Injectable()
 @Controller('game')
+@Public()
 export class GameController {
   constructor(private gameService: GameService) {}
 
