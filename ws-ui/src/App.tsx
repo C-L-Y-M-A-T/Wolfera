@@ -7,6 +7,7 @@ import { BACKEND_URL, connectToGameSocket } from "./api";
 import GameContextComponent, {
   ActivePhaseComponent,
 } from "./gameContext.component";
+import { GameOverPopup } from "./gameOverPopup";
 import showToast from "./showToast";
 import {
   CreateGameResponse,
@@ -100,6 +101,7 @@ export default function WerewolfGame(): JSX.Element {
   const [joinedMessages, setJoinedMessages] = useState<string[]>([]);
   const [activePhase, setActivePhase] = useState<Phase | null>(null);
   const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
+  const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
 
   const gameDataRef = useRef<GameData | null>(null);
 
@@ -202,7 +204,7 @@ export default function WerewolfGame(): JSX.Element {
 
     sock.on("game-ended", (data: any) => {
       console.log("Game ended:", data);
-      showToast(data.message, "info");
+      setGameOverMessage(data.message);
       setGameData(null);
       setActivePhase(null);
       setRole("");
@@ -262,6 +264,12 @@ export default function WerewolfGame(): JSX.Element {
           currentUser={user}
           role={role}
           phase={activePhase?.phaseName || ""}
+        />
+      )}
+      {gameOverMessage && (
+        <GameOverPopup
+          message={gameOverMessage}
+          onClose={() => setGameOverMessage(null)}
         />
       )}
       {activePhase && <ActivePhaseComponent {...activePhase} />}
