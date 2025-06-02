@@ -1,6 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { AvatarConfigType } from '../types/AvatarOptions';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
@@ -31,7 +33,7 @@ export class User extends BaseEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  avatar_url?: string;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.friends)
@@ -47,6 +49,10 @@ export class User extends BaseEntity {
     },
   })
   friends?: User[];
+
+  // ---- Notifications ----
+  @OneToMany(() => Notification, (notification) => notification.recipient)
+  notifications?: Notification[];
 
   // ---- Game Stats ----
   @Field()

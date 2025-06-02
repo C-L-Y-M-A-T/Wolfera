@@ -15,7 +15,13 @@ import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { GamePhase } from './GamePhase';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
-import { GameOptions, PlayerAction, PlayerActionSchema } from './types';
+import {
+  GameOptions,
+  GameResult,
+  PlayerAction,
+  PlayerActionSchema,
+  serverSocketEvent,
+} from './types';
 
 @Injectable()
 export class GameContext {
@@ -23,6 +29,7 @@ export class GameContext {
   public gameId: string;
   private _owner: Player;
   public gameEventEmitter: GameEventEmitter;
+  public gameResults: GameResult;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
@@ -143,7 +150,38 @@ export class GameContext {
     }
   }
 
+  checkGameEndConditions(): void {
+    // TODO: check game end conditions
+    const alivePlayers = this.getAlivePlayers();
+    if (alivePlayers.length === 0) {
+      this.gameResults.winner = 'werewolves';
+      this.gameResults.message =
+        'The werewolves have won! The village is overrun!';
+    } else {
+      const werewolves = alivePlayers.filter(
+        (player) => player.role?.roleData.name === WEREWOLF_ROLE_NAME,
+      );
+      if (werewolves.length === 0) {
+        this.gameResults.winner = 'villagers';
+        this.gameResults.message =
+          'The villagers have won! The werewolves are extinct!';
+      } else if (werewolves.length === alivePlayers.length) {
+        this.gameResults.winner = 'werewolves';
+        this.gameResults.message =
+          'The werewolves have won! The village is overrun!';
+      }
+    }
+
+    if (this.gameResults.winner) {
+      this.stop();
+    }
+  }
+
   stop(): void {
+    this.broadcastToPlayers(serverSocketEvent.gameEnded, {
+      winner: this.gameResults.winner,
+      message: this.gameResults.message,
+    });
     this.players.forEach((player) => {
       player.disconnect();
     });

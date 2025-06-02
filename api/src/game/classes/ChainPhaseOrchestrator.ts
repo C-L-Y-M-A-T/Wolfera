@@ -44,6 +44,7 @@ export class ChainPhaseOrchestrator<
     return currentData as TOutput;
   }
 
+
   getPhaseHistory(): readonly ChainableGamePhase[] {
     return this.phaseHistory;
   }

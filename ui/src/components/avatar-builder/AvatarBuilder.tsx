@@ -18,12 +18,18 @@ import ColorSelector from "./components/ColorSelector";
 import FaceCustomizer from "./components/FaceCustomizer";
 import HairCustomizer from "./components/HairCustomizer";
 import TabSection from "./components/TabSection";
-
-export default function AvatarCustomizer() {
-  const initialState = Object.fromEntries(
-    Object.keys(options).map((key) => [key, 0]),
-  ) as Record<keyof AvatarConfigType, number>;
-  const [currentOptions, setCurrentOptions] = useState(initialState);
+interface AvatarCustomizerProps {
+  avatarOptions: Record<keyof AvatarConfigType, number>;
+  onAvatarSave: (newOptions: Record<keyof AvatarConfigType, number>) => void;
+  onClose: () => void;
+  setAvatarOptions: (options: Record<keyof AvatarConfigType, number>) => void;
+}
+export default function AvatarCustomizer({
+  avatarOptions,
+  onAvatarSave,
+  onClose,
+}: AvatarCustomizerProps) {
+  const [currentOptions, setCurrentOptions] = useState(avatarOptions);
   const [activeTab, setActiveTab] = useState("face");
 
   const handleRandomize = () => {
@@ -39,15 +45,18 @@ export default function AvatarCustomizer() {
   };
 
   const handleSave = () => {
-    /*onUpdate(currentOptions);
-    onClose();*/
+    onAvatarSave(currentOptions);
+    onClose();
   };
-
+  const handleClose = () => {
+    onClose();
+  };
   const updateOption = (key: keyof AvatarConfigType, value: number) => {
     setCurrentOptions((prev) => ({
       ...prev,
       [key]: value,
     }));
+    console.log(currentOptions);
   };
 
   return (
@@ -71,12 +80,17 @@ export default function AvatarCustomizer() {
                 variant="ghost"
                 size="icon"
                 className="absolute top-4 left-4 text-gray-400 hover:text-white hover:bg-gray-800"
-                onClick={handleSave}
+                onClick={handleClose}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-
-              <AvatarPreview currentOptions={currentOptions} />
+              <motion.div
+                className="w-64 h-64 rounded-full overflow-hidden bg-gray-800 border-4 border-red-500 shadow-lg mb-6 relative"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", damping: 10, stiffness: 300 }}
+              >
+                <AvatarPreview currentOptions={currentOptions} />
+              </motion.div>
 
               <div className="flex gap-4">
                 <Button

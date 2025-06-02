@@ -16,13 +16,12 @@ import { SignupDto } from './dtos/signup.dto';
 import { AccessToken } from './types/AccessToken';
 
 interface AuthenticatedRequest extends Request {
-  user:
-    | {
-        id: string;
-        email: string;
-        username: string;
-      }
-    | any;
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    [key: string]: any; // Allow additional properties
+  };
 }
 
 @ApiTags('Auth')

@@ -26,7 +26,7 @@ export class AuthService {
     return user;
   }
 
-  login(user: User): AccessToken {
+  login(user: { id: string; email: string; username: string }): AccessToken {
     const payload: AccessTokenPayload = {
       id: user.id,
       email: user.email,
