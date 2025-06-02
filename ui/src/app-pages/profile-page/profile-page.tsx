@@ -3,15 +3,17 @@
 import AvatarBuilder from "@/components/avatar-builder/AvatarBuilder";
 import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/auth-context";
 import userData from "@/data/profile/user-data.mock.json";
 import { useTheme } from "@/providers/theme-provider";
+import apiClient from "@/services/api/client";
 import {
   AvatarConfigType,
   initialState,
 } from "@/types/avatar-builder/avatarConfig";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Trophy, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AboutTab,
   AchievementsTab,
@@ -25,6 +27,7 @@ import {
 
 export default function ProfilePage() {
   const theme = useTheme();
+  const { user } = useAuth(); // Get the logged-in user
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [avatarBuilderOpen, setAvatarBuilderOpen] = useState(false);
   const [profile, setProfile] = useState({
@@ -35,16 +38,41 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("about");
   const [avatarOptions, setAvatarOptions] = useState(initialState);
 
-  const handleAvatarSave = (
+  // Initialize avatar options from logged-in user
+  useEffect(() => {
+    if (user?.avatarOptions) {
+      setAvatarOptions(user.avatarOptions);
+    }
+  }, [user]);
+
+  const handleAvatarSave = async (
     newAvatarOptions: Record<keyof AvatarConfigType, number>,
   ) => {
+    if (!user) {
+      alert("User not logged in");
+      return;
+    }
+
     setAvatarOptions(newAvatarOptions);
 
-    // Call the parent callback if provided (e.g., to save to database)
-    /* if (onAvatarUpdate) {
-      onAvatarUpdate(newAvatarOptions);
-    }*/
+    try {
+      // Use your existing API structure
+      const updateData = {
+        avatarOptions: newAvatarOptions,
+      };
+
+      await apiClient.patch(`/users/${user.id}`, updateData);
+
+      alert("Avatar saved successfully!");
+      setAvatarBuilderOpen(false);
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+      alert("Failed to save avatar");
+      // Revert the local state on error
+      setAvatarOptions(user.avatarOptions || initialState);
+    }
   };
+
   const handleProfileChange = (field: string, value: string) => {
     setProfile((prev) => ({
       ...prev,
@@ -65,6 +93,19 @@ export default function ProfilePage() {
       // Show error notification or handle gracefully
     }
   };
+
+  // Show loading state if user is not loaded yet
+  if (!user) {
+    return (
+      <div className={theme.gameStyles.backgrounds.page}>
+        <div className={theme.gameStyles.backgrounds.overlay}>
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">Loading profile...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={theme.gameStyles.backgrounds.page}>
@@ -169,9 +210,8 @@ export default function ProfilePage() {
         onSave={handleSaveProfile}
       />
 
-      {/* Avatar Builder Modal would go here */}
+      {/* Avatar Builder Modal */}
       {avatarBuilderOpen && (
-        // i want when click away from the avatar builder modal, it closes
         <Dialog open={avatarBuilderOpen} onOpenChange={setAvatarBuilderOpen}>
           <AvatarBuilder
             avatarOptions={avatarOptions}

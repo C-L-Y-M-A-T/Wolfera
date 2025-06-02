@@ -1,16 +1,21 @@
-import { IsAlphanumeric, IsOptional, Length } from 'class-validator';
-import { IsAvatarConfig } from '../decorator/is-avatar-options.decorator';
+// update-user.dto.ts
+import { IsObject, IsOptional, IsString } from 'class-validator';
 import { AvatarConfigType } from '../types/AvatarOptions';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsAlphanumeric()
-  @Length(3, 20)
+  @IsString()
   username?: string;
 
   @IsOptional()
-  @IsAvatarConfig({
-    message: 'avatarOptions must have valid keys and number values',
-  })
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsObject()
   avatarOptions?: Record<keyof AvatarConfigType, number>;
 }
