@@ -1,4 +1,5 @@
 import { Controller, Get, Injectable, Post } from '@nestjs/common';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { tempGameOptions } from 'src/dummyData/gameParams';
 import { events } from '../events/event.types';
 import { GameService } from '../services/game/game.service';
@@ -8,6 +9,7 @@ import { GameService } from '../services/game/game.service';
 export class GameController {
   constructor(private gameService: GameService) {}
 
+  @Public()
   @Post('create')
   async createGame() {
     //TODO: read user and game options from request, and validate them

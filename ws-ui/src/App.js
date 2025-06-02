@@ -30,9 +30,11 @@ export default function WerewolfGame() {
     });
 
     // Handle connection errors
-    sock.on("exception", (err) => {
-      console.error("WsException received:", err);
-      showToast(err.message || "An error occurred");
+    sock.on("exception", (error) => {
+      showToast(
+        error.message ||
+          "Failed to connect to the game server. Please try again.",
+      );
     });
 
     // When the client connects, emit join_game
