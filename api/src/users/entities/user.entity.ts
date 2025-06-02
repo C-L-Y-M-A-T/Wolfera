@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { AvatarConfigType } from '../types/AvatarOptions';
 
 export enum Badge {
@@ -19,15 +19,16 @@ registerEnumType(Badge, {
 @Entity('users')
 export class User extends BaseEntity {
   @Field()
-  @PrimaryColumn()
-  declare id: string;
-  @Field()
   @Column({ unique: true })
   email: string;
 
   @Field()
   @Column({ unique: true })
   username: string;
+
+  @Field()
+  @Column()
+  hashedPassword: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

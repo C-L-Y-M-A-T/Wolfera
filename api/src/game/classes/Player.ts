@@ -22,6 +22,9 @@ export class Player {
     return this.socket !== undefined && this.socket.connected;
   }
   connect(socket: Socket): void {
+    if (this.socket) {
+      throw new Error('Player is already connected to the game');
+    }
     this.socket = socket;
     this.socket.data.player = this;
     this.socket.data.game = this.context;
@@ -38,5 +41,9 @@ export class Player {
   die(): void {
     this.isAlive = false;
     this.context.gameEventEmitter.emit('player:die', this);
+  }
+
+  assignRole(role: GameRole): void {
+    this.role = role;
   }
 }

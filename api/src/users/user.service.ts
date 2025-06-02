@@ -1,73 +1,55 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/utils/generic/base.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Badge, User } from './entities/user.entity';
-import { AvatarConfigType, options } from './types/AvatarOptions';
 
 @Injectable()
 export class UsersService extends BaseService<
   User,
   CreateUserDto,
-  UpdateUserDto,
-  FilterUserDto
+  UpdateUserDto
 > {
   constructor(
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {
-    super(userRepo);
+    super(userRepository);
   }
-
-  async syncUser(
-    id: string,
-    {
-      email,
-      username,
-      avatar,
-    }: {
-      email: string;
-      username?: string;
-      avatar?: Record<keyof AvatarConfigType, number>;
-    },
-  ): Promise<User> {
-    console.log('Syncing user', id, email, username);
-    // if user exists update it
-    const existingUser = await this.findOne({ id });
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const existingUser = await this.findOne(
+      {
+        email: createUserDto.email,
+      },
+      { withException: false },
+    );
     if (existingUser) {
-      const updatedData: UpdateUserDto = {
-        username: username || existingUser.username || email.split('@')[0],
-        avatarOptions: avatar || existingUser.avatarOptions,
-      };
-      return this.updateOne({ id }, updatedData);
+      throw new ConflictException('Email already exists');
     }
 
-    // if user does not exist create it
-    let finalUsername = username || email.split('@')[0];
-    while (await this.findOne({ username: finalUsername })) {
-      finalUsername += Math.floor(Math.random() * 10000);
-    }
-    const defaultAvatarOptions = Object.fromEntries(
-      Object.keys(options).map((key) => [key, 0]),
-    ) as Record<keyof AvatarConfigType, number>;
-    const finalAvatar = avatar || defaultAvatarOptions;
-    const newUserDto: CreateUserDto = {
-      id,
-      email,
-      avatarOptions: finalAvatar,
-      username: finalUsername,
-    };
-
-    return this.createOne(newUserDto);
+    const user = await this.createOne(createUserDto);
+    return user;
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = await this.findOne({ username });
+  async findById(id: string) {
+    const user = await this.findOne({ id }, { withException: false });
+    return user; // or omit sensitive fields if needed
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    const user = await this.findOne({ username }, { withException: false });
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
+    }
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.findOne({ email }, { withException: false });
+    if (!user) {
+      return null;
     }
     return user;
   }
@@ -96,16 +78,6 @@ export class UsersService extends BaseService<
     if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
       user.badges.push(Badge.MOON_SURVIVOR);
     }
-    return this.updateOne({ id: user.id }, {
-      badges: user.badges,
-    } as UpdateUserDto);
-  }
-  async findById(id: string) {
-    const user = await this.userRepo.findOne({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user; // or omit sensitive fields if needed
+    return this.updateOne({ id: user.id }, user);
   }
 }

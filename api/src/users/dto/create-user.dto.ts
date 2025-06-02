@@ -1,18 +1,12 @@
-import { IsAlphanumeric, IsEmail, IsString, Length } from 'class-validator';
-import { AvatarConfigType } from '../types/AvatarOptions';
-import { IsAvatarConfig } from '../decorators/is-avatar-options.decorators';
+import { IsAlphanumeric, IsOptional, Length } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  id: string;
-  @IsEmail()
-  @Length(5, 255)
-  email: string;
+  @IsOptional()
   @IsAlphanumeric()
   @Length(3, 20)
-  username: string;
-  @IsAvatarConfig({
-    message: 'avatarOptions must have valid keys and number values',
-  })
-  avatarOptions: Record<keyof AvatarConfigType, number>;
+  username?: string;
+
+  email?: string;
+
+  hashedPassword?: string;
 }
