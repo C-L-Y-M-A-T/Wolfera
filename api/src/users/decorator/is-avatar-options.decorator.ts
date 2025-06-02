@@ -40,7 +40,7 @@ export class IsAvatarConfigConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsAvatarConfig(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName,

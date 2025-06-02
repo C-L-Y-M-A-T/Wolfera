@@ -4,13 +4,13 @@ import {
   IsEmail,
   IsEnum,
   IsNumber,
-  IsOptional,
   IsString,
   IsUUID,
   Min,
 } from 'class-validator';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { Column } from 'typeorm';
 import { Badge } from '../entities/user.entity';
-import { AvatarConfigType } from '../types/AvatarOptions';
 
 @ObjectType({ isAbstract: true })
 export abstract class BaseUserDto {
@@ -30,10 +30,9 @@ export abstract class BaseUserDto {
   username: string;
 
   @Expose()
-  @Field({ nullable: true })
-  @IsAvatarOptions()
-  @IsOptional()
-  avatarOptions: Record<keyof AvatarConfigType, number>;
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column('json', { nullable: true })
+  avatarOptions: Record<string, number>;
 
   @Expose()
   @Field(() => [Badge])
@@ -63,10 +62,4 @@ export abstract class BaseUserDto {
   @IsNumber()
   @Min(0)
   gamesAsVillager: number;
-}
-function IsAvatarOptions(): (
-  target: BaseUserDto,
-  propertyKey: 'avatarOptions',
-) => void {
-  throw new Error('Function not implemented.');
 }

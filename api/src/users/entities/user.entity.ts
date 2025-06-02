@@ -1,8 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { AvatarConfigType } from '../types/AvatarOptions';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
@@ -31,9 +31,9 @@ export class User extends BaseEntity {
   @Column()
   hashedPassword: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  avatarOptions: Record<keyof AvatarConfigType, number>;
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column('json', { nullable: true })
+  avatarOptions?: Record<string, number>;
 
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.friends)

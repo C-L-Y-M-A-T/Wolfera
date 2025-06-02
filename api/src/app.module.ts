@@ -21,8 +21,10 @@ import { UserModule } from './users/user.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/users/graphql/schema.gql'),
       sortSchema: true,
+
       context: ({ req }) => ({ req, user: req.user || undefined }),
     }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: config.postgres.host,

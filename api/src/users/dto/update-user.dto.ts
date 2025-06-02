@@ -1,5 +1,6 @@
 // update-user.dto.ts
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { IsAvatarConfig } from '../decorator/is-avatar-options.decorator';
 import { AvatarConfigType } from '../types/AvatarOptions';
 
 export class UpdateUserDto {
@@ -15,7 +16,7 @@ export class UpdateUserDto {
   @IsString()
   email?: string;
 
-  @IsOptional()
-  @IsObject()
-  avatarOptions?: Record<keyof AvatarConfigType, number>;
+  // @IsOptional()
+  // @IsAvatarConfig()
+  // avatarOptions?: Record<keyof AvatarConfigType, number>;
 }
