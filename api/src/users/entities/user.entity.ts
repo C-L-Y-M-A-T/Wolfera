@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { AvatarConfigType } from '../types/AvatarOptions';
 
 export enum Badge {
@@ -47,6 +48,10 @@ export class User extends BaseEntity {
     },
   })
   friends?: User[];
+
+  // ---- Notifications ----
+  @OneToMany(() => Notification, (notification) => notification.recipient)
+  notifications?: Notification[];
 
   // ---- Game Stats ----
   @Field()

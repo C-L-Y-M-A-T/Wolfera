@@ -1,0 +1,5 @@
+export enum NotificationType {
+  FRIEND_REQUEST = 'FRIEND_REQUEST',
+  NEW_ACHIEVEMENT = 'NEW_ACHIEVEMENT',
+  GAME_INVITE = 'GAME_INVITE',
+}
