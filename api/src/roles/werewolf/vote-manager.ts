@@ -2,7 +2,11 @@ import { WsException } from '@nestjs/websockets';
 import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
 import { WEREWOLF_ROLE_NAME } from '.';
-import { WerewolfAction, WerewolfVote, WerewolfVoteState } from './types';
+import {
+  WerewolfActionPayload,
+  WerewolfVote,
+  WerewolfVoteState,
+} from './types';
 
 export class WerewolfVoteManager {
   private voteState: WerewolfVoteState;
@@ -27,15 +31,18 @@ export class WerewolfVoteManager {
   /**
    * Processes a werewolf vote
    */
-  processVote(player: Player, action: WerewolfAction): WerewolfVoteState {
+  processVote(
+    player: Player,
+    action: WerewolfActionPayload,
+  ): WerewolfVoteState {
     const previousVote = this.voteState.votes.get(player.id);
     if (previousVote) {
       this.removePreviousVote(previousVote);
     }
 
-    if (action.action === 'werewolf-skip') {
+    if (action.action === 'skip') {
       return this.processSkipVote(player);
-    } else if (action.action === 'werewolf-vote' && action.targetId) {
+    } else if (action.action === 'vote' && action.targetId) {
       return this.processTargetVote(player, action.targetId);
     }
 

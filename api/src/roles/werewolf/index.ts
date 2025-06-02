@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { GameRole } from '..';
 import { WerewolfNightPhase } from './night-action';
 
@@ -21,15 +20,5 @@ export const werewolfRole: GameRole = {
     nightPriority: 1,
   },
 };
-
-export const werewolfActionSchema = z.object({
-  targetId: z.string(),
-  action: z.union([
-    z.literal('skip'),
-    z.literal('change-vote'),
-    z.literal('vote'),
-  ]),
-});
-export type WerewolfActionPayload = z.infer<typeof werewolfActionSchema>;
 
 export default werewolfRole;

@@ -1,19 +1,17 @@
 import { Player } from 'src/game/classes/Player';
-import { PlayerAction } from 'src/game/classes/types';
+import { z } from 'zod';
 
-export type WerewolfAction = PlayerAction & {
-  action: 'werewolf-vote' | 'werewolf-skip';
-  targetId?: string;
-};
+export const werewolfActionSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('vote'),
+    targetId: z.string(),
+  }),
+  z.object({
+    action: z.literal('skip'),
+  }),
+]);
 
-export type WerewolfVoteAction = WerewolfAction & {
-  action: 'werewolf-vote';
-  targetId: string;
-};
-
-export type WerewolfSkipAction = WerewolfAction & {
-  action: 'werewolf-skip';
-};
+export type WerewolfActionPayload = z.infer<typeof werewolfActionSchema>;
 
 // Vote tracking for werewolf consensus
 export interface WerewolfVote {
@@ -53,5 +51,5 @@ export interface WerewolfErrorPayload {
       | 'TARGET_NOT_FOUND';
     message: string;
   };
-  action: WerewolfAction;
+  action: WerewolfActionPayload;
 }

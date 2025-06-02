@@ -2,13 +2,14 @@ import { WsException } from '@nestjs/websockets';
 import { GameContext } from 'src/game/classes/GameContext';
 import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
+import { PlayerAction } from 'src/game/classes/types';
 import { events } from 'src/game/events/event.types';
-import werewolfRole, {
-  WEREWOLF_ROLE_NAME,
+import werewolfRole, { WEREWOLF_ROLE_NAME } from '.';
+import {
   WerewolfActionPayload,
   werewolfActionSchema,
-} from '.';
-import { WerewolfAction, WerewolfNightEndPayload } from './types';
+  WerewolfNightEndPayload,
+} from './types';
 import { WerewolfVoteManager } from './vote-manager';
 
 export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
@@ -47,11 +48,14 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
    */
   async processPlayerAction(
     player: Player,
-    action: WerewolfAction,
+    action: PlayerAction<WerewolfActionPayload>,
   ): Promise<void> {
     console.log(`Werewolf ${player.id} performed action:`, action);
     // Process the vote
-    const voteUpdate = this.voteManager.processVote(player, action);
+    const voteUpdate = this.voteManager.processVote(
+      player,
+      action.phasePayload,
+    );
 
     // Broadcast vote update to werewolves
     this.emitToWerewolves(events.GAME.WEREWOLF.VOTE, voteUpdate);
@@ -69,13 +73,16 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   /**
    * Validates if a player can perform a werewolf action
    */
-  protected validatePlayerAction(_: Player, action: WerewolfAction): boolean {
+  protected validatePlayerAction(
+    _: Player,
+    action: PlayerAction<WerewolfActionPayload>,
+  ): void {
     // Validate specific action types
-    switch (action.action) {
-      case 'werewolf-vote':
-        return this.validateTargetAction(action);
-      case 'werewolf-skip':
-        return true;
+    switch (action.phasePayload.action) {
+      case 'vote':
+        return this.validateTargetAction(action.phasePayload);
+      case 'skip':
+        return;
       default:
         throw new WsException({
           message: 'Invalid werewolf action',
@@ -94,7 +101,9 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   /**
    * Validates target-based actions (vote)
    */
-  private validateTargetAction(action: WerewolfAction): boolean {
+  private validateTargetAction(
+    action: Extract<WerewolfActionPayload, { action: 'vote' }>,
+  ): void {
     if (!action.targetId) {
       throw new WsException({
         message: 'Target ID is required for this action',
@@ -125,7 +134,5 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
         code: 'TARGET_IS_WEREWOLF',
       });
     }
-
-    return true;
   }
 }
