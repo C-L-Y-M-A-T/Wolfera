@@ -6,6 +6,7 @@ import { GameService } from '../services/game/game.service';
 
 @Injectable()
 @Controller('game')
+@Public()
 export class GameController {
   constructor(private gameService: GameService) {}
 
