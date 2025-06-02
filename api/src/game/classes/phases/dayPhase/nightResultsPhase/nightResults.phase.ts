@@ -60,4 +60,8 @@ export class NightResultsPhase extends GamePhase {
   protected validatePlayerPermissions(): void {
     return; // No specific player permissions needed for this phase
   }
+
+  private calculateNightResults(): void {
+    console.log(this.input);
+  }
 }

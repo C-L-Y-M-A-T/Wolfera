@@ -59,19 +59,11 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected async processPlayerAction(player: Player): Promise<void> {
-    this.context.gameEventEmitter.emit('game:started', {
-      startedBy: player.id,
-      gameId: this.context.gameId,
-      playerCount: this.context.players.size,
-    });
+    const gameData = this.context.getPublicGameData();
+    this.context.gameEventEmitter.emit('game:started', gameData);
 
     // Broadcast to all players that the game is starting
-    this.broadcastToPlayers('game-started', {
-      //TODO: save event names in string constants
-      gameId: this.context.gameId,
-      startedBy: player.id,
-      playerCount: this.context.players.size,
-    });
+    this.broadcastToPlayers('game-started', gameData);
 
     await this.end();
   }

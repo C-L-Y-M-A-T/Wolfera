@@ -35,3 +35,28 @@ export const PlayerActionSchema = z.object({
   timestamp: z.number(),
   phasePayload: z.any(),
 });
+
+export const serverSocketEvent = {
+  gameEvent: 'game-event',
+  roleAssigned: 'role-assigned',
+  playerEliminated: 'player-eliminated',
+  playerJoined: 'player-joined',
+  playerLeft: 'player-left',
+  gameStarted: 'game-started',
+  phaseStarted: 'phase-started',
+  phaseEnded: 'phase-ended',
+  roleRevealed: 'role-revealed',
+};
+
+// Payload types for each serverSocketEvent
+export type ServerSocketEventPayloads = {
+  //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
+  [serverSocketEvent.roleAssigned]: { playerId: string; role: RoleName };
+  [serverSocketEvent.playerEliminated]: { playerId: string };
+  [serverSocketEvent.playerJoined]: { playerId: string; playerName: string };
+  [serverSocketEvent.playerLeft]: { playerId: string };
+  [serverSocketEvent.gameStarted]: { gameId: string; options: GameOptions };
+  [serverSocketEvent.phaseStarted]: { phase: string; state: PhaseState };
+  [serverSocketEvent.phaseEnded]: { phase: string; state: PhaseState };
+  [serverSocketEvent.roleRevealed]: { playerId: string; role: RoleName }; //
+};

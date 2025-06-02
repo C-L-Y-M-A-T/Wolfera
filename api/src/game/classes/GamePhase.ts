@@ -1,9 +1,15 @@
 import { WsException } from '@nestjs/websockets';
+import { RoleName } from 'src/roles';
 import { z } from 'zod';
 import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseName, PhaseState, PlayerAction } from './types';
+import {
+  PhaseName,
+  PhaseState,
+  PlayerAction,
+  serverSocketEvent,
+} from './types';
 
 export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
@@ -32,7 +38,7 @@ export abstract class GamePhase<A = any> {
     return 3000;
   } // 3s post-phase by default
 
-  private input?: any;
+  protected input?: any;
   private onComplete?: (output: any) => void;
   protected output?: any;
   // can be overridden in subclasses by using:
@@ -219,5 +225,12 @@ export abstract class GamePhase<A = any> {
     } else {
       throw new WsException(`Player ${player.id} is not connected`);
     }
+  }
+
+  protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
+    this.emitToPlayer(revealTo, serverSocketEvent.roleRevealed, {
+      playerId: player.id,
+      role: roleName,
+    });
   }
 }

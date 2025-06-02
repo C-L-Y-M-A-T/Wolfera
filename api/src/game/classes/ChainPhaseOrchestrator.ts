@@ -3,7 +3,6 @@ import { GameContext } from './GameContext';
 import { PhaseOrchestrator } from './PhaseOrchestrator';
 import { PhaseConstructor } from './types';
 
-//TODO: this class and ChainablePhase are not tested
 export class ChainPhaseOrchestrator<
   TInput = any,
   TOutput = any,
