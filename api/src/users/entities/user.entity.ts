@@ -1,13 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Notification } from 'src/notifications/entities/notification.entity';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BaseEntity } from 'src/utils/generic/base.entity';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
@@ -23,11 +17,7 @@ registerEnumType(Badge, {
 
 @ObjectType()
 @Entity('users')
-export class User {
-  @Field()
-  @PrimaryGeneratedColumn('uuid') //to be changed to be in sync with the supbase id (while creating the new user)
-  id: string;
-
+export class User extends BaseEntity {
   @Field()
   @Column({ unique: true })
   email: string;
@@ -35,6 +25,10 @@ export class User {
   @Field()
   @Column({ unique: true })
   username: string;
+
+  @Field()
+  @Column()
+  hashedPassword: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
