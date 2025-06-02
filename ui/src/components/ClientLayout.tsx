@@ -1,6 +1,7 @@
 "use client";
 
 import "@/i18n/i18n";
+import { ApolloProviderWrapper } from "@/providers/apollo-provider";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../styles/globals.css";
@@ -25,9 +26,11 @@ export default function ClientLayout({
 
   return mounted ? (
     <body className="font-sans bg-background text-foreground min-h-screen">
-      <ThemeProvider>
-        <div className="flex flex-col min-h-screen">{children}</div>
-      </ThemeProvider>
+      <ApolloProviderWrapper>
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">{children}</div>
+        </ThemeProvider>
+      </ApolloProviderWrapper>
     </body>
   ) : (
     <body></body>

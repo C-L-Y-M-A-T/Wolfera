@@ -3,7 +3,8 @@
 import AvatarBuilder from "@/components/avatar-builder/AvatarBuilder";
 import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import userData from "@/data/profile/user-data.mock.json";
+import mockedUser from "@/data/profile/user-data.mock.json";
+import { useMyProfile } from "@/hooks/use-profile";
 import { useTheme } from "@/providers/theme-provider";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Trophy, User } from "lucide-react";
@@ -21,15 +22,25 @@ import {
 
 export default function ProfilePage() {
   const theme = useTheme();
+  const {
+    user,
+    profileStats,
+    achievements,
+    recentGames,
+    loading,
+    error,
+    refetch,
+  } = useMyProfile();
+
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [avatarBuilderOpen, setAvatarBuilderOpen] = useState(false);
   const [profile, setProfile] = useState({
-    username: userData.username,
-    bio: userData.bio,
-    email: userData.email,
+    username: mockedUser.username,
+    bio: mockedUser.bio,
+    email: mockedUser.email,
   });
-  const [avatarData, setAvatarData] = useState(userData.avatarData);
-  const [avatarUrl, setAvatarUrl] = useState(userData.avatar);
+  const [avatarData, setAvatarData] = useState(mockedUser.avatarData);
+  const [avatarUrl, setAvatarUrl] = useState(mockedUser.avatar);
   const [activeTab, setActiveTab] = useState("about");
 
   const handleProfileChange = (field: string, value: string) => {
@@ -69,7 +80,7 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4">
           {/* Profile Header */}
           <ProfileHeader
-            userData={userData}
+            userData={mockedUser}
             onEditProfile={() => setEditProfileOpen(true)}
             onEditAvatar={() => setAvatarBuilderOpen(true)}
             avatarUrl={avatarUrl}
@@ -84,13 +95,13 @@ export default function ProfilePage() {
               className="space-y-6"
             >
               {/* Stats Card */}
-              <StatsCard stats={userData.stats} />
+              <StatsCard stats={mockedUser.stats} />
 
               {/* Recent Games Card */}
-              <RecentGamesCard games={userData.recentGames} />
+              <RecentGamesCard games={mockedUser.recentGames} />
 
               {/* Friends Card */}
-              <FriendsCard friends={userData.friends} />
+              <FriendsCard friends={mockedUser.friends} />
             </motion.div>
 
             {/* Main Content */}
@@ -139,15 +150,15 @@ export default function ProfilePage() {
                     transition={{ duration: 0.3 }}
                   >
                     <TabsContent value="about" className="mt-6">
-                      <AboutTab userData={userData} />
+                      <AboutTab userData={mockedUser} />
                     </TabsContent>
 
                     <TabsContent value="achievements" className="mt-6">
-                      <AchievementsTab achievements={userData.achievements} />
+                      <AchievementsTab achievements={mockedUser.achievements} />
                     </TabsContent>
 
                     <TabsContent value="history" className="mt-6">
-                      <GameHistoryTab games={userData.recentGames} />
+                      <GameHistoryTab games={mockedUser.recentGames} />
                     </TabsContent>
                   </motion.div>
                 </AnimatePresence>
