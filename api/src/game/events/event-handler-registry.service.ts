@@ -42,12 +42,12 @@ export class GameHandlerRegistry implements OnModuleInit {
    */
   private getAvailableHandlerClasses(): GameHandlerClass[] {
     // Import handler classes dynamically or statically
-    const {
-      NightPhaseEventHandler,
-    } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
+    // const {
+    //   NightPhaseEventHandler,
+    // } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
 
     return [
-      NightPhaseEventHandler,
+      // NightPhaseEventHandler,
       // Add other handler classes here as you create them
     ];
   }
