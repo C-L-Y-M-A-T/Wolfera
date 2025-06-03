@@ -91,7 +91,8 @@ const createCheckEvents = (namespace: string) => ({
 type PhaseNameOrWildcard = PhaseName | '*';
 // Phase event creators
 const createPhaseEvents = () => ({
-  START: (phaseName: PhaseName) => createPhaseEvent(phaseName, ACTIONS.START),
+  START: (phaseName: PhaseNameOrWildcard) =>
+    createPhaseEvent(phaseName, ACTIONS.START),
   END: (phaseName: PhaseNameOrWildcard) =>
     createPhaseEvent(phaseName, ACTIONS.END),
   ACTION: (phaseName: PhaseNameOrWildcard, action: string) =>

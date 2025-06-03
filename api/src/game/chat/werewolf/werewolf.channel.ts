@@ -1,6 +1,6 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { ROLE_ASSIGNMENT_PHASE_NAME } from 'src/game/classes/phases/roleAssignmentPhase/types';
 import { Player } from 'src/game/classes/Player';
+import { PHASE_NAMES } from 'src/game/classes/types';
 import { events } from 'src/game/events/event.types';
 import werewolfRole from 'src/roles/werewolf';
 import { IncomingMessage } from '../chat.types';
@@ -10,7 +10,7 @@ export class WerewolfChannel extends ChatChannel {
   constructor(context: GameContext) {
     super(context);
     context.gameEventEmitter.on(
-      events.GAME.PHASE.END(ROLE_ASSIGNMENT_PHASE_NAME),
+      events.GAME.PHASE.END(PHASE_NAMES.ROLE_ASSIGNMENT),
       (player: Player) => {
         this.onPlayerJoin(player);
       },

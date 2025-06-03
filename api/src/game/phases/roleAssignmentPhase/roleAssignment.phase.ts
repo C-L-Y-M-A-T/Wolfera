@@ -26,7 +26,11 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
     this.assignRoles();
     // Notify players of their assigned roles
     this.context.getplayers().forEach((player) => {
-      this.emitToPlayer(player, SERVER_SOCKET_EVENTS.roleAssigned, {
+      if (!player.role) {
+        throw new Error(`Player ${player.id} does not have a role assigned.`);
+      }
+
+      this.context.emitToPlayer(player, SERVER_SOCKET_EVENTS.roleAssigned, {
         role: player.role?.roleData.name,
       });
     });

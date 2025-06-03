@@ -248,7 +248,7 @@ export class GameContext {
    * @param payload - The payload to send
    * @throws Error if the player is not connected
    */
-  private emitToPlayer<E extends ServerSocketEvent>(
+  public emitToPlayer<E extends ServerSocketEvent>(
     player: Player,
     event: E,
     payload: ServerSocketEventPayloads[E],

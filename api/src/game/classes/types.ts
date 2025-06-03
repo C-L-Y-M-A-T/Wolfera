@@ -60,7 +60,7 @@ export const SERVER_SOCKET_EVENTS = {
 // Payload types for each serverSocketEvent
 export type ServerSocketEventPayloads = {
   //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
-  [SERVER_SOCKET_EVENTS.roleAssigned]: { playerId: string; role: RoleName };
+  [SERVER_SOCKET_EVENTS.roleAssigned]: { role: RoleName };
   [SERVER_SOCKET_EVENTS.playerEliminated]: { playerId: string };
   [SERVER_SOCKET_EVENTS.playerJoined]: { playerId: string; playerName: string };
   [SERVER_SOCKET_EVENTS.playerLeft]: { playerId: string };
