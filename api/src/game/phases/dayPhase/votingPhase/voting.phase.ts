@@ -15,6 +15,7 @@ export class VotingPhase extends GamePhase<VoteActionPayload> {
 
   constructor(context: GameContext) {
     super(context);
+    this.voteManager = new VotePhaseManager(context);
   }
 
   get phaseName(): `${string}-phase` {
@@ -36,7 +37,7 @@ export class VotingPhase extends GamePhase<VoteActionPayload> {
 
     // Create end payload
     const endPayload: VotingPhaseEndPayload = {
-      phase: 'DayVoting-phase',
+      phase: 'Voting-phase',
       result,
       votes,
     };

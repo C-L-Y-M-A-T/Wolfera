@@ -13,9 +13,9 @@ export class DayResultsPhase extends ResultsPhase {
   }
 
   processActions(): void {
-    const voteResults = this.input.initialData[PHASE_NAMES.DAY][
-      PHASE_NAMES.DAY_PHASES.VOTE
-    ] as VoteEndPayload | undefined;
+    const voteResults = this.input[PHASE_NAMES.DAY_PHASES.VOTE] as
+      | VoteEndPayload
+      | undefined;
     if (!voteResults) return;
     if (voteResults.result.action !== 'kill') return;
     const target = voteResults.result.target;
