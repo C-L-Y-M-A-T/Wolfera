@@ -58,7 +58,7 @@ export abstract class GamePhase<A = any> {
     this.input = input;
     this.onComplete = onComplete;
 
-    this.context.loggerService.log(
+    this.context.loggerService.debug(
       `Executing phase: ${this.phaseName} with input:`,
       this.input,
     );

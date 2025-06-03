@@ -1,8 +1,9 @@
 // src/roles/role.service.ts
-import { Injectable, LoggerService, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { assert } from 'console';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { LoggerService } from 'src/logger/logger.service';
 import { GameRole, RoleName, RoleSchema } from 'src/roles';
 
 @Injectable()
@@ -38,7 +39,7 @@ export class RoleService implements OnModuleInit {
       }
     }
 
-    this.loggerService.log(
+    this.loggerService.verbose(
       'Roles loaded:',
       Array.from(this.roles.values()).map((r) => r),
     );
@@ -79,20 +80,20 @@ export class RoleService implements OnModuleInit {
       (role) => role.nightPhase === undefined,
     );
 
-    this.loggerService.log('Night Roles sorted by priority:');
+    this.loggerService.verbose('Night Roles sorted by priority:');
     for (const role of rolesWithNightPhase) {
-      this.loggerService.log(
+      this.loggerService.verbose(
         `-${role.nightPhase?.nightPriority || -1}- ${role.roleData.name} `,
       );
     }
 
-    this.loggerService.log('Roles without night phase:');
+    this.loggerService.verbose('Roles without night phase:');
     if (rolesWithoutNightPhase.length > 0) {
       for (const role of rolesWithoutNightPhase) {
-        this.loggerService.log(`- ${role.roleData.name}`);
+        this.loggerService.verbose(`- ${role.roleData.name}`);
       }
     } else {
-      this.loggerService.log(' -- none --');
+      this.loggerService.verbose(' -- none --');
     }
   }
 

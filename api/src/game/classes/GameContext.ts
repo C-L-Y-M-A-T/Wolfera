@@ -1,8 +1,9 @@
 // Updated GameContext.ts with event handling
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { GameSocket } from 'src/socket/socket.types';
 
 import { WsException } from '@nestjs/websockets';
+import { LoggerService } from 'src/logger/logger.service';
 import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { User } from 'src/users/entities/user.entity';
@@ -27,11 +28,8 @@ export class GameContext {
   public players: Map<string, Player> = new Map();
   public gameId: string;
   private _owner: Player;
-  public gameEventEmitter: GameEventEmitter;
-  public gameResults: GameResult = {
-    winner: null,
-    message: '',
-  };
+  public gameEventEmitter = new GameEventEmitter(this);
+  public gameResults: GameResult;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
@@ -44,34 +42,8 @@ export class GameContext {
     public loggerService: LoggerService,
   ) {
     this.gameId = this.generateGameId();
-    // Initialize game event emitter
-    this.gameEventEmitter = new GameEventEmitter();
-    this.registerEventHandlers(this);
-    //this.setupEventListeners();
+    this.gameEventEmitter.registerGameEventHandler(this);
     this.orchestrator.execute();
-  }
-
-  // private setupEventListeners(): void {
-  //   // Set up listeners for broadcast events
-  //   this.gameEventEmitter.on('broadcast:*', (data: any) => {
-  //     const event = this.gameEventEmitter.getEventEmitter().event;
-  //     const actualEvent = event.replace('broadcast:', '');
-  //     this.players.forEach((player) => {
-  //       if (player.isConnected()) {
-  //         player.socket.emit('game-event', {
-  //           event: actualEvent,
-  //           data,
-  //         });
-  //       }
-  //     });
-  //   });
-  // }
-
-  /**
-   * Register a class that contains @OnGameEvent handlers
-   */
-  registerEventHandlers(handler: any): void {
-    this.gameEventEmitter.registerGameEventHandlers(handler);
   }
 
   isEmpty() {
@@ -79,7 +51,7 @@ export class GameContext {
   }
 
   addPlayer(user: User): Player {
-    this.loggerService.log('Adding player:', user);
+    this.loggerService.debug('Adding player:', user);
     const player = new Player(user, this);
     this.players.set(user.id, player);
     this.gameEventEmitter.emit('player:join', {

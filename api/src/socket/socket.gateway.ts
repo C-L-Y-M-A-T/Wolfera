@@ -1,4 +1,4 @@
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -14,6 +14,7 @@ import { PlayerAction } from 'src/game/classes/types';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
 
+import { LoggerService } from 'src/logger/logger.service';
 import { User } from 'src/users/entities/user.entity';
 import { SocketGame } from './decorators/socketGame.decorator';
 import { SocketPlayer } from './decorators/socketPlayer.decorator';
@@ -48,7 +49,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('start-dummy-game')
   createDummyGame(client: GameSocket, payload: any) {
-    this.loggerService.log('start-dummy-game event received'); 
+    this.loggerService.log('start-dummy-game event received');
     const dummyPlayers: User[] = [
       {
         id: '456',

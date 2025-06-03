@@ -37,7 +37,7 @@ export class GameService {
     handlerInstances.forEach(({ instance, className }) => {
       console.log(`Registering ${className} for game ${game.gameId}`); //TODO: remove this log
 
-      game.gameEventEmitter.registerGameEventHandlers(instance);
+      game.gameEventEmitter.registerGameEventHandler(instance);
     });
 
     // i want to log for each game each event handlers :
