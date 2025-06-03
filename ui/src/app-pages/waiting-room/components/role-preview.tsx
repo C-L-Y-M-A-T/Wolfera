@@ -1,35 +1,27 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Eye, Skull, Users, Shield, FlaskRound, Axe, Info } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/providers/theme-provider";
+import { GameSettings } from "@/types/waiting-room";
+import { motion } from "framer-motion";
+import { Axe, Eye, FlaskRound, Info, Shield, Skull, Users } from "lucide-react";
 
 interface RolePreviewProps {
-  settings: {
-    roles: {
-      werewolves: number
-      villagers: number
-      seer: number
-      doctor: number
-      hunter: number
-      witch: number
-    }
-  }
-  playerCount: number
-  isExpanded: boolean
-  onTogglePreview: () => void
+  settings: GameSettings;
+  playerCount: number;
+  isExpanded: boolean;
+  onTogglePreview: () => void;
 }
 
 const roleData = {
-  werewolves: {
+  werewolf: {
     icon: <Skull className="h-5 w-5" />,
     color: "text-red-400 bg-red-950/50 border-red-500/30",
     description: "Eliminate villagers during the night phase",
     team: "Evil",
   },
-  villagers: {
+  villager: {
     icon: <Users className="h-5 w-5" />,
     color: "text-blue-400 bg-blue-950/50 border-blue-500/30",
     description: "Find and eliminate all werewolves",
@@ -59,12 +51,14 @@ const roleData = {
     description: "Has a healing potion and a poison potion",
     team: "Good",
   },
-}
+};
 
 export function RolePreview({ settings, playerCount }: RolePreviewProps) {
-  const theme = useTheme()
+  const theme = useTheme();
 
-  const activeRoles = Object.entries(settings.roles).filter(([_, count]) => count > 0)
+  const activeRoles = Object.entries(settings.roles).filter(
+    ([_, count]) => count > 0,
+  );
 
   return (
     <motion.div
@@ -73,7 +67,9 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
       transition={{ duration: 0.6, delay: 0.5 }}
       className="h-full"
     >
-      <Card className={`${theme.gameStyles.cards.profile} h-full flex flex-col`}>
+      <Card
+        className={`${theme.gameStyles.cards.profile} h-full flex flex-col`}
+      >
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="text-xl text-red-400 flex items-center">
             <Info className="w-5 h-5 mr-2 text-yellow-500" />
@@ -91,7 +87,10 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200 }}
               >
-                <Badge variant="outline" className={`${roleData[role as keyof typeof roleData].color} border`}>
+                <Badge
+                  variant="outline"
+                  className={`${roleData[role as keyof typeof roleData].color} border`}
+                >
                   {roleData[role as keyof typeof roleData].icon}
                   <span className="ml-1 capitalize">
                     {role === "werewolves" ? "Werewolves" : role} ({count})
@@ -103,7 +102,9 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
 
           {/* Detailed Role Information */}
           <div className="space-y-4">
-            <div className="text-sm text-gray-400 mb-4">Roles will be randomly assigned when the game starts</div>
+            <div className="text-sm text-gray-400 mb-4">
+              Roles will be randomly assigned when the game starts
+            </div>
 
             {activeRoles.map(([role, count], index) => (
               <motion.div
@@ -116,7 +117,9 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {roleData[role as keyof typeof roleData].icon}
-                    <span className="font-medium capitalize">{role === "werewolves" ? "Werewolves" : role}</span>
+                    <span className="font-medium capitalize">
+                      {role === "werewolves" ? "Werewolves" : role}
+                    </span>
                     <Badge
                       variant="secondary"
                       className={`text-xs ${
@@ -128,11 +131,16 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                       {roleData[role as keyof typeof roleData].team}
                     </Badge>
                   </div>
-                  <Badge variant="outline" className="bg-gray-800/50 text-white">
+                  <Badge
+                    variant="outline"
+                    className="bg-gray-800/50 text-white"
+                  >
                     {count} {count === 1 ? "player" : "players"}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-300">{roleData[role as keyof typeof roleData].description}</p>
+                <p className="text-sm text-gray-300">
+                  {roleData[role as keyof typeof roleData].description}
+                </p>
               </motion.div>
             ))}
 
@@ -147,25 +155,36 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-400">Game Balance:</span>
                   <div className="flex gap-2">
-                    <Badge variant="outline" className="text-blue-300 border-blue-500">
+                    <Badge
+                      variant="outline"
+                      className="text-blue-300 border-blue-500"
+                    >
                       Good:{" "}
                       {Object.entries(settings.roles).reduce(
                         (sum, [role, count]) =>
-                          roleData[role as keyof typeof roleData].team === "Good" ? sum + count : sum,
+                          roleData[role as keyof typeof roleData].team ===
+                          "Good"
+                            ? sum + count
+                            : sum,
                         0,
                       )}
                     </Badge>
-                    <Badge variant="outline" className="text-red-300 border-red-500">
+                    <Badge
+                      variant="outline"
+                      className="text-red-300 border-red-500"
+                    >
                       Evil: {settings.roles.werewolves}
                     </Badge>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500">Recommended for {playerCount} players</div>
+                <div className="text-xs text-gray-500">
+                  Recommended for {playerCount} players
+                </div>
               </div>
             </motion.div>
           </div>
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

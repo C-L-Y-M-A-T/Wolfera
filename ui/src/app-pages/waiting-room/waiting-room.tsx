@@ -12,71 +12,7 @@ import {
   RolePreview,
   WaitingRoomHeader,
 } from "./components";
-
-// Mock data for the waiting room
-const mockGameData = {
-  gameId: "game_12345",
-  gameName: "Miller's Hollow - Night Hunt",
-  host: "WolfHunter",
-  currentPlayer: "WolfHunter",
-  maxPlayers: 12,
-  minPlayers: 6,
-  isHost: true,
-  gameStarting: false,
-  settings: {
-    roles: {
-      werewolves: 2,
-      villagers: 6,
-      seer: 1,
-      doctor: 1,
-      hunter: 1,
-      witch: 1,
-    },
-    nightDuration: 60,
-    dayDuration: 120,
-    discussionTime: 180,
-    votingTime: 60,
-  },
-};
-
-const mockPlayers: Player[] = [
-  {
-    id: "1",
-    username: "WolfHunter",
-    avatar: "/placeholder.svg?height=64&width=64&text=WH",
-    isHost: true,
-    isReady: true,
-    status: "online",
-    joinedAt: new Date(Date.now() - 300000),
-  },
-  {
-    id: "2",
-    username: "MoonHowler",
-    avatar: "/placeholder.svg?height=64&width=64&text=MH",
-    isHost: false,
-    isReady: true,
-    status: "online",
-    joinedAt: new Date(Date.now() - 240000),
-  },
-  {
-    id: "3",
-    username: "VillageProtector",
-    avatar: "/placeholder.svg?height=64&width=64&text=VP",
-    isHost: false,
-    isReady: false,
-    status: "online",
-    joinedAt: new Date(Date.now() - 180000),
-  },
-  {
-    id: "4",
-    username: "NightStalker",
-    avatar: "/placeholder.svg?height=64&width=64&text=NS",
-    isHost: false,
-    isReady: true,
-    status: "online",
-    joinedAt: new Date(Date.now() - 120000),
-  },
-];
+import { mockGameData, mockPlayers } from "@/data/lobby";
 
 export default function WaitingRoomPage() {
   const theme = useTheme();

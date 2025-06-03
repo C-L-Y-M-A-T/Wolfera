@@ -1,22 +1,32 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Play, Crown, Users, AlertTriangle, CheckCircle, Settings, UserMinus, RotateCcw } from "lucide-react"
-import { motion } from "framer-motion"
-import { useTheme } from "@/providers/theme-provider"
-import { useState } from "react"
-import { GameSettingsModal } from "./game-settings-modal"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Crown,
+  Play,
+  RotateCcw,
+  Settings,
+  UserMinus,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
+import { GameSettingsModal } from "./game-settings-modal";
+import { GameSettings } from "@/types/waiting-room";
 
 interface HostNavbarProps {
-  canStartGame: boolean
-  gameStarting: boolean
-  playerCount: number
-  minPlayers: number
-  allPlayersReady: boolean
-  onStartGame: () => void
-  settings: any
-  onSettingsChange: (settings: any) => void
+  canStartGame: boolean;
+  gameStarting: boolean;
+  playerCount: number;
+  minPlayers: number;
+  allPlayersReady: boolean;
+  onStartGame: () => void;
+  settings: GameSettings;
+  onSettingsChange: (settings: any) => void;
 }
 
 export function HostNavbar({
@@ -29,21 +39,23 @@ export function HostNavbar({
   settings,
   onSettingsChange,
 }: HostNavbarProps) {
-  const theme = useTheme()
-  const [showSettings, setShowSettings] = useState(false)
+  const theme = useTheme();
+  const [showSettings, setShowSettings] = useState(false);
 
   const getStartButtonText = () => {
-    if (gameStarting) return "Starting Game..."
-    if (playerCount < minPlayers) return `Need ${minPlayers - playerCount} More`
-    if (!allPlayersReady) return "Waiting for Players"
-    return "Start Game"
-  }
+    if (gameStarting) return "Starting Game...";
+    if (playerCount < minPlayers)
+      return `Need ${minPlayers - playerCount} More`;
+    if (!allPlayersReady) return "Waiting for Players";
+    return "Start Game";
+  };
 
   const getStatusIcon = () => {
-    if (playerCount < minPlayers) return <AlertTriangle className="h-4 w-4 text-yellow-500" />
-    if (!allPlayersReady) return <Users className="h-4 w-4 text-yellow-500" />
-    return <CheckCircle className="h-4 w-4 text-green-500" />
-  }
+    if (playerCount < minPlayers)
+      return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+    if (!allPlayersReady) return <Users className="h-4 w-4 text-yellow-500" />;
+    return <CheckCircle className="h-4 w-4 text-green-500" />;
+  };
 
   return (
     <>
@@ -65,7 +77,11 @@ export function HostNavbar({
               {/* Game Status */}
               <div className="flex items-center gap-2 text-sm">
                 {getStatusIcon()}
-                <span className={canStartGame ? "text-green-400" : "text-yellow-400"}>
+                <span
+                  className={
+                    canStartGame ? "text-green-400" : "text-yellow-400"
+                  }
+                >
                   {canStartGame ? "Ready to Start" : "Not Ready"}
                 </span>
               </div>
@@ -74,7 +90,10 @@ export function HostNavbar({
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
               {/* Settings Button */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button
                   variant="outline"
                   size="sm"
@@ -87,7 +106,10 @@ export function HostNavbar({
               </motion.div>
 
               {/* Kick Player Button */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button
                   variant="outline"
                   size="sm"
@@ -99,7 +121,10 @@ export function HostNavbar({
               </motion.div>
 
               {/* Reset Game Button */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button
                   variant="outline"
                   size="sm"
@@ -134,15 +159,27 @@ export function HostNavbar({
 
           {/* Game Starting Progress */}
           {gameStarting && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="pb-4">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="pb-4"
+            >
               <div className="flex items-center justify-center gap-3 p-3 bg-green-900/20 border border-green-500/30 rounded-lg">
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "linear",
+                  }}
                   className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full"
                 />
-                <div className="text-green-400 font-medium">Preparing game...</div>
-                <div className="text-xs text-gray-400">Assigning roles and setting up the village</div>
+                <div className="text-green-400 font-medium">
+                  Preparing game...
+                </div>
+                <div className="text-xs text-gray-400">
+                  Assigning roles and setting up the village
+                </div>
               </div>
             </motion.div>
           )}
@@ -157,5 +194,5 @@ export function HostNavbar({
         onSettingsChange={onSettingsChange}
       />
     </>
-  )
+  );
 }
