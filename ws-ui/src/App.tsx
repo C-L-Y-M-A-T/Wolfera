@@ -197,7 +197,7 @@ export default function WerewolfGame(): JSX.Element {
       setPlayerRole(playerId, role);
     });
 
-    sock.on("game:werewolf:vote", (votes: WerewolfVote[]) => {
+    sock.on("werewolf-vote", (votes: WerewolfVote[]) => {
       setwerewolfesVotes(votes);
       console.log("225 votes: ", votes);
     });
@@ -212,6 +212,7 @@ export default function WerewolfGame(): JSX.Element {
     });
 
     sock.on("round-results", (result: any) => {
+      //TODO:send eliminated players roles with the result
       debugger;
       setGameData((prevGameData) => {
         if (!prevGameData) return null;

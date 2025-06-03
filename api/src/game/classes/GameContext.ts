@@ -20,6 +20,7 @@ import {
   GameResult,
   PlayerAction,
   PlayerActionSchema,
+  PublicGameData,
   SERVER_SOCKET_EVENTS,
   ServerSocketEvent,
   ServerSocketEventPayloads,
@@ -264,7 +265,7 @@ export class GameContext {
    * Returns public game data to be sent to players.
    * Sensitive information like roles is omitted.
    */
-  getPublicGameData(): any {
+  getPublicGameData(): PublicGameData {
     return {
       gameId: this.gameId,
       round: this.round,

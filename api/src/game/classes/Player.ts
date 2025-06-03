@@ -4,6 +4,7 @@ import { GameSocket } from 'src/socket/socket.types';
 
 import { User } from 'src/users/entities/user.entity';
 import { ChatChannel } from '../chat/chatChannel';
+import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 
 export class Player {
@@ -42,7 +43,7 @@ export class Player {
   }
   die(): void {
     this.isAlive = false;
-    this.context.gameEventEmitter.emit('player:die', this);
+    this.context.gameEventEmitter.emit(events.GAME.PLAYER.KILLED, this);
   }
 
   assignRole(role: GameRole): void {
