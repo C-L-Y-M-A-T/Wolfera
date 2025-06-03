@@ -1,7 +1,9 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { GamePhase } from 'src/game/classes/GamePhase';
+import { PHASE_NAMES } from 'src/game/classes/types';
+import { VoteEndPayload } from 'src/game/types/vote-manager.types';
+import { ResultsPhase } from '../../ResultsPhase';
 
-export class DayResultsPhase extends GamePhase {
+export class DayResultsPhase extends ResultsPhase {
   constructor(context: GameContext) {
     super(context);
   }
@@ -9,17 +11,16 @@ export class DayResultsPhase extends GamePhase {
   get phaseName(): `${string}-phase` {
     return 'DayResults-phase';
   }
-  get phaseDuration(): number {
-    return 4; // No specific duration, ends when all actions are processed
-  }
-  protected async onStart(): Promise<void> {
-    console.log('DayResultsPhase started');
-  }
-  protected async onEnd(): Promise<void> {
-    console.log('DayResultsPhase ended');
-  }
 
-  protected validatePlayerPermissions(): void {
-    return; // No specific player permissions needed for this phase
+  processActions(): void {
+    const voteResults = this.input.initialData[PHASE_NAMES.DAY][
+      PHASE_NAMES.DAY_PHASES.VOTE
+    ] as VoteEndPayload | undefined;
+    if (!voteResults) return;
+    if (voteResults.result.action !== 'kill') return;
+    const target = voteResults.result.target;
+    if (!target) return;
+    this.resultsOutput.eliminatedPlayers.add(target);
+    this.resultsOutput.wasAnyoneEliminated = true;
   }
 }

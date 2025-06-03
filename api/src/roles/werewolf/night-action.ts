@@ -57,7 +57,6 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
       action.phasePayload,
     );
 
-    const a = Array.from(voteUpdate.votes.values());
     this.broadcastToWerewolves(voteUpdate);
   }
 
@@ -68,7 +67,9 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
     this.context.broadcastToPlayers(
       SERVER_SOCKET_EVENTS.werewolfVote,
       Array.from(voteUpdate.votes.values()),
-      (player) => this.isPlayerWerewolf(player),
+      (player) => {
+        return this.isPlayerWerewolf(player) || player.isAlive === false;
+      },
     );
   }
 

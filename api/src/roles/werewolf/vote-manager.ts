@@ -12,10 +12,6 @@ export class WerewolfVoteManager extends GenericVoteManager {
     return player.role?.roleData.name === WEREWOLF_ROLE_NAME;
   }
 
-  protected getRequiredVotes(eligibleVoters: Player[]): number {
-    return Math.ceil(eligibleVoters.length / 2);
-  }
-
   protected isEligibleTarget(player: Player): boolean {
     return player.role?.roleData.name !== WEREWOLF_ROLE_NAME;
   }

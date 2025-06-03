@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { ChainableGamePhase } from '../phases/chainablePhase';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
+import { Vote } from '../types/vote-manager.types';
 
 export enum PhaseState {
   Pending = 'pending',
@@ -55,6 +56,7 @@ export const SERVER_SOCKET_EVENTS = {
   gameEnded: 'game-ended',
   roundResults: 'round-results',
   werewolfVote: 'werewolf-vote',
+  playerVote: 'player-vote',
 } as const;
 
 // Payload types for each serverSocketEvent
@@ -81,6 +83,7 @@ export type ServerSocketEventPayloads = {
     message: string;
   };
   [SERVER_SOCKET_EVENTS.werewolfVote]: WerewolfVote[];
+  [SERVER_SOCKET_EVENTS.playerVote]: Vote[];
 };
 export type ServerSocketEvent = keyof ServerSocketEventPayloads;
 
