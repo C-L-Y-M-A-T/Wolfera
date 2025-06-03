@@ -212,6 +212,7 @@ export default function WerewolfGame(): JSX.Element {
     });
 
     sock.on("round-results", (result: any) => {
+      //TODO:send eliminated players roles with the result
       debugger;
       setGameData((prevGameData) => {
         if (!prevGameData) return null;
