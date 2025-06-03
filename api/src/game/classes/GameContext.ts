@@ -10,6 +10,8 @@ import { User } from 'src/users/entities/user.entity';
 import { OnGameEvent } from '../events/event-emitter/decorators/game-event.decorator';
 import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { events } from '../events/event.types';
+import { GamePersistenceHandler } from '../services/game/game-persistence.handler';
+import { GamePersistenceService } from '../services/game/game-persistence.service';
 import { RoleService } from '../services/role/role.service';
 import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { GamePhase } from './GamePhase';
@@ -30,6 +32,7 @@ export class GameContext {
   private _owner: Player;
   public gameEventEmitter = new GameEventEmitter(this);
   public gameResults: GameResult;
+  private gamePersistanceHandler = new GamePersistenceHandler(this);
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
@@ -40,10 +43,12 @@ export class GameContext {
   constructor(
     public rolesService: RoleService,
     public loggerService: LoggerService,
+    public persistenceService: GamePersistenceService,
   ) {
     this.gameId = this.generateGameId();
     this.gameEventEmitter.registerGameEventHandler(this);
     this.orchestrator.execute();
+    this.gameEventEmitter.emit(events.GAME.CREATE, this);
   }
 
   isEmpty() {

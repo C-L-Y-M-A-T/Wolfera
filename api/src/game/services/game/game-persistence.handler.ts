@@ -1,35 +1,44 @@
+import { GameEventHandler } from './../../events/event-emitter/decorators/game-event.decorator';
 import { Injectable } from '@nestjs/common';
 import { GameResult } from 'src/game/entities/game.entity';
+import { EventHandlerFactory } from 'src/game/events/event-emitter/decorators/event-handler.decorator';
+import { events } from 'src/game/events/event.types';
 import { GameContext } from '../../classes/GameContext';
 import { OnGameEvent } from '../../events/event-emitter/decorators/game-event.decorator';
 import { GamePersistenceService } from './game-persistence.service';
 
-@Injectable()
 export class GamePersistenceHandler {
-  constructor(private persistence: GamePersistenceService) {}
+  constructor(private context: GameContext) {}
 
-  @OnGameEvent('game:start')
+  @OnGameEvent(events.GAME.CREATE)
   async onGameStart(context: GameContext) {
-    await this.persistence.createGameRecord(context);
+    await this.context.persistenceService.createGameRecord(context);
   }
 
   @OnGameEvent('roles:assigned')
-  async onRolesAssigned(context: GameContext) {
-    await this.persistence.updatePlayerRoles(
-      context.gameId,
-      context.getAlivePlayers(),
+  async onRolesAssigned() {
+    await this.context.persistenceService.updatePlayerRoles(
+      this.context.gameId,
+      this.context.getAlivePlayers(),
     );
   }
 
   @OnGameEvent('player:eliminated')
-  async onPlayerEliminated(context: GameContext, playerId: string) {
-    await this.persistence.recordPlayerDeath(context.gameId, playerId);
+  async onPlayerEliminated(payload: any) {
+    //TODO: check type of payload
+    await this.context.persistenceService.recordPlayerDeath(
+      this.context.gameId,
+      payload.playerId,
+    );
   }
 
   @OnGameEvent('game:end')
-  async onGameEnd(context: GameContext, { winner }: { winner: string }) {
+  async onGameEnd({ winner }: { winner: string }) {
     const gameResult = this.parseGameResult(winner);
-    await this.persistence.finalizeGameRecord(context.gameId, gameResult);
+    await this.context.persistenceService.finalizeGameRecord(
+      this.context.gameId,
+      gameResult,
+    );
   }
 
   private parseGameResult(winner: string): GameResult {

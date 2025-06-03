@@ -9,7 +9,7 @@ export enum GameResult {
   ABANDONED = 'abandoned',
 }
 
-@Entity()
+@Entity('games')
 export class GameEntity extends BaseEntity {
   @PrimaryColumn()
   id: string = '';

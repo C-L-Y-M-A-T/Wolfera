@@ -2,7 +2,7 @@ import { RoleName } from 'src/roles';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { GameEntity } from './game.entity';
 
-@Entity()
+@Entity('player_game_result')
 export class PlayerGameResult {
   @PrimaryColumn()
   playerId: string;
