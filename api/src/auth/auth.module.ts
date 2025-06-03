@@ -1,23 +1,32 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { config } from 'src/config';
 import { UserModule } from 'src/users/user.module';
-
-import { JwtAuthGuard } from './guards/supabase-auth.guard';
-import { SupabaseStrategy } from './strategies/jwt.strategy';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtExpiredFilter } from './filters/jwt-expired.filter';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
-  controllers: [],
-  providers: [JwtAuthGuard, SupabaseStrategy],
   imports: [
     UserModule,
-    PassportModule,
     JwtModule.register({
-      global: true,
-      secret: config.supabase.jwtSecret,
-      signOptions: { expiresIn: 3600 },
+      secret: config.jwt.secret,
+      signOptions: { expiresIn: config.jwt.expirationTime },
     }),
   ],
+  controllers: [AuthController],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: JwtExpiredFilter,
+    },
+  ],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

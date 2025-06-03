@@ -21,7 +21,4 @@ export const werewolfRole: GameRole = {
   },
 };
 
-//TODO: this is just a dummy type, we need to implement the werewolf role
-export type WerewolfAction = { action: 'werewolf-kill'; personToKill: string };
-
 export default werewolfRole;

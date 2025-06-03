@@ -1,35 +1,31 @@
 import apiClient from "./client";
+import { request } from "./request";
 
 const api = {
-  users: {
-    sync: async (
-      accessToken: string,
-      email?: string,
-      username?: string,
-      avatar_url?: string,
-    ) => {
-      const data = await apiClient.post(
-        "/users/sync",
-        {
+  auth: {
+    login: async (username: string, password: string) => {
+      return request(
+        apiClient.post("/auth/login", {
+          username,
+          password,
+        }),
+      );
+    },
+    signup: async (email: string, username: string, password: string) => {
+      return request(
+        apiClient.post("/auth/signup", {
           email,
           username,
-          avatar_url,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+          password,
+        }),
       );
-      return data;
     },
-    me: async (accessToken: string) => {
-      const data = await apiClient.get("/users/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return data;
+    logout: async () => {
+      return request(apiClient.post("/auth/logout"));
+    },
+
+    profile: async () => {
+      return request(apiClient.get("/auth/profile"));
     },
   },
 };

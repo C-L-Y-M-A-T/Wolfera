@@ -1,9 +1,11 @@
 "use client";
 
 import AnimatedText from "@/components/animated-text";
+import { AvatarPreview } from "@/components/avatar-builder/components";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/providers/theme-provider";
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { UserData } from "@/types/profile/profile-header.types";
 import { motion } from "framer-motion";
 import { Calendar, Camera, Edit, Skull, Trophy } from "lucide-react";
@@ -12,14 +14,14 @@ interface ProfileHeaderProps {
   userData: UserData;
   onEditProfile: () => void;
   onEditAvatar: () => void;
-  avatarUrl: string;
+  avatarOptions: Record<keyof AvatarConfigType, number>;
 }
 
 export function ProfileHeader({
   userData,
   onEditProfile,
   onEditAvatar,
-  avatarUrl,
+  avatarOptions,
 }: ProfileHeaderProps) {
   const theme = useTheme();
   const { avatar } = theme.gameStyles;
@@ -41,18 +43,25 @@ export function ProfileHeader({
       <div className={theme.gameStyles.backgrounds.header.fadeBottom} />
 
       <div className="relative -mt-20 flex flex-col md:flex-row items-center md:items-end px-6 pb-4">
+        {/* Avatar Container - Using Theme Styles */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-          className={avatar.container}
+          className={`${avatar.container} flex-shrink-0`}
         >
-          <div className={avatar.glow}></div>
-          <img
-            src={avatarUrl || "/placeholder.svg"}
-            alt={userData.username}
-            className={avatar.image}
-          />
+          {/* Glow Effect */}
+          <div className={avatar.glow} />
+
+          {/* Avatar Image */}
+          <div className={`${avatar.image} overflow-hidden`}>
+            <AvatarPreview
+              currentOptions={avatarOptions}
+              className="w-full h-full bg-white"
+            />
+          </div>
+
+          {/* Edit Button */}
           <Button
             variant="outline"
             size="icon"
@@ -62,11 +71,12 @@ export function ProfileHeader({
             <Camera className="h-4 w-4 text-red-500" />
           </Button>
 
-          {/* Level indicator */}
-          <div className={avatar.levelBadge}>LVL {userData.level}</div>
+          {/* Level Badge - uncomment if needed */}
+          {/* <div className={avatar.levelBadge}>LVL {userData.level}</div> */}
         </motion.div>
 
-        <div className="mt-6 md:mt-0 md:ml-6 text-center md:text-left">
+        {/* User Info */}
+        <div className="mt-6 md:mt-0 md:ml-6 text-center md:text-left flex-grow">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -106,6 +116,7 @@ export function ProfileHeader({
           </motion.div>
         </div>
 
+        {/* Edit Profile Button */}
         <div className="mt-4 md:mt-0 md:ml-auto">
           <Button
             variant="outline"
@@ -137,7 +148,7 @@ function ProfileXpBar({ level, xp }: ProfileXpBarProps) {
     <div className="px-6 pb-4">
       <div className="flex items-center justify-between text-xs mb-1">
         <span className={`${theme.typography.fontSize.sm} text-gray-300`}>
-          Level {level + 1}
+          Level {level}
         </span>
         <span className={`${theme.typography.fontSize.sm} text-gray-300`}>
           Level {level + 1}

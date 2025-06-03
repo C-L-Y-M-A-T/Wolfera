@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/require-await */
+import { WsException } from '@nestjs/websockets';
 import { ChainableGamePhase } from '../../chainablePhase';
+import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
-import { NightPhase } from '../night.phase';
-import { PhaseConstructor, PlayerAction } from './../../types';
-import { WaitingForGameStartPlayerAction } from './types';
+import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
+import { PhaseConstructor } from './../../types';
+import {
+  WaitingForGameStartPlayerAction,
+  waitingForGameStartPlayerActionSchema,
+} from './types';
 
 export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameStartPlayerAction> {
+  constructor(context: GameContext) {
+    super(context, waitingForGameStartPlayerActionSchema);
+  }
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
-    return NightPhase;
+    return RoleAssignmentPhase;
   }
 
   readonly phaseName = 'WaitingForGameStart-phase';
@@ -15,6 +24,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   onStart(): void {
+    console.log('WaitingForGameStartPhase: onStart');
     this.context.gameEventEmitter.broadcastToPlayers(
       'game:waitingForGameStart',
       {
@@ -31,11 +41,6 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected async onPrePhase(): Promise<void> {
-    this.context.loggerService.log(
-      'WaitingForGameStartPhase: onPrePhase',
-      this.context.gameId,
-      this.context.players.size,
-    );
     this.context.gameEventEmitter.emit('game:lobby:open', {
       gameId: this.context.gameId,
     });
@@ -51,28 +56,30 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     });
   }
   protected async onEnd(): Promise<void> {
-    this.context.loggerService.log(
-      'WaitingForGameStartPhase: onEnd',
-      this.context.gameId,
-      this.context.players.size,
-    );
     this.context.gameEventEmitter.emit('game:starting', {
       gameId: this.context.gameId,
       playerCount: this.context.players.size,
     });
   }
 
-  protected validatePlayerAction(
-    player: Player,
-    action: PlayerAction,
-  ): action is WaitingForGameStartPlayerAction {
+  protected async processPlayerAction(player: Player): Promise<void> {
+    const gameData = this.context.getPublicGameData();
+    this.context.gameEventEmitter.emit('game:started', gameData);
+
+    // Broadcast to all players that the game is starting
+    this.broadcastToPlayers('game-started', gameData);
+
+    await this.end();
+  }
+
+  protected validatePlayerPermissions(player: Player): void {
     // Validate that the player is the game owner
     if (player.id !== this.context.owner?.id) {
       this.context.gameEventEmitter.emitToPlayer(player, 'error', {
         message: 'Only the game owner can start the game',
         code: 'NOT_OWNER',
       });
-      return false;
+      throw new WsException('Not owner');
     }
 
     // Validate minimum player count
@@ -82,23 +89,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
         message: 'Not enough players to start the game',
         code: 'NOT_ENOUGH_PLAYERS',
       });
-      return false;
+      throw new WsException('Low size');
     }
-
-    return action.action === 'start-game';
-  }
-
-  protected async processPlayerAction(
-    player: Player,
-    action: WaitingForGameStartPlayerAction,
-  ): Promise<void> {
-    this.context.gameEventEmitter.emit('game:started', {
-      startedBy: player.id,
-      gameId: this.context.gameId,
-      playerCount: this.context.players.size,
-    });
-
-    this.context.tempAsignRoles();
-    this.end();
   }
 }

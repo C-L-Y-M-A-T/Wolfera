@@ -11,7 +11,7 @@ enum Badge {
 }
 
 type FriendDto {
-  avatar_url: String
+  avatarOptions: JSONObject
   badges: [Badge!]!
   email: String!
   gamesAsVillager: Float!
@@ -21,6 +21,11 @@ type FriendDto {
   id: String!
   username: String!
 }
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
 
 type Query {
   allUsers: [UserDto!]!
@@ -29,7 +34,7 @@ type Query {
 }
 
 type User {
-  avatar_url: String
+  avatarOptions: JSONObject
   badges: [Badge!]!
   email: String!
   friends: [User!]
@@ -37,12 +42,12 @@ type User {
   gamesAsWerewolf: Float!
   gamesPlayed: Float!
   gamesWon: Float!
-  id: String!
+  hashedPassword: String!
   username: String!
 }
 
 type UserDto {
-  avatar_url: String
+  avatarOptions: JSONObject
   badges: [Badge!]!
   email: String!
   friends: [FriendDto!]

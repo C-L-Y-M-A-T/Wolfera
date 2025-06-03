@@ -2,7 +2,6 @@
 
 import type React from "react";
 
-import GoogleSignIn from "@/components/google-signIn";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,15 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import api from "@/services/api";
-import {
-  signInWithEmailAndPassword,
-  signUpWithEmailAndPassword,
-} from "@/services/supabase";
+
+import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ConnectPage() {
+  const { login } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("login");
 
@@ -35,35 +33,47 @@ export default function ConnectPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await signInWithEmailAndPassword({
-      email,
-      password,
-    });
 
-    if (error) {
-      console.error("Error logging in:", error);
-    } else {
-      await api.users.sync(data?.session?.access_token || "", email, username);
-      router.push("/dashboard");
+    const { data, error } = await api.auth.login(username, password);
+
+    if (error || !data?.access_token) {
+      console.error("Login failed:", error || "No token received");
+      alert("Login failed. Please check your credentials.");
+      return;
     }
-    console.log("Login attempt with:", { email, password });
+
+    try {
+      await login(data.access_token); // <- sets token and user
+      router.push("/");
+    } catch (err) {
+      console.error("Login failed while setting user:", err);
+      alert("Login failed. Try again.");
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await signUpWithEmailAndPassword({
-      email,
-      password,
-    });
 
-    if (error) {
-      console.error("Error logging in:", error);
-    } else {
-      console.log("Signed up:", data);
-
-      router.push("/dashboard");
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
     }
-    console.log("Login attempt with:", { email, password });
+
+    const { data, error } = await api.auth.signup(email, username, password);
+
+    if (error || !data?.access_token) {
+      console.error("Signup failed:", error || "No token received");
+      alert("Signup failed. Please try again.");
+      return;
+    }
+
+    try {
+      await login(data.access_token);
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Signup failed while setting user:", err);
+      alert("Signup failed. Try again.");
+    }
   };
 
   return (
@@ -86,6 +96,7 @@ export default function ConnectPage() {
             onValueChange={() => {
               setActiveTab((prev) => (prev === "login" ? "signup" : "login"));
               setEmail("");
+              setUsername("");
               setPassword("");
               setConfirmPassword("");
             }}
@@ -99,13 +110,13 @@ export default function ConnectPage() {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-username">Username</Label>
                   <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
+                    id="login-username"
+                    type="text"
+                    placeholder="Enter your username"
+                    onChange={(e) => setUsername(e.target.value)}
+                    value={username}
                     required
                   />
                 </div>
@@ -121,6 +132,7 @@ export default function ConnectPage() {
                   </div>
                   <Input
                     id="login-password"
+                    placeholder="********"
                     type="password"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
@@ -163,6 +175,7 @@ export default function ConnectPage() {
                   <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
+                    placeholder="********"
                     type="password"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
@@ -173,6 +186,7 @@ export default function ConnectPage() {
                   <Label htmlFor="signup-confirm">Confirm Password</Label>
                   <Input
                     id="signup-confirm"
+                    placeholder="********"
                     type="password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     value={confirmPassword}
@@ -209,8 +223,6 @@ export default function ConnectPage() {
             <span className="px-2 text-sm text-gray-500">OR</span>
             <hr className="w-full border-t-[0.5px] border-gray-300" />
           </div>
-
-          <GoogleSignIn />
         </CardFooter>
       </Card>
     </div>

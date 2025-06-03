@@ -1,47 +1,37 @@
-// src/users/users.controller.ts
-
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/guards/supabase-auth.guard';
+import { Body, Controller, Param, Patch } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './user.service';
 
-@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('sync')
-  @UseGuards(JwtAuthGuard)
-  async onCallback(
-    @Req() req: Request,
-    @Body()
-    body: {
-      email: string;
-      username?: string;
-      avatar_url?: string;
-    },
+  @Patch(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
-    const userId =
-      req.user && 'sub' in req.user
-        ? (req.user as { sub: string }).sub
-        : undefined;
-    if (!userId) {
-      throw new Error('User ID is missing or invalid');
-    }
-    const user = await this.usersService.syncUser(userId, body);
-    console.log('User synced', user); //TODO remove log
-    return { success: true };
-  }
 
-  @Get('me')
-  getMe(@Req() req: Request) {
-    const userId =
-      req.user && 'sub' in req.user
-        ? (req.user as { sub: string }).sub
-        : undefined;
-    if (!userId) {
-      throw new Error('User ID is missing or invalid');
+    try {
+      const user = await this.usersService.findOne({ id: id });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // Update the user with the new data (including avatarOptions)
+      const updatedUser = await this.usersService.updateOne(
+        { id },
+        updateUserDto,
+      );
+
+      return {
+        success: true,
+        user: updatedUser,
+      };
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
     }
-    return this.usersService.findById(userId);
   }
 }

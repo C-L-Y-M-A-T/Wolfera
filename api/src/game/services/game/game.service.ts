@@ -1,10 +1,12 @@
 // src/game/services/game/game.service.ts (updated)
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { GameOptions } from 'src/game/classes/types';
 import { GameHandlerRegistry } from 'src/game/events/event-handler-registry.service';
-import { User } from 'src/temp/temp.user';
+
+import { User } from 'src/users/entities/user.entity';
 import { GameContext } from '../../classes/GameContext';
 
 @Injectable()
@@ -65,8 +67,7 @@ export class GameService {
   connectPlayer(user: User, gameId: string, socket: Socket): GameContext {
     const gameContext = this.games.get(gameId);
     if (!gameContext) {
-      //todo: throw a better error
-      throw new Error('Game not found');
+      throw new WsException('Game not found');
     }
     gameContext.connectPlayer(user, socket);
     return gameContext;

@@ -1,4 +1,5 @@
 import { RoleName } from 'src/roles';
+import { z } from 'zod';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
 import { ChainableGamePhase } from './chainablePhase';
@@ -13,7 +14,7 @@ export enum PhaseState {
 
 //TODO: to think about the options we want to add
 export type GameOptions = {
-  roles: Record<RoleName, number>;
+  roles: Partial<Record<RoleName, number>>;
   totalPlayers: number;
 };
 
@@ -23,26 +24,60 @@ export type PhaseConstructor<T extends ChainableGamePhase = GamePhase> = new (
 
 export type PhaseName = `${string}-phase`;
 
-//TODO: to implement type
-export type PlayerAction = { action: string; data?: any };
+export type PlayerAction<ActionPayload = any> = {
+  activePhase: string;
+  timestamp: number;
+  phasePayload: ActionPayload;
+};
 
-/**
- * Game events that can be emitted during gameplay
- */
-export const GameEvent = {
-  phaseStart: 'phase:start',
-  phaseEnd: 'phase:end',
-  playerAction: 'player:action',
-  playerEliminated: 'player:eliminated',
-  playerJoined: 'player:join',
-  playerLeft: 'player:leave',
-  gameStart: 'game:start',
-  gameEnd: 'game:end',
-  nightStart: 'night:start',
-  nightEnd: 'night:end',
-  dayStart: 'day:start',
-  dayEnd: 'day:end',
-  voteStart: 'vote:start',
-  voteEnd: 'vote:end',
-  roleAction: 'role:action',
+export type GameResult = {
+  winner: 'werewolves' | 'villagers' | null;
+  message: string;
+};
+
+export const PlayerActionSchema = z.object({
+  activePhase: z.string(),
+  timestamp: z.number(),
+  phasePayload: z.any(),
+});
+
+export const serverSocketEvent = {
+  gameEvent: 'game-event',
+  roleAssigned: 'role-assigned',
+  playerEliminated: 'player-eliminated',
+  playerJoined: 'player-joined',
+  playerLeft: 'player-left',
+  gameStarted: 'game-started',
+  phaseStarted: 'phase-started',
+  phaseEnded: 'phase-ended',
+  roleRevealed: 'role-revealed',
+  gameEnded: 'game-ended',
+  roundResults: 'round-results',
+};
+
+// Payload types for each serverSocketEvent
+export type ServerSocketEventPayloads = {
+  //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
+  [serverSocketEvent.roleAssigned]: { playerId: string; role: RoleName };
+  [serverSocketEvent.playerEliminated]: { playerId: string };
+  [serverSocketEvent.playerJoined]: { playerId: string; playerName: string };
+  [serverSocketEvent.playerLeft]: { playerId: string };
+  [serverSocketEvent.gameStarted]: { gameId: string; options: GameOptions };
+  [serverSocketEvent.phaseStarted]: { phase: string; state: PhaseState };
+  [serverSocketEvent.phaseEnded]: { phase: string; state: PhaseState };
+  [serverSocketEvent.roleRevealed]: { playerId: string; role: RoleName }; //
+  [serverSocketEvent.gameEnded]: { gameId: string };
+};
+
+export const phaseNames = {
+  ROLES: (role: string) => `${role}-phase`,
+  NIGHT: 'Night-phase',
+  DAY_PHASES: {
+    NIGHT_RESULTS: `NightResults-phase`,
+    DAY_RESULTS: `DayResults-phase`,
+    VOTE: 'Vote-phase',
+  },
+  DAY: 'Day-phase',
+  ROLE_ASSIGNMENT: 'RoleAssignment-phase',
+  WAITING_FOR_GAME_START: 'WaitingForGameStart-phase',
 };

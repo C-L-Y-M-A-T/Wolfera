@@ -1,11 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { BaseEntity } from 'src/utils/generic/base.entity';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
@@ -21,11 +18,7 @@ registerEnumType(Badge, {
 
 @ObjectType()
 @Entity('users')
-export class User {
-  @Field()
-  @PrimaryGeneratedColumn('uuid') //to be changed to be in sync with the supbase id (while creating the new user)
-  id: string;
-
+export class User extends BaseEntity {
   @Field()
   @Column({ unique: true })
   email: string;
@@ -34,9 +27,13 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  avatar_url?: string;
+  @Field()
+  @Column()
+  hashedPassword: string;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column('json', { nullable: true })
+  avatarOptions: Record<string, number>;
 
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.friends)
@@ -52,6 +49,10 @@ export class User {
     },
   })
   friends?: User[];
+
+  // ---- Notifications ----
+  @OneToMany(() => Notification, (notification) => notification.recipient)
+  notifications?: Notification[];
 
   // ---- Game Stats ----
   @Field()
