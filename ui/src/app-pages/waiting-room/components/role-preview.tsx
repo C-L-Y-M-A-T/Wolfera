@@ -1,35 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, ChevronUp, Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useTheme } from "@/providers/theme-provider"
-import { useRoleStyles } from "@/hooks/use-role-styles"
-import { ROLES_DATA } from "@/lib/data/roles"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ROLES_DATA } from "@/data/roles";
+import { useRoleStyles } from "@/hooks/use-role-styles";
+import { useTheme } from "@/providers/theme-provider";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { useState } from "react";
 
 interface RolePreviewProps {
   settings: {
     roles: {
-      werewolves: number
-      villagers: number
-      seer: number
-      doctor: number
-      hunter: number
-      witch: number
-    }
-  }
-  playerCount: number
-  isExpanded: boolean
-  onTogglePreview: () => void
+      werewolves: number;
+      villagers: number;
+      seer: number;
+      doctor: number;
+      hunter: number;
+      witch: number;
+    };
+  };
+  playerCount: number;
+  isExpanded: boolean;
+  onTogglePreview: () => void;
 }
 
 export function RolePreview({ settings, playerCount }: RolePreviewProps) {
-  const theme = useTheme()
-  const getRoleStyles = useRoleStyles()
-  const [showAllRoles, setShowAllRoles] = useState(false)
+  const theme = useTheme();
+  const { getRoleColorClass, getRoleIcon } = useRoleStyles();
+  const [showAllRoles, setShowAllRoles] = useState(false);
 
   const activeRoles = ROLES_DATA.filter((role) => {
     const roleKey =
@@ -39,13 +39,16 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
           ? "werewolves"
           : role.category === "villager"
             ? "villagers"
-            : role.category
-    return settings.roles[roleKey as keyof typeof settings.roles] > 0
-  })
+            : role.category;
+    return settings.roles[roleKey as keyof typeof settings.roles] > 0;
+  });
 
-  const goodTeamCount = Object.entries(settings.roles).reduce((sum, [role, count]) => {
-    return role !== "werewolves" ? sum + count : sum
-  }, 0)
+  const goodTeamCount = Object.entries(settings.roles).reduce(
+    (sum, [role, count]) => {
+      return role !== "werewolves" ? sum + count : sum;
+    },
+    0,
+  );
 
   return (
     <motion.div
@@ -54,7 +57,9 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
       transition={{ duration: 0.6, delay: 0.5 }}
       className="h-full"
     >
-      <Card className={`${theme.gameStyles.cards.profile} h-full flex flex-col`}>
+      <Card
+        className={`${theme.gameStyles.cards.profile} h-full flex flex-col`}
+      >
         <CardHeader className="pb-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl text-red-400 flex items-center">
@@ -67,7 +72,11 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
               onClick={() => setShowAllRoles(!showAllRoles)}
               className="text-gray-400 hover:text-white"
             >
-              {showAllRoles ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {showAllRoles ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </CardHeader>
@@ -75,34 +84,39 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
         <CardContent className="flex-1 overflow-y-auto">
           {/* Quick Summary */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {activeRoles.slice(0, showAllRoles ? activeRoles.length : 4).map((role) => {
-              const roleKey =
-                role.category === "guardian"
-                  ? "doctor"
-                  : role.category === "werewolf"
-                    ? "werewolves"
-                    : role.category === "villager"
-                      ? "villagers"
-                      : role.category
-              const count = settings.roles[roleKey as keyof typeof settings.roles]
-              const roleStyles = getRoleStyles(role.category)
+            {activeRoles
+              .slice(0, showAllRoles ? activeRoles.length : 4)
+              .map((role) => {
+                const roleKey =
+                  role.category === "guardian"
+                    ? "doctor"
+                    : role.category === "werewolf"
+                      ? "werewolves"
+                      : role.category === "villager"
+                        ? "villagers"
+                        : role.category;
+                const count =
+                  settings.roles[roleKey as keyof typeof settings.roles];
 
-              return (
-                <motion.div
-                  key={role.id}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200 }}
-                >
-                  <Badge variant="outline" className={`${roleStyles.colors} border`}>
-                    {roleStyles.icon}
-                    <span className="ml-1">
-                      {role.name} ({count})
-                    </span>
-                  </Badge>
-                </motion.div>
-              )
-            })}
+                return (
+                  <motion.div
+                    key={role.id}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                  >
+                    <Badge
+                      variant="outline"
+                      className={`${getRoleColorClass(role.category)} border`}
+                    >
+                      {getRoleIcon(role.category)}
+                      <span className="ml-1">
+                        {role.name} ({count})
+                      </span>
+                    </Badge>
+                  </motion.div>
+                );
+              })}
           </div>
 
           {/* Player Count Info */}
@@ -115,49 +129,60 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
 
           {/* Detailed Role Information */}
           <div className="space-y-4">
-            <div className="text-sm text-gray-400 mb-4">Roles will be randomly assigned when the game starts</div>
+            <div className="text-sm text-gray-400 mb-4">
+              Roles will be randomly assigned when the game starts
+            </div>
 
-            {activeRoles.slice(0, showAllRoles ? activeRoles.length : 3).map((role, index) => {
-              const roleKey =
-                role.category === "guardian"
-                  ? "doctor"
-                  : role.category === "werewolf"
-                    ? "werewolves"
-                    : role.category === "villager"
-                      ? "villagers"
-                      : role.category
-              const count = settings.roles[roleKey as keyof typeof settings.roles]
-              const roleStyles = getRoleStyles(role.category)
+            {activeRoles
+              .slice(0, showAllRoles ? activeRoles.length : 3)
+              .map((role, index) => {
+                const roleKey =
+                  role.category === "guardian"
+                    ? "doctor"
+                    : role.category === "werewolf"
+                      ? "werewolves"
+                      : role.category === "villager"
+                        ? "villagers"
+                        : role.category;
+                const count =
+                  settings.roles[roleKey as keyof typeof settings.roles];
 
-              return (
-                <motion.div
-                  key={role.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`p-4 rounded-lg border ${roleStyles.colors} backdrop-blur-sm`}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      {roleStyles.icon}
-                      <span className="font-medium">{role.name}</span>
+                return (
+                  <motion.div
+                    key={role.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`p-4 rounded-lg border ${getRoleColorClass(role.category)} backdrop-blur-sm`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {getRoleIcon(role.category)}
+                        <span className="font-medium">{role.name}</span>
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs ${
+                            role.team === "Evil"
+                              ? "bg-red-900/50 text-red-300"
+                              : "bg-blue-900/50 text-blue-300"
+                          }`}
+                        >
+                          {role.team}
+                        </Badge>
+                      </div>
                       <Badge
-                        variant="secondary"
-                        className={`text-xs ${
-                          role.team === "Evil" ? "bg-red-900/50 text-red-300" : "bg-blue-900/50 text-blue-300"
-                        }`}
+                        variant="outline"
+                        className="bg-gray-800/50 text-white"
                       >
-                        {role.team}
+                        {count} {count === 1 ? "player" : "players"}
                       </Badge>
                     </div>
-                    <Badge variant="outline" className="bg-gray-800/50 text-white">
-                      {count} {count === 1 ? "player" : "players"}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-300">{role.shortDescription}</p>
-                </motion.div>
-              )
-            })}
+                    <p className="text-sm text-gray-300">
+                      {role.shortDescription}
+                    </p>
+                  </motion.div>
+                );
+              })}
 
             {/* Show More Button */}
             <AnimatePresence>
@@ -191,20 +216,28 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-400">Game Balance:</span>
                   <div className="flex gap-2">
-                    <Badge variant="outline" className="text-blue-300 border-blue-500">
+                    <Badge
+                      variant="outline"
+                      className="text-blue-300 border-blue-500"
+                    >
                       Good: {goodTeamCount}
                     </Badge>
-                    <Badge variant="outline" className="text-red-300 border-red-500">
+                    <Badge
+                      variant="outline"
+                      className="text-red-300 border-red-500"
+                    >
                       Evil: {settings.roles.werewolves}
                     </Badge>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500">Recommended for {playerCount} players</div>
+                <div className="text-xs text-gray-500">
+                  Recommended for {playerCount} players
+                </div>
               </div>
             </motion.div>
           </div>
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }
