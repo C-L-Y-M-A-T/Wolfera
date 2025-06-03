@@ -2,7 +2,7 @@ import { RoleName } from 'src/roles';
 import { z } from 'zod';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
-import { ChainableGamePhase } from './chainablePhase';
+import { ChainableGamePhase } from './phases/chainablePhase';
 
 export enum PhaseState {
   Pending = 'pending',
@@ -69,8 +69,8 @@ export type ServerSocketEventPayloads = {
   [serverSocketEvent.gameEnded]: { gameId: string };
 };
 
-export const phaseNames = {
-  ROLES: (role: string) => `${role}-phase`,
+export const PHASE_NAMES = {
+  ROLE: (role: RoleName) => `${role}-phase` as const,
   NIGHT: 'Night-phase',
   DAY_PHASES: {
     NIGHT_RESULTS: `NightResults-phase`,
@@ -80,4 +80,4 @@ export const phaseNames = {
   DAY: 'Day-phase',
   ROLE_ASSIGNMENT: 'RoleAssignment-phase',
   WAITING_FOR_GAME_START: 'WaitingForGameStart-phase',
-};
+} as const;

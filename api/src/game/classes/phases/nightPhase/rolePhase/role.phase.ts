@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { GameContext } from '../../../GameContext';
 import { GamePhase } from '../../../GamePhase';
 import { Player } from '../../../Player';
-import { PlayerAction } from '../../../types';
+import { PHASE_NAMES, PlayerAction } from '../../../types';
 
 export abstract class RolePhase<A = any> extends GamePhase<A> {
   constructor(
@@ -25,6 +25,6 @@ export abstract class RolePhase<A = any> extends GamePhase<A> {
   }
 
   get phaseName(): `${string}-phase` {
-    return `${this.role.roleData.name}-phase`;
+    return PHASE_NAMES.ROLE(this.role.roleData.name);
   }
 }

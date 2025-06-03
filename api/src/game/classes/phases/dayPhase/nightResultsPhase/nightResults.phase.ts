@@ -1,7 +1,7 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { GamePhase } from 'src/game/classes/GamePhase';
 import { Player } from 'src/game/classes/Player';
-import { phaseNames, serverSocketEvent } from 'src/game/classes/types';
+import { PHASE_NAMES, serverSocketEvent } from 'src/game/classes/types';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { WerewolfNightEndPayload } from 'src/roles/werewolf/types';
 import { WITCH_ROLE_NAME } from 'src/roles/witch';
@@ -100,8 +100,8 @@ export class NightResultsPhase extends GamePhase {
 
   private processWerewolvesActions(): void {
     // TODO: process night actions
-    const werewolvesResults = this.input.initialData[phaseNames.NIGHT][
-      phaseNames.ROLES(WEREWOLF_ROLE_NAME)
+    const werewolvesResults = this.input.initialData[PHASE_NAMES.NIGHT][
+      PHASE_NAMES.ROLE(WEREWOLF_ROLE_NAME)
     ] as WerewolfNightEndPayload | undefined;
 
     if (!werewolvesResults) return;
@@ -111,8 +111,8 @@ export class NightResultsPhase extends GamePhase {
     const target = werewolvesResults.result.target;
     if (!target) return;
 
-    const witchResults = this.input.initialData[phaseNames.NIGHT][
-      phaseNames.ROLES(WITCH_ROLE_NAME)
+    const witchResults = this.input.initialData[PHASE_NAMES.NIGHT][
+      PHASE_NAMES.ROLE(WITCH_ROLE_NAME)
     ] as WitchNightEndPayload | undefined;
     if (witchResults && witchResults.result.action === 'save') {
       this.nightResultsOutput.protectedPlayers.add(target);
@@ -124,8 +124,8 @@ export class NightResultsPhase extends GamePhase {
   }
 
   processWitchActions(): void {
-    const witchResults = this.input.initialData[phaseNames.NIGHT][
-      phaseNames.ROLES(WITCH_ROLE_NAME)
+    const witchResults = this.input.initialData[PHASE_NAMES.NIGHT][
+      PHASE_NAMES.ROLE(WITCH_ROLE_NAME)
     ] as WitchNightEndPayload | undefined;
     if (witchResults) {
       if (witchResults.result.action === 'kill') {

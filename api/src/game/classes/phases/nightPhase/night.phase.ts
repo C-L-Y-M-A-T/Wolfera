@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { GameRole } from 'src/roles';
-import { ChainableGamePhase } from '../../chainablePhase';
-import { PhaseOrchestrator } from '../../PhaseOrchestrator';
 import { Player } from '../../Player';
-import { SequentialPhaseOrchestrator } from '../../SequentialPhaseOrchestrator';
-import { PhaseConstructor, PlayerAction } from '../../types';
+import { PHASE_NAMES, PhaseConstructor, PlayerAction } from '../../types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { DayPhase } from '../dayPhase/day.phase';
+import { PhaseOrchestrator } from '../orchertrators/PhaseOrchestrator';
+import { SequentialPhaseOrchestrator } from '../orchertrators/SequentialPhaseOrchestrator';
 
 export class NightPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
@@ -16,7 +16,7 @@ export class NightPhase extends ChainableGamePhase {
       nightNumber: this.context.round,
     });
   }
-  readonly phaseName = 'Night-phase';
+  readonly phaseName = PHASE_NAMES.NIGHT;
   private orchestrator: PhaseOrchestrator;
   private activeRoles: GameRole[] = [];
 

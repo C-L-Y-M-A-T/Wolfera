@@ -1,8 +1,8 @@
 import { GameRole, RoleName } from 'src/roles';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
-import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
-import { PhaseConstructor, serverSocketEvent } from '../../types';
+import { PHASE_NAMES, PhaseConstructor, serverSocketEvent } from '../../types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { NightPhase } from '../nightPhase/night.phase';
 
 export class RoleAssignmentPhase extends ChainableGamePhase {
@@ -12,7 +12,7 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
     return NightPhase;
   }
-  readonly phaseName = 'RoleAssignment-phase';
+  readonly phaseName = PHASE_NAMES.ROLE_ASSIGNMENT;
 
   get phaseDuration(): number {
     return 10 * 1000;

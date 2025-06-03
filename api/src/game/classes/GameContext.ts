@@ -11,8 +11,8 @@ import { OnGameEvent } from '../events/event-emitter/decorators/game-event.decor
 import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { events } from '../events/event.types';
 import { RoleService } from '../services/role/role.service';
-import { ChainPhaseOrchestrator } from './ChainPhaseOrchestrator';
 import { GamePhase } from './GamePhase';
+import { ChainPhaseOrchestrator } from './phases/orchertrators/ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
 import {

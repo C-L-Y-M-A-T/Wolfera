@@ -1,7 +1,7 @@
-import { ChainableGamePhase } from './chainablePhase';
-import { GameContext } from './GameContext';
+import { GameContext } from '../../GameContext';
+import { PhaseConstructor } from '../../types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { PhaseOrchestrator } from './PhaseOrchestrator';
-import { PhaseConstructor } from './types';
 
 export class ChainPhaseOrchestrator<
   TInput = any,
@@ -43,7 +43,6 @@ export class ChainPhaseOrchestrator<
     this.currentPhase = undefined;
     return currentData as TOutput;
   }
-
 
   getPhaseHistory(): readonly ChainableGamePhase[] {
     return this.phaseHistory;

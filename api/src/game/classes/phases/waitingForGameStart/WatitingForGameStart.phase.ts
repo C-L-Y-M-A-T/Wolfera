@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { WsException } from '@nestjs/websockets';
-import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
+import { ChainableGamePhase } from '../chainablePhase';
 import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
-import { PhaseConstructor } from './../../types';
+import { PHASE_NAMES, PhaseConstructor } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
   waitingForGameStartPlayerActionSchema,
@@ -18,7 +18,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     return RoleAssignmentPhase;
   }
 
-  readonly phaseName = 'WaitingForGameStart-phase';
+  readonly phaseName = PHASE_NAMES.WAITING_FOR_GAME_START;
   get phaseDuration(): number {
     return 0;
   }
