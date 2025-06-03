@@ -21,15 +21,12 @@ export class SeerNightPhase extends RolePhase<SeerActionPayload> {
     this.context.emit('seer:night:start', {
       message: 'Choose a victim...',
     });
-    this.context.loggerService.log('seer night phase started');
   }
   async onEnd() {
     this.context.emit('seer:night:end', {
       message: 'Night phase is over.',
     });
-    this.context.loggerService.log('seer night phase ended');
   }
-
 
   async processPlayerAction(
     player: Player,

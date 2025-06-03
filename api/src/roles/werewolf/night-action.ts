@@ -50,7 +50,7 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
     player: Player,
     action: PlayerAction<WerewolfActionPayload>,
   ): Promise<void> {
-    this.context.loggerService.debug(`Werewolf ${player.id} performed action:`, action);
+    //this.context.loggerService.debug(`Werewolf ${player.id} performed action:`, action);
     // Process the vote
     const voteUpdate = this.voteManager.processVote(
       player,

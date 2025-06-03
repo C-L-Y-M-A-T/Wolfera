@@ -1,12 +1,12 @@
 // src/game/classes/GameEventEmitter.ts
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import 'reflect-metadata';
+import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from '../../classes/Player';
 import {
   GAME_EVENT_METADATA,
   GameEventHandler,
 } from './decorators/game-event.decorator';
-import { LoggerService } from '@nestjs/common';
 
 /**
  * Game-specific event emitter that handles events within a game context
@@ -15,9 +15,7 @@ export class GameEventEmitter {
   private eventEmitter: EventEmitter2;
   private handlers: GameEventHandler[];
 
-  constructor(
-    private readonly loggerService: LoggerService,
-  ) {
+  constructor(private readonly context: GameContext) {
     this.eventEmitter = new EventEmitter2({
       wildcard: true,
       delimiter: ':',
@@ -31,14 +29,14 @@ export class GameEventEmitter {
    * @param instance The instance containing @OnGameEvent handlers
    * @param gameEventEmitter The EventEmitter2 instance from the game context
    */
-  registerGameEventHandlers(instance: any): void {
+  registerGameEventHandler(instance: any): void {
     const metadata = Reflect.getMetadata(
       GAME_EVENT_METADATA,
       instance.constructor,
     );
 
     if (!metadata) {
-      this.loggerService.warn(
+      this.context.loggerService.warn(
         `No game event metadata found for ${instance.constructor.name}`,
       );
       return;
@@ -53,13 +51,13 @@ export class GameEventEmitter {
           try {
             handler(data);
           } catch (error) {
-            this.loggerService.error(
+            this.context.loggerService.error(
               `Error in game event handler ${methodName} for event ${event}: ${error.message}`,
             );
           }
         });
 
-        this.loggerService.log(
+        this.context.loggerService.log(
           `Registered handler ${instance.constructor.name}.${methodName} for event '${event}'`,
         );
       }
@@ -141,6 +139,6 @@ export class GameEventEmitter {
   cleanup(): void {
     this.eventEmitter.removeAllListeners();
     this.handlers.length = 0;
-    this.loggerService.log(`GameEventEmitter cleaned up`);
+    this.context.loggerService.log(`GameEventEmitter cleaned up`);
   }
 }
