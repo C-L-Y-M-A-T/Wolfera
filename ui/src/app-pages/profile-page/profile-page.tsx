@@ -3,11 +3,19 @@
 import AvatarBuilder from "@/components/avatar-builder/AvatarBuilder";
 import { Dialog } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/auth-context";
 import userData from "@/data/profile/user-data.mock.json";
+import { useToast } from "@/hooks/use-toast";
+import { useNotificationStream } from "@/hooks/useNotificationStream";
 import { useTheme } from "@/providers/theme-provider";
+import apiClient from "@/services/api/client";
+import {
+  AvatarConfigType,
+  initialState,
+} from "@/types/avatar-builder/avatarConfig";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Trophy, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AboutTab,
   AchievementsTab,
@@ -28,9 +36,56 @@ export default function ProfilePage() {
     bio: userData.bio,
     email: userData.email,
   });
-  const [avatarData, setAvatarData] = useState(userData.avatarData);
-  const [avatarUrl, setAvatarUrl] = useState(userData.avatar);
+
   const [activeTab, setActiveTab] = useState("about");
+  const toast = useToast();
+
+  const { user } = useAuth();
+  // const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   const user = fetchUser();
+  //   setUser(user);
+  // }, []);
+  console.log("User data:", user);
+
+  useNotificationStream(user?.id);
+  const [avatarOptions, setAvatarOptions] = useState(initialState);
+
+  // Initialize avatar options from logged-in user
+  useEffect(() => {
+    if (user?.avatarOptions) {
+      setAvatarOptions(user.avatarOptions);
+    }
+  }, [user]);
+
+  const handleAvatarSave = async (
+    newAvatarOptions: Record<keyof AvatarConfigType, number>,
+  ) => {
+    if (!user) {
+      alert("User not logged in");
+      return;
+    }
+
+    setAvatarOptions(newAvatarOptions);
+
+    try {
+      // Use your existing API structure
+      const updateData = {
+        avatarOptions: newAvatarOptions,
+      };
+
+      await apiClient.patch(`/users/${user.id}`, updateData);
+
+      alert("Avatar saved successfully!");
+      setAvatarBuilderOpen(false);
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+      // alert("Failed to save avatar");
+      // Revert the local state on error
+      // setAvatarOptions(user.avatarOptions || initialState);
+    }
+  };
 
   const handleProfileChange = (field: string, value: string) => {
     setProfile((prev) => ({
@@ -53,15 +108,18 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveAvatar = (newAvatarData: any) => {
-    // In a real app, this would save the avatar data to the server
-    console.log("Saving avatar:", newAvatarData);
-    setAvatarData(newAvatarData);
-
-    // In a real implementation, the server would generate an avatar image
-    // For now, we'll just keep using the placeholder
-    setAvatarUrl(`/placeholder.svg?height=128&width=128&text=Custom`);
-  };
+  // Show loading state if user is not loaded yet
+  if (!user) {
+    return (
+      <div className={theme.gameStyles.backgrounds.page}>
+        <div className={theme.gameStyles.backgrounds.overlay}>
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">Loading profile...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={theme.gameStyles.backgrounds.page}>
@@ -72,7 +130,7 @@ export default function ProfilePage() {
             userData={userData}
             onEditProfile={() => setEditProfileOpen(true)}
             onEditAvatar={() => setAvatarBuilderOpen(true)}
-            avatarUrl={avatarUrl}
+            avatarOptions={avatarOptions}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -166,11 +224,15 @@ export default function ProfilePage() {
         onSave={handleSaveProfile}
       />
 
-      {/* Avatar Builder Modal would go here */}
+      {/* Avatar Builder Modal */}
       {avatarBuilderOpen && (
-        // i want when click away from the avatar builder modal, it closes
         <Dialog open={avatarBuilderOpen} onOpenChange={setAvatarBuilderOpen}>
-          <AvatarBuilder />
+          <AvatarBuilder
+            avatarOptions={avatarOptions}
+            onAvatarSave={handleAvatarSave}
+            onClose={() => setAvatarBuilderOpen(false)}
+            setAvatarOptions={setAvatarOptions}
+          />
         </Dialog>
       )}
     </div>

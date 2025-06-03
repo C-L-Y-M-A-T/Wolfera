@@ -3,7 +3,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { assert } from 'console';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { Player } from 'src/game/classes/Player';
 import { GameRole, RoleName, RoleSchema } from 'src/roles';
 
 @Injectable()
@@ -103,17 +102,5 @@ export class RoleService implements OnModuleInit {
   // Get a specific role's config
   getRole(roleName: RoleName) {
     return this.roles.get(roleName);
-  }
-
-  assignRoles(players: Player[]): void {
-    players.forEach((player, index) => {
-      const role = this.roles.get(
-        Array.from(this.roles.keys())[index % this.roles.size],
-      );
-      if (!role) {
-        throw new Error(`Role not found`);
-      }
-      player.assignRole(role);
-    });
   }
 }

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/C-L-Y-M-A-T/Wolfera#readme",
   "devDependencies": {
+    "@types/event-source-polyfill": "^1.0.5",
     "concurrently": "^9.1.2"
   },
   "dependencies": {
@@ -25,7 +26,9 @@
     "@nestjs/apollo": "^13.1.0",
     "@nestjs/graphql": "^13.1.0",
     "dataloader": "^2.2.3",
+    "event-source-polyfill": "^1.0.31",
     "framer-motion": "^12.11.0",
-    "graphql": "^16.11.0"
+    "graphql": "^16.11.0",
+    "graphql-type-json": "^0.3.2"
   }
 }

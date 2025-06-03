@@ -1,12 +1,20 @@
-import { IsAlphanumeric, IsOptional, IsUrl, Length } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsAlphanumeric()
-  @Length(3, 20)
+  @IsString()
   username?: string;
 
   @IsOptional()
-  @IsUrl()
-  avatar_url?: string;
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @Column('json', { nullable: true })
+  @IsOptional()
+  avatarOptions?: Record<string, number>;
 }
