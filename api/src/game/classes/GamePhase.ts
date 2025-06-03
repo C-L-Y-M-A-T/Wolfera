@@ -1,8 +1,15 @@
 import { WsException } from '@nestjs/websockets';
+import { RoleName } from 'src/roles';
 import { z } from 'zod';
+import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseName, PhaseState, PlayerAction } from './types';
+import {
+  PhaseName,
+  PhaseState,
+  PlayerAction,
+  serverSocketEvent,
+} from './types';
 
 export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
@@ -31,7 +38,7 @@ export abstract class GamePhase<A = any> {
     return 3000;
   } // 3s post-phase by default
 
-  private input?: any;
+  protected input?: any;
   private onComplete?: (output: any) => void;
   protected output?: any;
   // can be overridden in subclasses by using:
@@ -51,7 +58,10 @@ export abstract class GamePhase<A = any> {
     this.input = input;
     this.onComplete = onComplete;
 
-    console.log('Executing phase:', this.phaseName);
+    this.context.loggerService.debug(
+      `Executing phase: ${this.phaseName} with input:`,
+      this.input,
+    );
     if (this.phaseState !== PhaseState.Pending) {
       throw new Error(
         `Phase ${this.phaseName} is already running or completed.`,
@@ -67,6 +77,10 @@ export abstract class GamePhase<A = any> {
     // 2. Main phase
     this.phaseState = PhaseState.Active;
     await this.onStart();
+    this.context.gameEventEmitter.emit(
+      events.GAME.PHASE.START(this.phaseName),
+      this,
+    );
 
     if (this.phaseDuration > 0) {
       await this.delay(this.phaseDuration);
@@ -81,6 +95,10 @@ export abstract class GamePhase<A = any> {
       ); //TODO: handle this error
     }
     await this.onEnd();
+    this.context.gameEventEmitter.emit(
+      events.GAME.PHASE.END(this.phaseName),
+      this,
+    );
     this.phaseState = PhaseState.Post;
 
     // 3. Post-phase
@@ -100,8 +118,10 @@ export abstract class GamePhase<A = any> {
         `Phase ${this.phaseName} cannot handle action from state ${this.phaseState}.`,
       );
     }
-    if (this.phaseName === action.activePhase) {
-      throw new WsException(`Phase ${this.phaseName} is not the active phase`);
+    if (this.phaseName !== action.activePhase) {
+      throw new WsException(
+        `event received for phase ${action.activePhase}, but the active phase is ${this.phaseName}`,
+      );
     }
 
     if (!player.isAlive)
@@ -185,11 +205,13 @@ export abstract class GamePhase<A = any> {
    * @param event - The event name to broadcast
    * @param payload - The payload to send to players
    */
-  protected broadcastToPlayers(event: string, payload: any): void {
+  protected broadcastToPlayers(
+    event: string,
+    payload: any,
+    filter: (player: Player) => boolean = () => true,
+  ) {
     this.context.players.forEach((player) => {
-      if (player.isConnected() && player.socket) {
-        player.socket.emit(event, payload);
-      }
+      if (filter(player)) this.emitToPlayer(player, event, payload);
     });
   }
 
@@ -206,5 +228,12 @@ export abstract class GamePhase<A = any> {
     } else {
       throw new WsException(`Player ${player.id} is not connected`);
     }
+  }
+
+  protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
+    this.emitToPlayer(revealTo, serverSocketEvent.roleRevealed, {
+      playerId: player.id,
+      role: roleName,
+    });
   }
 }

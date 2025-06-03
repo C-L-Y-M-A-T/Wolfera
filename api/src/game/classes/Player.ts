@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
-import { User } from 'src/temp/temp.user';
+
+import { User } from 'src/users/entities/user.entity';
 import { ChatChannel } from '../chat/chatChannel';
 import { GameContext } from './GameContext';
 
@@ -23,7 +24,8 @@ export class Player {
   }
   connect(socket: Socket): void {
     if (this.socket) {
-      throw new Error('Player is already connected to the game');
+      //throw new Error('Player is already connected to the game');
+      this.socket.disconnect();
     }
     this.socket = socket;
     this.socket.data.player = this;

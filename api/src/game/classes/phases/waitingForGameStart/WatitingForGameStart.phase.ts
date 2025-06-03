@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
+import { WsException } from '@nestjs/websockets';
 import { ChainableGamePhase } from '../../chainablePhase';
 import { GameContext } from '../../GameContext';
 import { Player } from '../../Player';
@@ -39,17 +40,6 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     );
   }
 
-  protected async onPrePhase(): Promise<void> {
-    this.context.gameEventEmitter.emit('game:lobby:open', {
-      gameId: this.context.gameId,
-    });
-  }
-  protected async onPostPhase(): Promise<void> {
-    console.log('WaitingForGameStartPhase: onPostPhase');
-    this.context.gameEventEmitter.emit('game:lobby:closed', {
-      gameId: this.context.gameId,
-    });
-  }
   protected async onEnd(): Promise<void> {
     this.context.gameEventEmitter.emit('game:starting', {
       gameId: this.context.gameId,
@@ -58,18 +48,11 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected async processPlayerAction(player: Player): Promise<void> {
-    this.context.gameEventEmitter.emit('game:started', {
-      startedBy: player.id,
-      gameId: this.context.gameId,
-      playerCount: this.context.players.size,
-    });
+    const gameData = this.context.getPublicGameData();
+    this.context.gameEventEmitter.emit('game:started', gameData);
 
     // Broadcast to all players that the game is starting
-    this.broadcastToPlayers('game-started', {
-      gameId: this.context.gameId,
-      startedBy: player.id,
-      playerCount: this.context.players.size,
-    });
+    this.broadcastToPlayers('game-started', gameData);
 
     await this.end();
   }
@@ -81,7 +64,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
         message: 'Only the game owner can start the game',
         code: 'NOT_OWNER',
       });
-      throw new Error('Not owner');
+      throw new WsException('Not owner');
     }
 
     // Validate minimum player count
@@ -91,7 +74,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
         message: 'Not enough players to start the game',
         code: 'NOT_ENOUGH_PLAYERS',
       });
-      throw new Error('Low size');
+      throw new WsException('Low size');
     }
   }
 }

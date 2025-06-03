@@ -36,7 +36,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
 
   @OnGameEvent('game:phase:night:start')
   handleNightStart(): void {
-    console.log(`Night phase started for game ${this.gameId}`);
+    this.game.loggerService.log(
+      `Night phase started for game ${this.gameId}`,
+    );
 
     // Clear any previous votes
     this.werewolfVotes.clear();
@@ -66,7 +68,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
   @OnGameEvent('werewolf:vote')
   handleWerewolfVote(data: WerewolfVoteData): void {
     const { voterId, targetId } = data;
-    console.log(`Werewolf ${voterId} voted to kill player ${targetId}`);
+    this.game.loggerService.log(
+      `Werewolf ${voterId} voted to kill player ${targetId}`,
+    );
 
     // Store the vote
     this.werewolfVotes.set(voterId, targetId);
@@ -88,7 +92,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
     const target = this.game.players.get(targetId);
 
     if (!target) {
-      console.warn(`Target player ${targetId} not found`);
+      this.game.loggerService.warn(
+        `Seer ${playerId} tried to check non-existent player ${targetId}`,
+      );
       return;
     }
 
@@ -106,7 +112,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
 
   @OnGameEvent('phase:night:end')
   handleNightEnd(): void {
-    console.log(`Night phase ended for game ${this.gameId}`);
+    this.game.loggerService.log(
+      `Night phase ended for game ${this.gameId}`,
+    );
 
     // Process any remaining votes
     this.processWerewolfVotes();
@@ -114,7 +122,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
 
   private processWerewolfVotes(): void {
     if (this.werewolfVotes.size === 0) {
-      console.log('No werewolf votes to process');
+      this.game.loggerService.log(
+        `No werewolf votes to process for game ${this.gameId}`,
+      );
       return;
     }
 
@@ -147,8 +157,9 @@ export class NightPhaseEventHandler implements GameEventHandler {
           playerName: victim.profile.id,
           killedBy: 'werewolves',
         });
-
-        console.log(`Player ${victim.profile.id} was killed by werewolves`);
+        this.game.loggerService.log(
+          `Player ${victim.profile.id} was killed by werewolves`,
+        );
       }
     }
 

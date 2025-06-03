@@ -11,6 +11,7 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
+
     try {
       const user = await this.usersService.findOne({ id: id });
 
