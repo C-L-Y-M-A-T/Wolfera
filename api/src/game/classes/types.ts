@@ -68,7 +68,7 @@ export type ServerSocketEventPayloads = {
   [SERVER_SOCKET_EVENTS.phaseStarted]: {
     phaseName: string;
     startTime: number;
-    phaseDuration;
+    phaseDuration: number;
     payload?: any; // Optional payload for the phase
     round: number;
   };
