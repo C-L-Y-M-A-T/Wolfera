@@ -1,13 +1,13 @@
 export interface Role {
-  id: string
-  name: string
-  team: "Good" | "Evil"
-  shortDescription: string
-  detailedDescription: string
-  abilities: string[]
-  tips: string[]
-  winCondition: string
-  category: "villager" | "werewolf" | "seer" | "guardian" | "hunter" | "witch"
+  id: string;
+  name: string;
+  team: "Good" | "Evil";
+  shortDescription: string;
+  detailedDescription: string;
+  abilities: string[];
+  tips: string[];
+  winCondition: string;
+  category: "villager" | "werewolf" | "seer" | "guardian" | "hunter" | "witch";
 }
 
 export const ROLES_DATA: Role[] = [
@@ -19,7 +19,11 @@ export const ROLES_DATA: Role[] = [
     shortDescription: "Innocent townspeople trying to survive",
     detailedDescription:
       "Villagers are the backbone of the town. They have no special abilities but must use their wit, observation skills, and voting power to identify and eliminate the werewolves threatening their community.",
-    abilities: ["Vote during the day phase", "Participate in discussions", "No special night actions"],
+    abilities: [
+      "Vote during the day phase",
+      "Participate in discussions",
+      "No special night actions",
+    ],
     tips: [
       "Pay attention to voting patterns and behavior",
       "Form alliances with trusted players",
@@ -133,12 +137,12 @@ export const ROLES_DATA: Role[] = [
     ],
     winCondition: "Help eliminate all werewolves",
   },
-]
+];
 
 export const getRole = (roleId: string): Role | undefined => {
-  return ROLES_DATA.find((role) => role.id === roleId)
-}
+  return ROLES_DATA.find((role) => role.id === roleId);
+};
 
 export const getRolesByTeam = (team: "Good" | "Evil"): Role[] => {
-  return ROLES_DATA.filter((role) => role.team === team)
-}
+  return ROLES_DATA.filter((role) => role.team === team);
+};
