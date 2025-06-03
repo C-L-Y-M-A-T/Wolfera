@@ -23,7 +23,7 @@ export class VotingPhase extends GamePhase<VoteActionPayload> {
   }
 
   get phaseDuration(): number {
-    return 10 * 1000; // 5 seconds for voting
+    return 20 * 1000; // 5 seconds for voting
   }
 
   protected async onStart(): Promise<void> {

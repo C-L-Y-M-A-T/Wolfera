@@ -107,7 +107,7 @@ export const PHASE_NAMES = {
   DAY_PHASES: {
     NIGHT_RESULTS: `NightResults-phase`,
     DAY_RESULTS: `DayResults-phase`,
-    VOTE: 'Vote-phase',
+    VOTE: 'Voting-phase',
   },
   DAY: 'Day-phase',
   ROLE_ASSIGNMENT: 'RoleAssignment-phase',
