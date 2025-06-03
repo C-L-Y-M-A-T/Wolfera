@@ -1,5 +1,5 @@
-import { GameContext } from '../../GameContext';
-import { PhaseConstructor } from '../../types';
+import { GameContext } from '../../classes/GameContext';
+import { PhaseConstructor } from '../../classes/types';
 import { ChainableGamePhase } from '../chainablePhase';
 import { PhaseOrchestrator } from './PhaseOrchestrator';
 

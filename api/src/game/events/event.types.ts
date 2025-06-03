@@ -38,11 +38,13 @@ const ACTIONS = {
 } as const;
 
 // Event factory functions for dynamic events
-const createPhaseEvent = (phaseName: PhaseName, action: string): string =>
-  createEvent(CATEGORIES.GAME, CATEGORIES.PHASE, phaseName, action);
+const createPhaseEvent = (
+  phaseName: PhaseNameOrWildcard,
+  action: string,
+): string => createEvent(CATEGORIES.GAME, CATEGORIES.PHASE, phaseName, action);
 
 const createPhaseActionVariant = (
-  phaseName: PhaseName,
+  phaseName: PhaseNameOrWildcard,
   action: string,
   variant: string,
 ): string =>
@@ -86,25 +88,27 @@ const createCheckEvents = (namespace: string) => ({
   RESULT: createEvent(CATEGORIES.GAME, namespace, ACTIONS.RESULT),
 });
 
+type PhaseNameOrWildcard = PhaseName | '*';
 // Phase event creators
 const createPhaseEvents = () => ({
   START: (phaseName: PhaseName) => createPhaseEvent(phaseName, ACTIONS.START),
-  END: (phaseName: PhaseName) => createPhaseEvent(phaseName, ACTIONS.END),
-  ACTION: (phaseName: PhaseName, action: string) =>
+  END: (phaseName: PhaseNameOrWildcard) =>
+    createPhaseEvent(phaseName, ACTIONS.END),
+  ACTION: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseEvent(phaseName, action),
-  CHECK: (phaseName: PhaseName, action: string) =>
+  CHECK: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.CHECK),
-  RESULT: (phaseName: PhaseName, action: string) =>
+  RESULT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.RESULT),
-  VOTE: (phaseName: PhaseName, action: string) =>
+  VOTE: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.VOTE),
-  VOTE_RESULT: (phaseName: PhaseName, action: string) =>
+  VOTE_RESULT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(
       phaseName,
       action,
       `${ACTIONS.VOTE}:${ACTIONS.RESULT}`,
     ),
-  VOTE_TIMEOUT: (phaseName: PhaseName, action: string) =>
+  VOTE_TIMEOUT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(
       phaseName,
       action,

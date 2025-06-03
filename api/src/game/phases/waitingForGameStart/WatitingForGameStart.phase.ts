@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { WsException } from '@nestjs/websockets';
-import { GameContext } from '../../GameContext';
-import { Player } from '../../Player';
+import { GameContext } from '../../classes/GameContext';
+import { Player } from '../../classes/Player';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  SERVER_SOCKET_EVENTS,
+} from '../../classes/types';
 import { ChainableGamePhase } from '../chainablePhase';
 import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
-import { PHASE_NAMES, PhaseConstructor } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
   waitingForGameStartPlayerActionSchema,
@@ -52,7 +56,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     this.context.gameEventEmitter.emit('game:started', gameData);
 
     // Broadcast to all players that the game is starting
-    this.broadcastToPlayers('game-started', gameData);
+    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStarted, gameData);
 
     await this.end();
   }

@@ -8,7 +8,7 @@ import {
   PhaseName,
   PhaseState,
   PlayerAction,
-  serverSocketEvent,
+  SERVER_SOCKET_EVENTS,
 } from './types';
 
 export abstract class GamePhase<A = any> {
@@ -231,7 +231,7 @@ export abstract class GamePhase<A = any> {
   }
 
   protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
-    this.emitToPlayer(revealTo, serverSocketEvent.roleRevealed, {
+    this.emitToPlayer(revealTo, SERVER_SOCKET_EVENTS.roleRevealed, {
       playerId: player.id,
       role: roleName,
     });

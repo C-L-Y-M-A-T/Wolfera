@@ -1,3 +1,0 @@
-declare global {
-  interface PhaseNameMap {}
-}

@@ -1,7 +1,7 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { GamePhase } from 'src/game/classes/GamePhase';
 import { Player } from 'src/game/classes/Player';
-import { PHASE_NAMES, serverSocketEvent } from 'src/game/classes/types';
+import { PHASE_NAMES, SERVER_SOCKET_EVENTS } from 'src/game/classes/types';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { WerewolfNightEndPayload } from 'src/roles/werewolf/types';
 import { WITCH_ROLE_NAME } from 'src/roles/witch';
@@ -72,8 +72,8 @@ export class NightResultsPhase extends GamePhase {
       this.nightResultsOutput.eliminatedPlayers,
     ).map((player) => player.id);
 
-    this.broadcastToPlayers(serverSocketEvent.roundResults, {
-      round: this.nightResultsOutput,
+    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.roundResults, {
+      round: this.nightResultsOutput.round,
       eliminatedPlayers,
       message: this.nightResultsOutput.wasAnyoneEliminated
         ? 'Someone was eliminated! The werewolves are closing in!'

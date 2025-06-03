@@ -1,5 +1,5 @@
-import { GameContext } from '../../GameContext';
-import { GamePhase } from '../../GamePhase';
+import { GameContext } from '../../classes/GameContext';
+import { GamePhase } from '../../classes/GamePhase';
 import { PhaseOrchestrator } from './PhaseOrchestrator';
 
 export class SequentialPhaseOrchestrator<

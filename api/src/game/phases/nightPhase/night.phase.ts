@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { GameRole } from 'src/roles';
-import { Player } from '../../Player';
-import { PHASE_NAMES, PhaseConstructor, PlayerAction } from '../../types';
+import { Player } from '../../classes/Player';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  PlayerAction,
+} from '../../classes/types';
 import { ChainableGamePhase } from '../chainablePhase';
 import { DayPhase } from '../dayPhase/day.phase';
 import { PhaseOrchestrator } from '../orchertrators/PhaseOrchestrator';
@@ -29,11 +33,6 @@ export class NightPhase extends ChainableGamePhase {
   }
 
   async onStart(): Promise<void> {
-    this.context.gameEventEmitter.broadcastToPlayers('night:start', {
-      nightNumber: this.context.round,
-      activeRoles: this.activeRoles.map((role) => role.roleData.name),
-    });
-
     this.output = await this.orchestrator.execute();
     this.end();
   }

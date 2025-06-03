@@ -1,8 +1,9 @@
 import { RoleName } from 'src/roles';
+import { WerewolfVote } from 'src/roles/werewolf/types';
 import { z } from 'zod';
+import { ChainableGamePhase } from '../phases/chainablePhase';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
-import { ChainableGamePhase } from './phases/chainablePhase';
 
 export enum PhaseState {
   Pending = 'pending',
@@ -41,33 +42,47 @@ export const PlayerActionSchema = z.object({
   phasePayload: z.any(),
 });
 
-export const serverSocketEvent = {
+export const SERVER_SOCKET_EVENTS = {
   gameEvent: 'game-event',
   roleAssigned: 'role-assigned',
   playerEliminated: 'player-eliminated',
-  playerJoined: 'player-joined',
+  playerJoined: 'player-join',
   playerLeft: 'player-left',
   gameStarted: 'game-started',
-  phaseStarted: 'phase-started',
+  phaseStarted: 'phase-start',
   phaseEnded: 'phase-ended',
   roleRevealed: 'role-revealed',
   gameEnded: 'game-ended',
   roundResults: 'round-results',
-};
+  werewolfVote: 'werewolf-vote',
+} as const;
 
 // Payload types for each serverSocketEvent
 export type ServerSocketEventPayloads = {
   //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
-  [serverSocketEvent.roleAssigned]: { playerId: string; role: RoleName };
-  [serverSocketEvent.playerEliminated]: { playerId: string };
-  [serverSocketEvent.playerJoined]: { playerId: string; playerName: string };
-  [serverSocketEvent.playerLeft]: { playerId: string };
-  [serverSocketEvent.gameStarted]: { gameId: string; options: GameOptions };
-  [serverSocketEvent.phaseStarted]: { phase: string; state: PhaseState };
-  [serverSocketEvent.phaseEnded]: { phase: string; state: PhaseState };
-  [serverSocketEvent.roleRevealed]: { playerId: string; role: RoleName }; //
-  [serverSocketEvent.gameEnded]: { gameId: string };
+  [SERVER_SOCKET_EVENTS.roleAssigned]: { playerId: string; role: RoleName };
+  [SERVER_SOCKET_EVENTS.playerEliminated]: { playerId: string };
+  [SERVER_SOCKET_EVENTS.playerJoined]: { playerId: string; playerName: string };
+  [SERVER_SOCKET_EVENTS.playerLeft]: { playerId: string };
+  [SERVER_SOCKET_EVENTS.gameStarted]: any;
+  [SERVER_SOCKET_EVENTS.phaseStarted]: {
+    phaseName: string;
+    startTime: number;
+    phaseDuration;
+    payload?: any; // Optional payload for the phase
+    round: number;
+  };
+  [SERVER_SOCKET_EVENTS.phaseEnded]: { phaseName: string; round: number };
+  [SERVER_SOCKET_EVENTS.roleRevealed]: { playerId: string; role: RoleName }; //
+  [SERVER_SOCKET_EVENTS.gameEnded]: GameResult;
+  [SERVER_SOCKET_EVENTS.roundResults]: {
+    round: number;
+    eliminatedPlayers: string[];
+    message: string;
+  };
+  [SERVER_SOCKET_EVENTS.werewolfVote]: WerewolfVote[];
 };
+export type ServerSocketEvent = keyof ServerSocketEventPayloads;
 
 export const PHASE_NAMES = {
   ROLE: (role: RoleName) => `${role}-phase` as const,

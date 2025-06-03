@@ -1,9 +1,9 @@
 // src/roles/werewolf/night-action.ts
 
 import { GameContext } from 'src/game/classes/GameContext';
-import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
 import { PlayerAction } from 'src/game/classes/types';
+import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
 import witchRole from '.';
 import { WitchActionPayload, witchActionSchema } from './types';
 

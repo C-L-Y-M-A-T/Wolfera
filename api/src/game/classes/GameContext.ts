@@ -10,17 +10,19 @@ import { User } from 'src/users/entities/user.entity';
 import { OnGameEvent } from '../events/event-emitter/decorators/game-event.decorator';
 import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { events } from '../events/event.types';
+import { ChainPhaseOrchestrator } from '../phases/orchertrators/ChainPhaseOrchestrator';
+import { WaitingForGameStartPhase } from '../phases/waitingForGameStart/WatitingForGameStart.phase';
 import { RoleService } from '../services/role/role.service';
 import { GamePhase } from './GamePhase';
-import { ChainPhaseOrchestrator } from './phases/orchertrators/ChainPhaseOrchestrator';
-import { WaitingForGameStartPhase } from './phases/waitingForGameStart/WatitingForGameStart.phase';
 import { Player } from './Player';
 import {
   GameOptions,
   GameResult,
   PlayerAction,
   PlayerActionSchema,
-  serverSocketEvent,
+  SERVER_SOCKET_EVENTS,
+  ServerSocketEvent,
+  ServerSocketEventPayloads,
 } from './types';
 
 @Injectable()
@@ -54,7 +56,7 @@ export class GameContext {
     this.loggerService.debug('Adding player:', user);
     const player = new Player(user, this);
     this.players.set(user.id, player);
-    this.gameEventEmitter.emit('player:join', {
+    this.gameEventEmitter.emit(events.GAME.PLAYER_JOIN, {
       player: player.profile,
     });
     return player;
@@ -109,13 +111,15 @@ export class GameContext {
   removePlayer(userId: string): void {
     const player = this.players.get(userId);
     if (player) {
-      this.players.delete(userId);
-      this.gameEventEmitter.emit('player:leave', { playerId: userId });
+      this.players.delete(userId); // TODO: maybe consider marking as inactive instead of deleting (for rejoining for example)
+      this.gameEventEmitter.emit(events.GAME.PLAYER_LEAVE, {
+        playerId: userId,
+      });
 
       // If owner left, try to assign a new owner
       if (this._owner && this._owner.id === userId && this.players.size > 0) {
         this._owner = this.getplayers()[0];
-        this.gameEventEmitter.emit('owner:changed', {
+        this.gameEventEmitter.emit(events.GAME.OWNER_CHANGED, {
           newOwnerId: this._owner.id,
         });
       }
@@ -157,11 +161,11 @@ export class GameContext {
   }
 
   stop(): void {
-    this.broadcastToPlayers(serverSocketEvent.gameEnded, this.gameResults);
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameEnded, this.gameResults);
     this.players.forEach((player) => {
       player.disconnect();
     });
-    this.gameEventEmitter.emit('game:end', {
+    this.gameEventEmitter.emit(events.GAME.END, {
       gameId: this.gameId,
     });
   }
@@ -182,7 +186,7 @@ export class GameContext {
       action,
     ) as PlayerAction;
 
-    this.gameEventEmitter.emit('player:action', {
+    this.gameEventEmitter.emit(events.GAME.PLAYER_ACTION, {
       playerId: player.id,
       ValidatedAction,
     });
@@ -195,7 +199,6 @@ export class GameContext {
     this.players.get('123')!.role =
       this.rolesService.getRole(WEREWOLF_ROLE_NAME);
     this.players.get('456')!.role = this.rolesService.getRole(SEER_ROLE_NAME);
-    this.gameEventEmitter.emit('roles:assigned', { gameId: this.gameId });
   }
 
   @OnGameEvent(events.GAME.PHASE.START('*')) //TODO: add typing for payload
@@ -203,7 +206,7 @@ export class GameContext {
     console.log(`Phase started: ${phase.phaseName}`);
     // Handle phase start logic here
     // For example, you can emit an event to notify players
-    this.broadcastToPlayers('phase-start', {
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseStarted, {
       phaseName: phase.phaseName,
       startTime: phase.startTime,
       phaseDuration: phase.phaseDuration,
@@ -216,7 +219,7 @@ export class GameContext {
     console.log(`Phase ended: ${event.phaseName}`);
     // Handle phase end logic here
     // For example, you can emit an event to notify players
-    this.broadcastToPlayers('phase-end', {
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseEnded, {
       phaseName: event.phaseName,
       round: this.round,
     });
@@ -228,9 +231,9 @@ export class GameContext {
    * @param event - The event name to broadcast
    * @param payload - The payload to send to players
    */
-  protected broadcastToPlayers(
-    event: string,
-    payload: any,
+  public broadcastToPlayers<E extends ServerSocketEvent>(
+    event: E,
+    payload: ServerSocketEventPayloads[E],
     filter: (player: Player) => boolean = () => true,
   ) {
     this.players.forEach((player) => {
@@ -245,7 +248,11 @@ export class GameContext {
    * @param payload - The payload to send
    * @throws Error if the player is not connected
    */
-  protected emitToPlayer(player: Player, event: string, payload: any): void {
+  private emitToPlayer<E extends ServerSocketEvent>(
+    player: Player,
+    event: E,
+    payload: ServerSocketEventPayloads[E],
+  ): void {
     if (player.isConnected() && player.socket) {
       player.socket.emit(event, payload);
     } else {

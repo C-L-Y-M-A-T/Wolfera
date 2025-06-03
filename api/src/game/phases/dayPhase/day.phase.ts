@@ -1,5 +1,9 @@
-import { Player } from '../../Player';
-import { PHASE_NAMES, PhaseConstructor, PlayerAction } from '../../types';
+import { Player } from '../../classes/Player';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  PlayerAction,
+} from '../../classes/types';
 import { ChainableGamePhase } from '../chainablePhase';
 import { NightPhase } from '../nightPhase/night.phase';
 import { PhaseOrchestrator } from '../orchertrators/PhaseOrchestrator';

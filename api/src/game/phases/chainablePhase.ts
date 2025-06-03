@@ -1,5 +1,5 @@
-import { GamePhase } from '../GamePhase';
-import { PhaseConstructor } from '../types';
+import { GamePhase } from '../classes/GamePhase';
+import { PhaseConstructor } from '../classes/types';
 
 export abstract class ChainableGamePhase<A = any> extends GamePhase<A> {
   /**

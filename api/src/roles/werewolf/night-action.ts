@@ -1,14 +1,14 @@
 import { WsException } from '@nestjs/websockets';
 import { GameContext } from 'src/game/classes/GameContext';
-import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { Player } from 'src/game/classes/Player';
-import { PlayerAction } from 'src/game/classes/types';
-import { events } from 'src/game/events/event.types';
+import { PlayerAction, SERVER_SOCKET_EVENTS } from 'src/game/classes/types';
+import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
 import werewolfRole, { WEREWOLF_ROLE_NAME } from '.';
 import {
   WerewolfActionPayload,
   werewolfActionSchema,
   WerewolfNightEndPayload,
+  WerewolfVoteState,
 } from './types';
 import { WerewolfVoteManager } from './vote-manager';
 
@@ -57,19 +57,18 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
       action.phasePayload,
     );
 
-    // Broadcast vote update to werewolves
-    this.emitToWerewolves(
-      events.GAME.WEREWOLF.VOTE,
-      Array.from(voteUpdate.votes.values()),
-    );
+    const a = Array.from(voteUpdate.votes.values());
+    this.broadcastToWerewolves(voteUpdate);
   }
 
   /**
-   * Emits events specifically to werewolf players
+   * Broadcasts the vote results to all werewolves
    */
-  private emitToWerewolves(event: string, data: any): void {
-    this.broadcastToPlayers(event, data, (plater) =>
-      this.isPlayerWerewolf(plater),
+  private broadcastToWerewolves(voteUpdate: WerewolfVoteState): void {
+    this.context.broadcastToPlayers(
+      SERVER_SOCKET_EVENTS.werewolfVote,
+      Array.from(voteUpdate.votes.values()),
+      (player) => this.isPlayerWerewolf(player),
     );
   }
 
