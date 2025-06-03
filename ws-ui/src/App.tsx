@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
 import { BACKEND_URL, connectToGameSocket } from "./api";
+import DayVotingPhase from "./day-voting.component";
 import GameContextComponent, {
   ActivePhaseComponent,
 } from "./gameContext.component";
@@ -101,6 +102,7 @@ export default function WerewolfGame(): JSX.Element {
   const [joinedMessages, setJoinedMessages] = useState<string[]>([]);
   const [activePhase, setActivePhase] = useState<Phase | null>(null);
   const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
+  const [dayVotes, setDayVotes] = useState<WerewolfVote[]>([]);
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
 
   const gameDataRef = useRef<GameData | null>(null);
@@ -472,6 +474,16 @@ export default function WerewolfGame(): JSX.Element {
             sectionStyle={sectionStyle}
             buttonStyle={buttonStyle}
           ></WerewolfPhase>
+        )}
+        {gameData && activePhase?.phaseName === "Voting-phase" && (
+          <DayVotingPhase
+            gameData={gameData}
+            user={user}
+            socket={socket}
+            votes={dayVotes}
+            setVotes={setDayVotes}
+            sectionStyle={sectionStyle}
+          />
         )}
       </div>
     </>
