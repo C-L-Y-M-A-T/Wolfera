@@ -23,12 +23,6 @@ export class ChainPhaseOrchestrator<
     const currentData = { initialData };
 
     while (PhaseConstructor) {
-      this.context.gameEventEmitter.emit('phase:transition', {
-        nextPhase: PhaseConstructor.name,
-        phaseNumber: this.phaseHistory.length + 1,
-        gameId: this.context.gameId,
-      });
-
       // Instantiate and execute current phase
       this.currentPhase = new PhaseConstructor(this.context);
       this.phaseHistory.push(this.currentPhase);

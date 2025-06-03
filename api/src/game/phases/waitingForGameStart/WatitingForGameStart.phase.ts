@@ -27,37 +27,17 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     return 0;
   }
 
-  onStart(): void {
-    console.log('WaitingForGameStartPhase: onStart');
-    this.context.gameEventEmitter.broadcastToPlayers(
-      'game:waitingForGameStart',
-      {
-        gameId: this.context.gameId,
-        players: Array.from(this.context.players.values()).map((player) => ({
-          id: player.id,
-          name: player.profile.id, // TODO: change to name
-          isConnected: player.isConnected(),
-          isOwner: this.context.owner?.id === player.id,
-        })),
-        owner: this.context.owner?.id,
-      },
-    );
-  }
-
+  protected onStart(): Promise<void> | void {}
   protected async onEnd(): Promise<void> {
-    this.context.gameEventEmitter.emit('game:starting', {
-      gameId: this.context.gameId,
-      playerCount: this.context.players.size,
-    });
+    const gameData = this.context.getPublicGameData();
+    this.context.gameEventEmitter.emit(
+      SERVER_SOCKET_EVENTS.gameStarted,
+      gameData,
+    );
+    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStarted, gameData);
   }
 
   protected async processPlayerAction(player: Player): Promise<void> {
-    const gameData = this.context.getPublicGameData();
-    this.context.gameEventEmitter.emit('game:started', gameData);
-
-    // Broadcast to all players that the game is starting
-    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStarted, gameData);
-
     await this.end();
   }
 

@@ -69,7 +69,7 @@ export type ServerSocketEventPayloads = {
     phaseName: string;
     startTime: number;
     phaseDuration: number;
-    payload?: any; // Optional payload for the phase
+    payload?: PublicGameData; // Optional payload for the phase
     round: number;
   };
   [SERVER_SOCKET_EVENTS.phaseEnded]: { phaseName: string; round: number };
@@ -83,6 +83,20 @@ export type ServerSocketEventPayloads = {
   [SERVER_SOCKET_EVENTS.werewolfVote]: WerewolfVote[];
 };
 export type ServerSocketEvent = keyof ServerSocketEventPayloads;
+
+export type PublicGameData = {
+  gameId: string;
+  ownerId: string;
+  players: {
+    id: string;
+    username: string;
+    role?: RoleName;
+    isAlive: boolean;
+    isConnected: boolean;
+  }[];
+  gameOptions: GameOptions;
+  round: number;
+};
 
 export const PHASE_NAMES = {
   ROLE: (role: RoleName) => `${role}-phase` as const,

@@ -197,7 +197,7 @@ export default function WerewolfGame(): JSX.Element {
       setPlayerRole(playerId, role);
     });
 
-    sock.on("game:werewolf:vote", (votes: WerewolfVote[]) => {
+    sock.on("werewolf-vote", (votes: WerewolfVote[]) => {
       setwerewolfesVotes(votes);
       console.log("225 votes: ", votes);
     });

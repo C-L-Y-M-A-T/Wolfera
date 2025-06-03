@@ -15,20 +15,12 @@ export class NightPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
     return DayPhase;
   }
-  protected async onEnd(): Promise<void> {
-    this.context.gameEventEmitter.emit('night:end', {
-      nightNumber: this.context.round,
-    });
-  }
+  protected async onEnd(): Promise<void> {}
   readonly phaseName = PHASE_NAMES.NIGHT;
   private orchestrator: PhaseOrchestrator;
   private activeRoles: GameRole[] = [];
 
   async onPrePhase(): Promise<void> {
-    this.context.gameEventEmitter.emit('night:pre', {
-      nightNumber: this.context.round,
-      message: 'The night is falling upon the village...',
-    });
     this.orchestrator = this.createOrchestrator();
   }
 
@@ -50,12 +42,6 @@ export class NightPhase extends ChainableGamePhase {
     player: Player,
     action: PlayerAction,
   ): Promise<void> {
-    this.context.gameEventEmitter.emit('night:player:action', {
-      playerId: player.id,
-      action,
-      roleName: player.role?.roleData.name,
-    });
-
     await this.orchestrator.handlePlayerAction(player, action);
   }
 
@@ -80,13 +66,6 @@ export class NightPhase extends ChainableGamePhase {
         (a.nightPhase?.nightPriority ?? -1) -
         (b.nightPhase?.nightPriority ?? -1),
     );
-
-    this.context.gameEventEmitter.emit('night:roles:assigned', {
-      roles: this.activeRoles.map((role) => ({
-        name: role.roleData.name,
-        priority: role.nightPhase?.nightPriority ?? -1,
-      })),
-    });
   }
 
   protected validatePlayerPermissions(): void {
