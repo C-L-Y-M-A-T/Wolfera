@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import React, { JSX } from "react";
 import Countdown from "react-countdown";
 import { GameData, Phase, Player, User } from "./types";
 
@@ -316,7 +316,7 @@ export default function GameContextComponent({
   );
 }
 
-export function ActivePhaseComponent(activePhase: Phase) {
+export const ActivePhaseComponent = React.memo((activePhase: Phase) => {
   console.log("112 Active Phase Component Rendered:", activePhase);
   if (!activePhase.phaseDuration || !activePhase.startTime) return null;
 
@@ -326,6 +326,7 @@ export function ActivePhaseComponent(activePhase: Phase) {
     <div className="active-phase-container">
       <span className="active-phase-label">{activePhase.phaseName}</span>
       <Countdown
+        key={activePhase.phaseName}
         date={endDate}
         intervalDelay={1000}
         precision={0}
@@ -381,4 +382,4 @@ export function ActivePhaseComponent(activePhase: Phase) {
       `}</style>
     </div>
   );
-}
+});
