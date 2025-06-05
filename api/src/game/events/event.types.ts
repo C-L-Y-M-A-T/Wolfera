@@ -35,6 +35,8 @@ const ACTIONS = {
   REMOVED: 'removed',
   UPDATED: 'updated',
   MESSAGE: 'message',
+  CONNECT: 'connect',
+  DISCONNECT: 'disconnect',
 } as const;
 
 // Event factory functions for dynamic events
@@ -62,6 +64,16 @@ const createGameEvents = () => ({
 
   // Player events
   PLAYER_JOIN: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, ACTIONS.JOIN),
+  PLAYER_CONNECT: createEvent(
+    CATEGORIES.GAME,
+    CATEGORIES.PLAYER,
+    ACTIONS.CONNECT,
+  ),
+  PLAYER_DISCONNECT: createEvent(
+    CATEGORIES.GAME,
+    CATEGORIES.PLAYER,
+    ACTIONS.DISCONNECT,
+  ),
   PLAYER_LEAVE: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, ACTIONS.LEAVE),
   PLAYER_ACTION: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, 'action'),
   OWNER_CHANGED: createEvent(CATEGORIES.GAME, 'owner', 'changed'), //TODO: implement owner change logic

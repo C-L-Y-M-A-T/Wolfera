@@ -1,5 +1,6 @@
+import { WsException } from '@nestjs/websockets';
 import { GameContext } from '../classes/GameContext';
-import { IncomingMessage } from './chat.types';
+import { IncomingMessage, IncomingMessageSchema } from './chat.types';
 import { ChatChannel } from './chatChannel';
 import { DeadChannel } from './dead/dead.channel';
 import { GeneralChannel } from './general/general.channel';
@@ -24,13 +25,18 @@ export class ChatHandler {
   }
 
   handleIncomingMessage(message: IncomingMessage) {
+    const parseResult = IncomingMessageSchema.safeParse(message);
+    if (!parseResult.success) {
+      throw new WsException(
+        `Invalid message format: ${parseResult.error.message}`,
+      );
+    }
+    message = parseResult.data;
     const channel = this.channels.get(message.channel);
     if (channel) {
       channel.handleIncomingMessage(message);
     } else {
-      this.context.loggerService.error(
-        `ChatHandler:handleIncomingMessage - Channel ${message.channel} not found`,
-      );
+      throw new WsException(`Channel ${message.channel} does not exist.`);
     }
   }
 }
