@@ -1,30 +1,31 @@
 import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
-import { IncomingMessage } from '../chat.types';
+import { OnGameEvent } from 'src/game/events/event-emitter/decorators/game-event.decorator';
+import { events } from 'src/game/events/event.types';
+import { IncomingMessage, SubscriptionType } from '../chat.types';
 import { ChatChannel } from '../chatChannel';
-
 export class GeneralChannel extends ChatChannel {
   constructor(context: GameContext) {
     super(context);
-    context.gameEventEmitter.on('player:join', (player: Player) => {
-      this.onPlayerJoin(player);
-    });
   }
 
   get name(): string {
     return 'general';
   }
 
+  @OnGameEvent(events.GAME.PLAYER_JOIN)
   onPlayerJoin(player: Player): void {
     this.subscribe(player);
-    this.sendMessageToPlayer(player, {
-      type: 'system_message',
-      content: `Welcome to the game! You can chat here.`,
-      channel: this.name,
-    });
   }
 
-  playerCanSendMessage(player: Player, message: IncomingMessage): boolean {
-    return player.isAlive;
+  @OnGameEvent(events.GAME.PLAYER.KILLED)
+  onPlayerKilled(player: Player): void {
+    const subscriber = this.subscribers.get(player.id);
+    if (subscriber) {
+      subscriber.subscriptionType = SubscriptionType.READ_ONLY;
+    }
+  }
+  validateMessage(message: IncomingMessage): void {
+    return;
   }
 }

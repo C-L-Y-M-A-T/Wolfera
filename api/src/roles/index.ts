@@ -1,6 +1,6 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { PhaseConstructor } from 'src/game/classes/types';
+import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
 import { z } from 'zod';
 import seerRole from './seer';
 import villagerRole from './villager';
