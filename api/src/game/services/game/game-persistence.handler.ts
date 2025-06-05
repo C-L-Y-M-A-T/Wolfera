@@ -1,11 +1,10 @@
-import { GameEventHandler } from './../../events/event-emitter/decorators/game-event.decorator';
-import { Injectable } from '@nestjs/common';
+import { Player } from 'src/game/classes/Player';
+import { PHASE_NAMES } from 'src/game/classes/types';
 import { GameResult } from 'src/game/entities/game.entity';
-import { EventHandlerFactory } from 'src/game/events/event-emitter/decorators/event-handler.decorator';
 import { events } from 'src/game/events/event.types';
+import { RoleAssignmentPhase } from 'src/game/phases/roleAssignmentPhase/roleAssignment.phase';
 import { GameContext } from '../../classes/GameContext';
 import { OnGameEvent } from '../../events/event-emitter/decorators/game-event.decorator';
-import { GamePersistenceService } from './game-persistence.service';
 
 export class GamePersistenceHandler {
   constructor(private context: GameContext) {}
@@ -15,20 +14,20 @@ export class GamePersistenceHandler {
     await this.context.persistenceService.createGameRecord(context);
   }
 
-  @OnGameEvent('roles:assigned')
-  async onRolesAssigned() {
+  @OnGameEvent(events.GAME.PHASE.END(PHASE_NAMES.ROLE_ASSIGNMENT))
+  async onRolesAssigned(roleAssignmentPhase: RoleAssignmentPhase) {
     await this.context.persistenceService.updatePlayerRoles(
       this.context.gameId,
       this.context.getAlivePlayers(),
     );
   }
 
-  @OnGameEvent('player:eliminated')
-  async onPlayerEliminated(payload: any) {
+  @OnGameEvent(events.GAME.PLAYER.KILLED)
+  async onPlayerEliminated(player: Player) {
     //TODO: check type of payload
     await this.context.persistenceService.recordPlayerDeath(
       this.context.gameId,
-      payload.playerId,
+      player.id,
     );
   }
 
