@@ -42,9 +42,22 @@ export function useRoleStyles() {
     return "text-gray-400 bg-gray-800";
   };
 
+  // Get role border class
+  const getRoleBorderClass = (role: string): string => {
+    const roleKey = role.toLowerCase();
+    const roleBorderClasses = theme.colors?.roleBorderClasses;
+
+    if (roleBorderClasses && roleKey in roleBorderClasses) {
+      return roleBorderClasses[roleKey as keyof typeof roleBorderClasses];
+    }
+
+    return "border-gray-400";
+  };
+
   return {
     roleIcons,
     getRoleIcon,
     getRoleColorClass,
+    getRoleBorderClass,
   };
 }
