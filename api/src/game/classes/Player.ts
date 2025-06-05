@@ -1,8 +1,10 @@
 import { Socket } from 'socket.io';
 import { GameRole } from 'src/roles';
 import { GameSocket } from 'src/socket/socket.types';
-import { User } from 'src/temp/temp.user';
+
+import { User } from 'src/users/entities/user.entity';
 import { ChatChannel } from '../chat/chatChannel';
+import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 
 export class Player {
@@ -23,7 +25,8 @@ export class Player {
   }
   connect(socket: Socket): void {
     if (this.socket) {
-      throw new Error('Player is already connected to the game');
+      //throw new Error('Player is already connected to the game');
+      this.socket.disconnect();
     }
     this.socket = socket;
     this.socket.data.player = this;
@@ -40,7 +43,7 @@ export class Player {
   }
   die(): void {
     this.isAlive = false;
-    this.context.gameEventEmitter.emit('player:die', this);
+    this.context.gameEventEmitter.emit(events.GAME.PLAYER.KILLED, this);
   }
 
   assignRole(role: GameRole): void {

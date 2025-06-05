@@ -23,7 +23,6 @@ export class GameEventsModule implements OnModuleInit {
 
     // Log discovered handlers
     if (gameEventHandlers.length) {
-      console.log(`Found ${gameEventHandlers.length} game event handlers`);
     }
   }
 

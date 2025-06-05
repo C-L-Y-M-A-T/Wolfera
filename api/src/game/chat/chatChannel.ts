@@ -36,7 +36,9 @@ export abstract class ChatChannel {
   sendMessageToPlayer(player: Player, message: OutgoingMessage): void {
     message.channel = this.name;
     if (!player.isConnected()) {
-      console.error(`Player ${player.id} is not connected`);
+      this.context.loggerService.error(
+        `ChatChannel:sendMessageToPlayer - Player ${player.id} is not connected`,
+      );
       return;
     }
     player.socket.emit('chat-message', this.formatMessage(message, player));
@@ -62,17 +64,9 @@ export abstract class ChatChannel {
   }
   public activate(): void {
     this.isActive = true;
-    this.context.gameEventEmitter.emit(
-      `chat:channel:${this.name}:activate`,
-      this,
-    );
   }
   public deactivate(): void {
     this.isActive = false;
-    this.context.gameEventEmitter.emit(
-      `chat:channel:${this.name}:deactivate`,
-      this,
-    );
   }
 
   private verifyIncomingMessage(message: IncomingMessage): boolean {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable, Subject } from 'rxjs';
+import { interval, map, merge, Observable, Subject } from 'rxjs';
 import { PaginationParams } from 'src/utils/dto/pagination.dto';
 import { BaseService } from 'src/utils/generic/base.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -23,11 +23,28 @@ export class NotificationService extends BaseService<
     super(notifRepo);
   }
 
-  getNotificationStream(userId: string): Observable<Notification> {
+  getNotificationStream(userId: string): Observable<any> {
     if (!this.streams.has(userId)) {
       this.streams.set(userId, new Subject<Notification>());
     }
-    return this.streams.get(userId)!.asObservable();
+
+    const userStream = this.streams.get(userId)!.asObservable();
+
+    const heartbeat$ = interval(30000).pipe(
+      map(() => ({
+        type: 'heartbeat',
+        data: ': keep-alive',
+      })),
+    );
+
+    const notification$ = userStream.pipe(
+      map((notification) => ({
+        type: 'notification',
+        data: notification,
+      })),
+    );
+
+    return merge(notification$, heartbeat$);
   }
 
   private readonly PERSISTENT_NOTIFICATION_TYPES = [

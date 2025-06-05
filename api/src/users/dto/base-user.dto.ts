@@ -31,6 +31,7 @@ export abstract class BaseUserDto {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   @Column('json', { nullable: true })
+  @IsOptional()
   avatarOptions?: Record<string, number>;
 
   @Expose()

@@ -1,3 +1,5 @@
+import { PhaseName } from '../classes/types';
+
 const CATEGORIES = {
   GAME: 'game',
   PHASE: 'phase',
@@ -36,11 +38,13 @@ const ACTIONS = {
 } as const;
 
 // Event factory functions for dynamic events
-const createPhaseEvent = (phaseName: string, action: string): string =>
-  createEvent(CATEGORIES.GAME, CATEGORIES.PHASE, phaseName, action);
+const createPhaseEvent = (
+  phaseName: PhaseNameOrWildcard,
+  action: string,
+): string => createEvent(CATEGORIES.GAME, CATEGORIES.PHASE, phaseName, action);
 
 const createPhaseActionVariant = (
-  phaseName: string,
+  phaseName: PhaseNameOrWildcard,
   action: string,
   variant: string,
 ): string =>
@@ -60,7 +64,7 @@ const createGameEvents = () => ({
   PLAYER_JOIN: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, ACTIONS.JOIN),
   PLAYER_LEAVE: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, ACTIONS.LEAVE),
   PLAYER_ACTION: createEvent(CATEGORIES.GAME, CATEGORIES.PLAYER, 'action'),
-  OWNER_CHANGED: createEvent(CATEGORIES.GAME, 'owner', 'changed'),
+  OWNER_CHANGED: createEvent(CATEGORIES.GAME, 'owner', 'changed'), //TODO: implement owner change logic
 });
 
 const createVoteEvents = (namespace: string) => ({
@@ -84,25 +88,28 @@ const createCheckEvents = (namespace: string) => ({
   RESULT: createEvent(CATEGORIES.GAME, namespace, ACTIONS.RESULT),
 });
 
+type PhaseNameOrWildcard = PhaseName | '*';
 // Phase event creators
 const createPhaseEvents = () => ({
-  START: (phaseName: string) => createPhaseEvent(phaseName, ACTIONS.START),
-  END: (phaseName: string) => createPhaseEvent(phaseName, ACTIONS.END),
-  ACTION: (phaseName: string, action: string) =>
+  START: (phaseName: PhaseNameOrWildcard) =>
+    createPhaseEvent(phaseName, ACTIONS.START),
+  END: (phaseName: PhaseNameOrWildcard) =>
+    createPhaseEvent(phaseName, ACTIONS.END),
+  ACTION: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseEvent(phaseName, action),
-  CHECK: (phaseName: string, action: string) =>
+  CHECK: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.CHECK),
-  RESULT: (phaseName: string, action: string) =>
+  RESULT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.RESULT),
-  VOTE: (phaseName: string, action: string) =>
+  VOTE: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(phaseName, action, ACTIONS.VOTE),
-  VOTE_RESULT: (phaseName: string, action: string) =>
+  VOTE_RESULT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(
       phaseName,
       action,
       `${ACTIONS.VOTE}:${ACTIONS.RESULT}`,
     ),
-  VOTE_TIMEOUT: (phaseName: string, action: string) =>
+  VOTE_TIMEOUT: (phaseName: PhaseNameOrWildcard, action: string) =>
     createPhaseActionVariant(
       phaseName,
       action,

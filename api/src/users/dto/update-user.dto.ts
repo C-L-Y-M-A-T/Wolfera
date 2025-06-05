@@ -1,4 +1,3 @@
-// update-user.dto.ts
 import { IsOptional, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 
@@ -15,7 +14,7 @@ export class UpdateUserDto {
   @IsString()
   email?: string;
 
-  @IsOptional()
   @Column('json', { nullable: true })
+  @IsOptional()
   avatarOptions?: Record<string, number>;
 }

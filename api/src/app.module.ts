@@ -11,6 +11,7 @@ import { JwtGuard } from './auth/guards/jwt.guard';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { config } from './config';
 import { GameModule } from './game/modules/game.module';
+import { LoggerModule } from './logger/logger.module';
 import { NotificationModule } from './notifications/notifications.module';
 import { SocketModule } from './socket/socket.module';
 import { UserModule } from './users/user.module';
@@ -39,6 +40,7 @@ import { UserModule } from './users/user.module';
     SocketModule,
     AuthModule,
     UserModule,
+    LoggerModule,
     NotificationModule,
   ],
   controllers: [AppController],
