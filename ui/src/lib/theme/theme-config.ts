@@ -9,7 +9,6 @@ import { effects } from "./effects";
 import { variants } from "./variants";
 import { border } from "./border";
 import { background } from "./background";
-import { getRoleIcon } from "./rolesIcons";
 
 // Helper to combine multiple style classes
 export const cx = (...classes: (string | boolean | undefined)[]) => {
@@ -35,10 +34,8 @@ export const theme = {
   effects,
   variants,
   cx,
-  getRoleColor,
   border,
   background,
-  getRoleIcon,
 };
 
 export type Theme = typeof theme;

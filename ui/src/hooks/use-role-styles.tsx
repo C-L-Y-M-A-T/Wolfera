@@ -17,7 +17,7 @@ export function useRoleStyles() {
 
   // Role icons mapping
   const roleIcons: Record<string, ReactNode> = {
-    villager: <Users className="h-4 w-4" />,
+    VILLAGER: <Users className="h-4 w-4" />,
     WEREWOLF: <Skull className="h-4 w-4" />,
     SEER: <Eye className="h-4 w-4" />,
     HUNTER: <Axe className="h-4 w-4" />,

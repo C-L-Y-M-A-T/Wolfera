@@ -30,7 +30,8 @@ export function GameSettingsModal({
   onSettingsChange,
 }: GameSettingsModalProps) {
   const theme = useTheme();
-  const { getRoleColorClass, getRoleIcon } = useRoleStyles();
+  const { getRoleColorClass, getRoleIcon, getRoleBorderClass } =
+    useRoleStyles();
   const [localSettings, setLocalSettings] = useState(settings);
 
   const updateRoleCount = (role: string, change: number) => {
@@ -67,7 +68,7 @@ export function GameSettingsModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-gray-900 border-gray-700 max-h-[80vh]">
-        <ScrollArea className="h-5/6">
+        <ScrollArea className="h-3/4">
           <DialogHeader>
             <DialogTitle className="text-xl text-purple-400 flex items-center">
               <Settings className="w-5 h-5 mr-2" />
@@ -96,7 +97,7 @@ export function GameSettingsModal({
                     key={role}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`p-4 rounded-lg border ${getRoleColorClass(role)} backdrop-blur-sm`}
+                    className={`p-4 rounded-lg border ${getRoleColorClass(role)} backdrop-blur-sm ${getRoleBorderClass(role)} `}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">

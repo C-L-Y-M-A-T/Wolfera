@@ -13,10 +13,9 @@ import { useState } from "react";
 interface RolePreviewProps {
   settings: {
     roles: {
-      werewolves: number;
-      villagers: number;
+      werewolf: number;
+      villager: number;
       seer: number;
-      doctor: number;
       hunter: number;
       witch: number;
     };
@@ -28,7 +27,8 @@ interface RolePreviewProps {
 
 export function RolePreview({ settings, playerCount }: RolePreviewProps) {
   const theme = useTheme();
-  const { getRoleColorClass, getRoleIcon } = useRoleStyles();
+  const { getRoleColorClass, getRoleIcon, getRoleBorderClass } =
+    useRoleStyles();
   const [showAllRoles, setShowAllRoles] = useState(false);
 
   const activeRoles = ROLES_DATA.filter((role) => {
@@ -107,7 +107,7 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                   >
                     <Badge
                       variant="outline"
-                      className={`${getRoleColorClass(role.category)} border`}
+                      className={`${getRoleColorClass(role.category)} border ${getRoleBorderClass(role.category)}`}
                     >
                       {getRoleIcon(role.category)}
                       <span className="ml-1">
@@ -153,7 +153,7 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`p-4 rounded-lg border ${getRoleColorClass(role.category)} backdrop-blur-sm`}
+                    className={`p-4 rounded-lg border ${getRoleColorClass(role.category)} backdrop-blur-sm ${getRoleBorderClass(role.category)}`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function RolePreview({ settings, playerCount }: RolePreviewProps) {
                       variant="outline"
                       className="text-red-300 border-red-500"
                     >
-                      Evil: {settings.roles.werewolves}
+                      Evil: {settings.roles.werewolf}
                     </Badge>
                   </div>
                 </div>

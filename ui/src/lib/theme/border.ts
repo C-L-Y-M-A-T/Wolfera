@@ -18,6 +18,14 @@ export const border = {
     green: "border-green-500",
     blue: "border-blue-500",
     indigo: "border-indigo-500",
+    roles: {
+      villager: "border-sky-500",
+      werewolf: "border-red-700",
+      seer: "border-purple-500",
+      hunter: "border-yellow-500",
+      witch: "border-indigo-500",
+      doctor: "border-emerald-500",
+    },
   },
   borderWidths: {
     default: "border",
