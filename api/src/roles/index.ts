@@ -2,10 +2,6 @@ import { GameContext } from 'src/game/classes/GameContext';
 import { PhaseConstructor } from 'src/game/classes/types';
 import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
 import { z } from 'zod';
-import seerRole from './seer';
-import villagerRole from './villager';
-import werewolfRole from './werewolf';
-import witchRole from './witch';
 //TODO: explain why I used zod instead of class-validator
 
 declare global {
@@ -34,7 +30,7 @@ export type RoleData = {
   description: string;
   maxPlayers?: number; // Maximum number of players with this role, not define or 0 means unlimited
   minPlayers?: number; // Minimum number of players with this role, not define or 0 means unlimited
-  //coefficient: number; // Coefficient for the role, used for balancing
+  power: number; // power for the role, used for balancing
 };
 
 export const RoleDataSchema = z
@@ -44,6 +40,7 @@ export const RoleDataSchema = z
     description: z.string(),
     maxPlayers: z.number().optional(),
     minPlayers: z.number().optional(),
+    power: z.number(),
   })
   .strict();
 

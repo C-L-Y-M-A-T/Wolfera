@@ -19,6 +19,9 @@ export class GameOptionsValidatorService {
 
     // Role-specific validation
     this.validateRoleConstraints(options);
+    // Balance evaluation
+    this.evaluateBalance(options);
+
     console.log('----------------Game options validated successfully');
   }
 
@@ -76,6 +79,38 @@ export class GameOptionsValidatorService {
 
     if (unknownRoles.length > 0) {
       throw new Error(`Unknown role(s): ${unknownRoles.join(', ')}`);
+    }
+  }
+  private evaluateBalance(options: GameOptions): void {
+    const allRoles = this.roleService.getAllRoles();
+    let villagerPower = 0;
+    let werewolfPower = 0;
+
+    for (const role of allRoles) {
+      const count = options.roles[role.name] ?? 0;
+      const totalPower = count * role.power;
+
+      if (role.team === 'villagers') {
+        villagerPower += totalPower;
+      } else if (role.team === 'werewolves') {
+        werewolfPower += totalPower;
+      }
+    }
+
+    // Avoid divide-by-zero
+    const ratio =
+      werewolfPower === 0 ? Infinity : villagerPower / werewolfPower;
+
+    console.log(
+      `Balance Ratio: Villagers ${villagerPower} / Werewolves ${werewolfPower} = ${ratio.toFixed(2)}`,
+    );
+
+    if (ratio < 0.8) {
+      throw new Error('⚠️ Game is likely unbalanced in favor of Werewolves');
+    } else if (ratio > 1.2) {
+      throw new Error('⚠️ Game is likely unbalanced in favor of Villagers');
+    } else {
+      console.log('✅ Game appears balanced');
     }
   }
 }

@@ -14,6 +14,7 @@ const witchRole: GameRole = {
     team: 'villagers',
     description: 'see role at night.',
     maxPlayers: 1, // Only one witch can exist in the game
+    power: 3, // Power level for balancing
   },
   nightPhase: {
     class: WitchNightPhase,
