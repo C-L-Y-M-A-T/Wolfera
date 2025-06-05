@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { GameOptions } from 'src/game/classes/types';
-import { roleDetails } from 'src/roles';
+import { RoleService } from './../role/role.service';
 
 @Injectable()
 export class GameOptionsValidatorService {
+  constructor(private readonly roleService: RoleService) {}
   private readonly MIN_PLAYERS = 4;
   private readonly MAX_PLAYERS = 20;
   /**
@@ -47,39 +48,34 @@ export class GameOptionsValidatorService {
   }
 
   private validateRoleConstraints(options: GameOptions): void {
-    const definedRoleNames = roleDetails.map((r) => r.roleData.name);
-    const providedRoleNames = Object.keys(options.roles);
+    const allRoles = this.roleService.getAllRoles();
 
-    // Check that all roles are specified in the options
-    const missingRoles = definedRoleNames.filter(
-      (roleName) => !providedRoleNames.includes(roleName),
-    );
-
-    if (missingRoles.length > 0) {
-      throw new Error(
-        `All roles must be specified in options. Missing: ${missingRoles.join(', ')}`,
-      );
-    }
-    for (const [roleName, count] of Object.entries(options.roles)) {
-      const role = roleDetails.find((r) => r.roleData.name === roleName);
-
-      if (!role) {
-        throw new Error(`Unknown role: ${roleName}`);
-      }
+    for (const role of allRoles) {
+      const count = options.roles[role.name] ?? 0;
 
       // Check minimum players constraint
-      if (role.roleData.minPlayers && count < role.roleData.minPlayers) {
+      if (role.minPlayers && count < role.minPlayers) {
         throw new Error(
-          `Role ${roleName} requires at least ${role.roleData.minPlayers} players, but ${count} specified`,
+          `Role ${role.name} requires at least ${role.minPlayers} players, but ${count} specified`,
         );
       }
 
       // Check maximum players constraint
-      if (role.roleData.maxPlayers && count > role.roleData.maxPlayers) {
+      if (role.maxPlayers && count > role.maxPlayers) {
         throw new Error(
-          `Role ${roleName} allows maximum ${role.roleData.maxPlayers} players, but ${count} specified`,
+          `Role ${role.name} allows maximum ${role.maxPlayers} players, but ${count} specified`,
         );
       }
+    }
+
+    // Optional: warn or throw for unknown roles (not defined in system)
+    const definedRoleNames = allRoles.map((r) => r.name as string);
+    const unknownRoles = Object.keys(options.roles).filter(
+      (name) => !definedRoleNames.includes(name),
+    );
+
+    if (unknownRoles.length > 0) {
+      throw new Error(`Unknown role(s): ${unknownRoles.join(', ')}`);
     }
   }
 }

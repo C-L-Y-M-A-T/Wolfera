@@ -14,12 +14,6 @@ declare global {
   }
 }
 export type RoleName = keyof RoleNameMap;
-export const roleDetails = [
-  werewolfRole,
-  seerRole,
-  villagerRole,
-  witchRole,
-] as GameRole[];
 
 //TODO: add lovers
 export type Team = 'villagers' | 'werewolves';
