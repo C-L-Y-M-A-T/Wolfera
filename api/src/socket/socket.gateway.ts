@@ -14,6 +14,7 @@ import { PlayerAction } from 'src/game/classes/types';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
 
+import { RawIncomingMessage } from 'src/game/chat/chat.types';
 import { LoggerService } from 'src/logger/logger.service';
 import { User } from 'src/users/entities/user.entity';
 import { SocketGame } from './decorators/socketGame.decorator';
@@ -74,6 +75,15 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.data.game.handlePlayerAction(client.data.game.owner, {
       action: 'start-game',
     });
+  }
+
+  @SubscribeMessage('chat-message')
+  async handleChatMessage(
+    @SocketGame() game: GameContext,
+    @SocketPlayer() player: Player,
+    @MessageBody() message: RawIncomingMessage,
+  ) {
+    game.chatHandler.handleIncomingMessage(player, message);
   }
 
   async handleConnection(client: Socket) {

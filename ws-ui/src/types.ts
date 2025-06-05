@@ -1,3 +1,5 @@
+import { SubscriptionType } from "./chat";
+
 export type PhaseStartEvent = {
   startTime: number;
   duration: number;
@@ -84,4 +86,15 @@ export type Phase = {
   startTime: number; // Timestamp when the phase started
   phaseDuration: number; // Duration in seconds
   payload?: any; // Additional data for the phase
+};
+
+export type PlayerData = {
+  id: string;
+  username: string;
+  role?: string;
+  channels?: {
+    name: string;
+    isActive: boolean;
+    subscriptionType: SubscriptionType;
+  }[];
 };
