@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   Min,
@@ -31,6 +32,7 @@ export abstract class BaseUserDto {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   @Column('json', { nullable: true })
+  @IsOptional()
   avatarOptions?: Record<string, number>;
 
   @Expose()
