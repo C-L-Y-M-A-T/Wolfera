@@ -1,8 +1,12 @@
 import { GameRole, RoleName } from 'src/roles';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
-import { ChainableGamePhase } from '../../chainablePhase';
-import { GameContext } from '../../GameContext';
-import { PhaseConstructor, serverSocketEvent } from '../../types';
+import { GameContext } from '../../classes/GameContext';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  SERVER_SOCKET_EVENTS,
+} from '../../classes/types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { NightPhase } from '../nightPhase/night.phase';
 
 export class RoleAssignmentPhase extends ChainableGamePhase {
@@ -12,7 +16,7 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
     return NightPhase;
   }
-  readonly phaseName = 'RoleAssignment-phase';
+  readonly phaseName = PHASE_NAMES.ROLE_ASSIGNMENT;
 
   get phaseDuration(): number {
     return 10 * 1000;
@@ -22,7 +26,11 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
     this.assignRoles();
     // Notify players of their assigned roles
     this.context.getplayers().forEach((player) => {
-      this.emitToPlayer(player, serverSocketEvent.roleAssigned, {
+      if (!player.role) {
+        throw new Error(`Player ${player.id} does not have a role assigned.`);
+      }
+
+      this.context.emitToPlayer(player, SERVER_SOCKET_EVENTS.roleAssigned, {
         role: player.role?.roleData.name,
       });
     });

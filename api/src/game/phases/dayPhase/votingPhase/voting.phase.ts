@@ -1,41 +1,43 @@
 import { WsException } from '@nestjs/websockets';
 import { GameContext } from 'src/game/classes/GameContext';
+import { GamePhase } from 'src/game/classes/GamePhase';
 import { Player } from 'src/game/classes/Player';
 import { PlayerAction, SERVER_SOCKET_EVENTS } from 'src/game/classes/types';
-import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
-import werewolfRole, { WEREWOLF_ROLE_NAME } from '.';
 import {
-  WerewolfActionPayload,
-  werewolfActionSchema,
-  WerewolfNightEndPayload,
-  WerewolfVoteState,
-} from './types';
-import { WerewolfVoteManager } from './vote-manager';
+  VoteActionPayload,
+  VoteState,
+} from 'src/game/types/vote-manager.types';
+import { VotingPhaseEndPayload } from './types';
+import { VotePhaseManager } from './vote-manager';
 
-export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
-  private voteManager: WerewolfVoteManager;
+export class VotingPhase extends GamePhase<VoteActionPayload> {
+  private voteManager: VotePhaseManager;
 
   constructor(context: GameContext) {
-    super(context, werewolfRole, werewolfActionSchema);
-    this.voteManager = new WerewolfVoteManager(context);
+    super(context);
+    this.voteManager = new VotePhaseManager(context);
+  }
+
+  get phaseName(): `${string}-phase` {
+    return 'Voting-phase';
   }
 
   get phaseDuration(): number {
-    return 10 * 1000;
+    return 20 * 1000; // 5 seconds for voting
   }
 
-  async onStart(): Promise<void> {
-    console.log('-------------------Werewolf night started-----------------');
+  protected async onStart(): Promise<void> {
+    console.log('-------------------Day Voting Phase started-----------------');
     this.voteManager.resetVotes();
   }
-  async onEnd(): Promise<void> {
+  protected async onEnd(): Promise<void> {
     // Get final voting result
     const result = this.voteManager.getFinalResult();
     const votes = this.voteManager.getVoteSummary();
 
     // Create end payload
-    const endPayload: WerewolfNightEndPayload = {
-      phase: 'Werewolf-phase',
+    const endPayload: VotingPhaseEndPayload = {
+      phase: 'Voting-phase',
       result,
       votes,
     };
@@ -44,46 +46,45 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   }
 
   /**
-   * Processes validated werewolf actions
+   * Processes validated player actions
    */
   async processPlayerAction(
     player: Player,
-    action: PlayerAction<WerewolfActionPayload>,
+    action: PlayerAction<VoteActionPayload>,
   ): Promise<void> {
-    //this.context.loggerService.debug(`Werewolf ${player.id} performed action:`, action);
+    //this.context.loggerService.debug(`player ${player.id} performed action:`, action);
     // Process the vote
     const voteUpdate = this.voteManager.processVote(
       player,
       action.phasePayload,
     );
 
-    this.broadcastToWerewolves(voteUpdate);
+    this.broadcastToOthers(voteUpdate);
   }
 
   /**
    * Broadcasts the vote results to all werewolves
    */
-  private broadcastToWerewolves(voteUpdate: WerewolfVoteState): void {
+  private broadcastToOthers(voteUpdate: VoteState): void {
     this.context.broadcastToPlayers(
-      SERVER_SOCKET_EVENTS.werewolfVote,
+      SERVER_SOCKET_EVENTS.playerVote,
       Array.from(voteUpdate.votes.values()),
-      (player) => {
-        return this.isPlayerWerewolf(player) || player.isAlive === false;
-      },
     );
   }
 
-  /**
-   * Validates if a player can perform a werewolf action
-   */
+  protected validatePlayerPermissions(
+    player: Player,
+    action: PlayerAction<VoteActionPayload>,
+  ): void {}
+
   protected validatePlayerAction(
-    _: Player,
-    action: PlayerAction<WerewolfActionPayload>,
+    player: Player,
+    action: PlayerAction<VoteActionPayload>,
   ): void {
     // Validate specific action types
     switch (action.phasePayload.action) {
       case 'vote':
-        return this.validateTargetAction(action.phasePayload);
+        return this.validateTargetAction(action.phasePayload, player);
       case 'skip':
         return;
       default:
@@ -95,17 +96,11 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
   }
 
   /**
-   * Checks if a player is a werewolf
-   */
-  isPlayerWerewolf(player: Player): boolean {
-    return player.role?.roleData.name === WEREWOLF_ROLE_NAME;
-  }
-
-  /**
    * Validates target-based actions (vote)
    */
   private validateTargetAction(
-    action: Extract<WerewolfActionPayload, { action: 'vote' }>,
+    action: Extract<VoteActionPayload, { action: 'vote' }>,
+    player: Player,
   ): void {
     if (!action.targetId) {
       throw new WsException({
@@ -131,10 +126,10 @@ export class WerewolfNightPhase extends RolePhase<WerewolfActionPayload> {
     }
 
     // Check if target is not a werewolf (werewolves cannot kill each other)
-    if (this.isPlayerWerewolf(target)) {
+    if (target.id === player.id) {
       throw new WsException({
-        message: 'Target is a werewolf',
-        code: 'TARGET_IS_WEREWOLF',
+        message: 'Target cannot vote for themselves',
+        code: 'TARGET_CANNOT_VOTE_FOR_SELF',
       });
     }
   }

@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { WsException } from '@nestjs/websockets';
-import { ChainableGamePhase } from '../../chainablePhase';
-import { GameContext } from '../../GameContext';
-import { Player } from '../../Player';
+import { events } from 'src/game/events/event.types';
+import { GameContext } from '../../classes/GameContext';
+import { Player } from '../../classes/Player';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  SERVER_SOCKET_EVENTS,
+} from '../../classes/types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { RoleAssignmentPhase } from '../roleAssignmentPhase/roleAssignment.phase';
-import { PhaseConstructor } from './../../types';
 import {
   WaitingForGameStartPlayerAction,
   waitingForGameStartPlayerActionSchema,
@@ -18,42 +23,20 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
     return RoleAssignmentPhase;
   }
 
-  readonly phaseName = 'WaitingForGameStart-phase';
+  readonly phaseName = PHASE_NAMES.WAITING_FOR_GAME_START;
   get phaseDuration(): number {
     return 0;
   }
 
-  onStart(): void {
-    console.log('WaitingForGameStartPhase: onStart');
-    this.context.gameEventEmitter.broadcastToPlayers(
-      'game:waitingForGameStart',
-      {
-        gameId: this.context.gameId,
-        players: Array.from(this.context.players.values()).map((player) => ({
-          id: player.id,
-          name: player.profile.id, // TODO: change to name
-          isConnected: player.isConnected(),
-          isOwner: this.context.owner?.id === player.id,
-        })),
-        owner: this.context.owner?.id,
-      },
-    );
-  }
+  protected onStart(): Promise<void> | void {}
 
   protected async onEnd(): Promise<void> {
-    this.context.gameEventEmitter.emit('game:starting', {
-      gameId: this.context.gameId,
-      playerCount: this.context.players.size,
-    });
+    const gameData = this.context.toDTO();
+    this.context.gameEventEmitter.emit(events.GAME.START, gameData);
+    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStart, gameData);
   }
 
   protected async processPlayerAction(player: Player): Promise<void> {
-    const gameData = this.context.getPublicGameData();
-    this.context.gameEventEmitter.emit('game:started', gameData);
-
-    // Broadcast to all players that the game is starting
-    this.broadcastToPlayers('game-started', gameData);
-
     await this.end();
   }
 

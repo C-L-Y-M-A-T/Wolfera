@@ -8,7 +8,7 @@ import {
   PhaseName,
   PhaseState,
   PlayerAction,
-  serverSocketEvent,
+  SERVER_SOCKET_EVENTS,
 } from './types';
 
 export abstract class GamePhase<A = any> {
@@ -199,39 +199,8 @@ export abstract class GamePhase<A = any> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /**
-   *
-   * Broadcasts an event to all connected players
-   * @param event - The event name to broadcast
-   * @param payload - The payload to send to players
-   */
-  protected broadcastToPlayers(
-    event: string,
-    payload: any,
-    filter: (player: Player) => boolean = () => true,
-  ) {
-    this.context.players.forEach((player) => {
-      if (filter(player)) this.emitToPlayer(player, event, payload);
-    });
-  }
-
-  /**
-   * Emits an event to a specific player
-   * @param player - The player to send the event to
-   * @param event - The event name
-   * @param payload - The payload to send
-   * @throws Error if the player is not connected
-   */
-  protected emitToPlayer(player: Player, event: string, payload: any): void {
-    if (player.isConnected() && player.socket) {
-      player.socket.emit(event, payload);
-    } else {
-      throw new WsException(`Player ${player.id} is not connected`);
-    }
-  }
-
   protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
-    this.emitToPlayer(revealTo, serverSocketEvent.roleRevealed, {
+    this.context.emitToPlayer(revealTo, SERVER_SOCKET_EVENTS.roleReveal, {
       playerId: player.id,
       role: roleName,
     });

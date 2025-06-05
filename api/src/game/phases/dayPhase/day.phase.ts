@@ -1,9 +1,13 @@
-import { ChainableGamePhase } from '../../chainablePhase';
-import { PhaseOrchestrator } from '../../PhaseOrchestrator';
-import { Player } from '../../Player';
-import { SequentialPhaseOrchestrator } from '../../SequentialPhaseOrchestrator';
-import { PhaseConstructor, PlayerAction } from '../../types';
+import { Player } from '../../classes/Player';
+import {
+  PHASE_NAMES,
+  PhaseConstructor,
+  PlayerAction,
+} from '../../classes/types';
+import { ChainableGamePhase } from '../chainablePhase';
 import { NightPhase } from '../nightPhase/night.phase';
+import { PhaseOrchestrator } from '../orchertrators/PhaseOrchestrator';
+import { SequentialPhaseOrchestrator } from '../orchertrators/SequentialPhaseOrchestrator';
 import { DayResultsPhase } from './dayResultsPhase/dayResults.phase';
 import { NightResultsPhase } from './nightResultsPhase/nightResults.phase';
 import { VotingPhase } from './votingPhase/voting.phase';
@@ -13,7 +17,7 @@ export class DayPhase extends ChainableGamePhase {
     return NightPhase;
   }
   protected async onEnd(): Promise<void> {}
-  readonly phaseName = 'Day-phase';
+  readonly phaseName = PHASE_NAMES.DAY;
   private orchestrator: PhaseOrchestrator;
 
   async onPrePhase(): Promise<void> {

@@ -14,7 +14,10 @@ export type User = {
 };
 
 export interface JoinedEvent {
-  player: string;
+  id: string;
+  username: string;
+  isAlive: boolean;
+  isConnected: boolean;
 }
 
 export interface RoleAssignedEvent {

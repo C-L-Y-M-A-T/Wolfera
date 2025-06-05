@@ -1,9 +1,10 @@
 import axios from "axios";
-import { JSX, useEffect, useRef, useState } from "react";
+import { JSX, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
 import { BACKEND_URL, connectToGameSocket } from "./api";
+import DayVotingPhase from "./day-voting.component";
 import GameContextComponent, {
   ActivePhaseComponent,
 } from "./gameContext.component";
@@ -101,13 +102,8 @@ export default function WerewolfGame(): JSX.Element {
   const [joinedMessages, setJoinedMessages] = useState<string[]>([]);
   const [activePhase, setActivePhase] = useState<Phase | null>(null);
   const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
+  const [dayVotes, setDayVotes] = useState<WerewolfVote[]>([]);
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
-
-  const gameDataRef = useRef<GameData | null>(null);
-
-  useEffect(() => {
-    gameDataRef.current = gameData;
-  }, [gameData]);
 
   const getGameData = () => gameData;
   const handleCreateGame = async (): Promise<void> => {
@@ -168,15 +164,25 @@ export default function WerewolfGame(): JSX.Element {
       //sock.emit("join_game", { userId, gameId });
     });
 
-    sock.on("joined", ({ player }: JoinedEvent) => {
-      setJoinedMessages((prev: string[]) => [
-        ...prev,
-        `${player} joined the game`,
-      ]);
-      showToast(`${player} joined the game`, "success");
+    sock.on("player-join", (payload: JoinedEvent) => {
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        const newPlayer: Player = payload;
+        setJoinedMessages((prev: string[]) => [
+          ...prev,
+          `${payload.username} joined the game`,
+        ]);
+        showToast(`${payload.username} joined the game`, "success");
+        // Add the new player to the players array
+        return {
+          ...prevGameData,
+          players: [...(prevGameData.players || []), newPlayer],
+        };
+      });
     });
 
-    sock.on("game-started", (data: GameData) => {
+    sock.on("game-start", (data: GameData) => {
+      console.log("888 Game data received:", data);
       console.log("Game started:", data);
       setGameData(data);
     });
@@ -197,7 +203,7 @@ export default function WerewolfGame(): JSX.Element {
       setPlayerRole(playerId, role);
     });
 
-    sock.on("game:werewolf:vote", (votes: WerewolfVote[]) => {
+    sock.on("werewolf-vote", (votes: WerewolfVote[]) => {
       setwerewolfesVotes(votes);
       console.log("225 votes: ", votes);
     });
@@ -211,7 +217,48 @@ export default function WerewolfGame(): JSX.Element {
       setwerewolfesVotes([]);
     });
 
+    sock.on("game-data", (data: GameData) => {
+      console.log("Game data received:", data);
+      setGameData(data);
+    });
+
+    sock.on("player-connect", (player: Player) => {
+      console.log(`Player connected: ${player.username} (${player.id})`);
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        const existingIndex = (prevGameData.players || []).findIndex(
+          (p) => p.id === player.id,
+        );
+        let updatedPlayers;
+        if (existingIndex !== -1) {
+          // Replace the existing player
+          updatedPlayers = [...prevGameData.players];
+          updatedPlayers[existingIndex] = player;
+        } else {
+          // Add the new player
+          updatedPlayers = [...(prevGameData.players || []), player];
+        }
+        return {
+          ...prevGameData,
+          players: updatedPlayers,
+        };
+      });
+    });
+
+    sock.on("player-disconnect", (player: Player) => {
+      console.log(`Player disconnected: ${player.username} (${player.id})`);
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        // Add the newly connected player to the players array
+        return {
+          ...prevGameData,
+          players: [...(prevGameData.players || []), player],
+        };
+      });
+    });
+
     sock.on("round-results", (result: any) => {
+      //TODO:send eliminated players roles with the result
       debugger;
       setGameData((prevGameData) => {
         if (!prevGameData) return null;
@@ -237,6 +284,17 @@ export default function WerewolfGame(): JSX.Element {
 
         return { ...prevGameData, players: updatedPlayers };
       });
+    });
+    sock.on("channel-status", (status: any) => {
+      console.log("Channel status update:", status);
+      showToast(`Channel ${status.channelId} status: ${status.status}`, "info");
+    });
+    sock.on("chat-message", (message: any) => {
+      console.log("Chat message received:", message);
+      showToast(
+        `New message in ${message.channel}: ${message.content}`,
+        "info",
+      );
     });
 
     setSocket(sock);
@@ -471,6 +529,16 @@ export default function WerewolfGame(): JSX.Element {
             sectionStyle={sectionStyle}
             buttonStyle={buttonStyle}
           ></WerewolfPhase>
+        )}
+        {gameData && activePhase?.phaseName === "Voting-phase" && (
+          <DayVotingPhase
+            gameData={gameData}
+            user={user}
+            socket={socket}
+            votes={dayVotes}
+            setVotes={setDayVotes}
+            sectionStyle={sectionStyle}
+          />
         )}
       </div>
     </>

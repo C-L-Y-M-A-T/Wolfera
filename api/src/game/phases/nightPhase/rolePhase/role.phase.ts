@@ -1,10 +1,10 @@
 import { WsException } from '@nestjs/websockets';
 import { GameRole } from 'src/roles';
 import { z } from 'zod';
-import { GameContext } from '../../../GameContext';
-import { GamePhase } from '../../../GamePhase';
-import { Player } from '../../../Player';
-import { PlayerAction } from '../../../types';
+import { GameContext } from '../../../classes/GameContext';
+import { GamePhase } from '../../../classes/GamePhase';
+import { Player } from '../../../classes/Player';
+import { PHASE_NAMES, PlayerAction } from '../../../classes/types';
 
 export abstract class RolePhase<A = any> extends GamePhase<A> {
   constructor(
@@ -25,6 +25,6 @@ export abstract class RolePhase<A = any> extends GamePhase<A> {
   }
 
   get phaseName(): `${string}-phase` {
-    return `${this.role.roleData.name}-phase`;
+    return PHASE_NAMES.ROLE(this.role.roleData.name);
   }
 }
