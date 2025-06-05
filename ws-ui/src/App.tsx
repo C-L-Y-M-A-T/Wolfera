@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSX, useEffect, useRef, useState } from "react";
+import { JSX, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
@@ -105,12 +105,6 @@ export default function WerewolfGame(): JSX.Element {
   const [dayVotes, setDayVotes] = useState<WerewolfVote[]>([]);
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
 
-  const gameDataRef = useRef<GameData | null>(null);
-
-  useEffect(() => {
-    gameDataRef.current = gameData;
-  }, [gameData]);
-
   const getGameData = () => gameData;
   const handleCreateGame = async (): Promise<void> => {
     try {
@@ -170,15 +164,25 @@ export default function WerewolfGame(): JSX.Element {
       //sock.emit("join_game", { userId, gameId });
     });
 
-    sock.on("player-join", ({ id, username }: JoinedEvent) => {
-      setJoinedMessages((prev: string[]) => [
-        ...prev,
-        `${username} joined the game`,
-      ]);
-      showToast(`${username} joined the game`, "success");
+    sock.on("player-join", (payload: JoinedEvent) => {
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        const newPlayer: Player = payload;
+        setJoinedMessages((prev: string[]) => [
+          ...prev,
+          `${payload.username} joined the game`,
+        ]);
+        showToast(`${payload.username} joined the game`, "success");
+        // Add the new player to the players array
+        return {
+          ...prevGameData,
+          players: [...(prevGameData.players || []), newPlayer],
+        };
+      });
     });
 
     sock.on("game-start", (data: GameData) => {
+      console.log("888 Game data received:", data);
       console.log("Game started:", data);
       setGameData(data);
     });
@@ -211,6 +215,46 @@ export default function WerewolfGame(): JSX.Element {
       setActivePhase(null);
       setRole("");
       setwerewolfesVotes([]);
+    });
+
+    sock.on("game-data", (data: GameData) => {
+      console.log("Game data received:", data);
+      setGameData(data);
+    });
+
+    sock.on("player-connect", (player: Player) => {
+      console.log(`Player connected: ${player.username} (${player.id})`);
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        const existingIndex = (prevGameData.players || []).findIndex(
+          (p) => p.id === player.id,
+        );
+        let updatedPlayers;
+        if (existingIndex !== -1) {
+          // Replace the existing player
+          updatedPlayers = [...prevGameData.players];
+          updatedPlayers[existingIndex] = player;
+        } else {
+          // Add the new player
+          updatedPlayers = [...(prevGameData.players || []), player];
+        }
+        return {
+          ...prevGameData,
+          players: updatedPlayers,
+        };
+      });
+    });
+
+    sock.on("player-disconnect", (player: Player) => {
+      console.log(`Player disconnected: ${player.username} (${player.id})`);
+      setGameData((prevGameData) => {
+        if (!prevGameData) return null;
+        // Add the newly connected player to the players array
+        return {
+          ...prevGameData,
+          players: [...(prevGameData.players || []), player],
+        };
+      });
     });
 
     sock.on("round-results", (result: any) => {

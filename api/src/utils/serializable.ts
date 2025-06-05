@@ -1,5 +1,5 @@
 export interface Serializable<T> {
-  toDTO(): T;
+  toDTO(...args: any[]): T;
 }
 
 // Type guard for Serializable objects

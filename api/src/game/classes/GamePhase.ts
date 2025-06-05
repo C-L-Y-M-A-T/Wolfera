@@ -200,7 +200,7 @@ export abstract class GamePhase<A = any> {
   }
 
   protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
-    this.context.emitToPlayer(revealTo, SERVER_SOCKET_EVENTS.roleRevealed, {
+    this.context.emitToPlayer(revealTo, SERVER_SOCKET_EVENTS.roleReveal, {
       playerId: player.id,
       role: roleName,
     });

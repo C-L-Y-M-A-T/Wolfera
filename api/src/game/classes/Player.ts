@@ -7,6 +7,7 @@ import { Serializable } from 'src/utils/serializable';
 import { ChannelSubscription } from '../chat/chat.types';
 import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
+import { PlayerData, PlayerDTO } from './types';
 
 export class Player implements Serializable<PlayerDTO> {
   public socket?: GameSocket;
@@ -32,6 +33,7 @@ export class Player implements Serializable<PlayerDTO> {
     this.socket = socket;
     this.socket.data.player = this;
     this.socket.data.game = this.context;
+    this.context.gameEventEmitter.emit(events.GAME.PLAYER_CONNECT, this);
   }
 
   disconnect(): void {
@@ -39,6 +41,11 @@ export class Player implements Serializable<PlayerDTO> {
       this.socket.disconnect();
     }
   }
+  onDisconnect(): void {
+    this.socket = undefined;
+    this.context.gameEventEmitter.emit(events.GAME.PLAYER_DISCONNECT, this);
+  }
+
   equals(other: Player): boolean {
     return this.id === other.id;
   }
@@ -60,11 +67,12 @@ export class Player implements Serializable<PlayerDTO> {
       // Do not include role or other sensitive info
     };
   }
+  getPlayerData(): PlayerData {
+    return {
+      id: this.id,
+      username: this.profile?.username,
+      role: this.role?.roleData.name,
+      channels: Array.from(this.channels.keys()),
+    };
+  }
 }
-
-type PlayerDTO = {
-  id: string;
-  username: string;
-  isAlive: boolean;
-  isConnected: boolean;
-};

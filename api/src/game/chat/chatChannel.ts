@@ -73,10 +73,10 @@ export abstract class ChatChannel extends EventHandler {
     });
   }
 
-  brodcast(
+  async brodcast(
     message: OutgoingMessage,
     filter: (player: Player) => boolean = () => true,
-  ): void {
+  ): Promise<void> {
     message.channel = this.name;
     this.subscribers.forEach((subscriber) => {
       if (filter(subscriber.player)) {
@@ -88,7 +88,10 @@ export abstract class ChatChannel extends EventHandler {
     });
   }
 
-  sendMessageToPlayer(player: Player, message: OutgoingMessage): void {
+  async sendMessageToPlayer(
+    player: Player,
+    message: OutgoingMessage,
+  ): Promise<void> {
     message.channel = this.name;
 
     this.context.emitToPlayer(

@@ -16,11 +16,6 @@ export class GeneralChannel extends ChatChannel {
   @OnGameEvent(events.GAME.PLAYER_JOIN)
   onPlayerJoin(player: Player): void {
     this.subscribe(player);
-    this.sendMessageToPlayer(player, {
-      type: 'system_message',
-      content: `Welcome to the game! You can chat here.`,
-      channel: this.name,
-    });
   }
 
   @OnGameEvent(events.GAME.PLAYER.KILLED)

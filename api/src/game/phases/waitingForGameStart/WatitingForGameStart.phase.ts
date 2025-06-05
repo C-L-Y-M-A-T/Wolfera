@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { WsException } from '@nestjs/websockets';
+import { events } from 'src/game/events/event.types';
 import { GameContext } from '../../classes/GameContext';
 import { Player } from '../../classes/Player';
 import {
@@ -28,13 +29,11 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   }
 
   protected onStart(): Promise<void> | void {}
+
   protected async onEnd(): Promise<void> {
     const gameData = this.context.toDTO();
-    this.context.gameEventEmitter.emit(
-      SERVER_SOCKET_EVENTS.gameStarted,
-      gameData,
-    );
-    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStarted, gameData);
+    this.context.gameEventEmitter.emit(events.GAME.START, gameData);
+    this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStart, gameData);
   }
 
   protected async processPlayerAction(player: Player): Promise<void> {

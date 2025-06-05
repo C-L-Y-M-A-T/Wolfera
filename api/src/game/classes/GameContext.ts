@@ -2,7 +2,6 @@
 import { Injectable } from '@nestjs/common';
 import { GameSocket } from 'src/socket/socket.types';
 
-import { WsException } from '@nestjs/websockets';
 import { LoggerService } from 'src/logger/logger.service';
 import { SEER_ROLE_NAME } from 'src/roles/seer';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
@@ -63,12 +62,16 @@ export class GameContext implements Serializable<GameDataDTO> {
     const player = new Player(user, this);
     this.players.set(user.id, player);
     this.gameEventEmitter.emit(events.GAME.PLAYER_JOIN, player);
+    return player;
+  }
+
+  @OnGameEvent(events.GAME.PLAYER_JOIN)
+  onPlayerJoin(player: Player): void {
     this.broadcastToPlayers(
-      SERVER_SOCKET_EVENTS.playerJoined,
+      SERVER_SOCKET_EVENTS.playerJoin,
       player,
       (p) => p.id !== player.id, // Don't send to the player who just joined
     );
-    return player;
   }
 
   connectPlayer(user: User, socket?: GameSocket): Player {
@@ -76,10 +79,25 @@ export class GameContext implements Serializable<GameDataDTO> {
     if (socket) {
       player.connect(socket);
     }
-
     return player;
   }
 
+  @OnGameEvent(events.GAME.PLAYER_CONNECT)
+  onPlayerConnect(player: Player): void {
+    debugger;
+    this.emitToPlayer(player, SERVER_SOCKET_EVENTS.gameData, toDTO(this));
+    this.loggerService.debug(`Player ${player.id} connected`);
+    this.broadcastToPlayers(
+      SERVER_SOCKET_EVENTS.playerConnect,
+      player,
+      (p) => p.id !== player.id, // Don't send to the player who just connected
+    );
+  }
+
+  HandlePlayerDisconnect(player: Player): void {
+    this.loggerService.debug(`Player ${player.id} disconnected`);
+    player.onDisconnect();
+  }
   setOptions(options: any): void {
     this.gameOptions = options;
   }
@@ -162,7 +180,7 @@ export class GameContext implements Serializable<GameDataDTO> {
   }
 
   stop(): void {
-    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameEnded, this.gameResults);
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameEnd, this.gameResults);
     this.players.forEach((player) => {
       player.disconnect();
     });
@@ -207,7 +225,7 @@ export class GameContext implements Serializable<GameDataDTO> {
     console.log(`Phase started: ${phase.phaseName}`);
     // Handle phase start logic here
     // For example, you can emit an event to notify players
-    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseStarted, {
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseStart, {
       phaseName: phase.phaseName,
       startTime: phase.startTime,
       phaseDuration: phase.phaseDuration,
@@ -220,7 +238,7 @@ export class GameContext implements Serializable<GameDataDTO> {
     console.log(`Phase ended: ${event.phaseName}`);
     // Handle phase end logic here
     // For example, you can emit an event to notify players
-    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseEnded, {
+    this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseEnd, {
       phaseName: event.phaseName,
       round: this.round,
     });
@@ -241,7 +259,15 @@ export class GameContext implements Serializable<GameDataDTO> {
   ) {
     const dtoPayload = isSerializable(payload) ? toDTO(payload) : payload;
     this.players.forEach((player) => {
-      if (filter(player)) this.emitToPlayer(player, event, dtoPayload);
+      if (filter(player))
+        try {
+          this.emitToPlayer(player, event, dtoPayload);
+        } catch (error) {
+          this.loggerService.error(
+            `Error emitting event ${event} to player ${player.id}:`,
+            error,
+          );
+        }
     });
   }
 
@@ -252,19 +278,6 @@ export class GameContext implements Serializable<GameDataDTO> {
    * @param payload - The payload to send
    * @throws Error if the player is not connected
    */
-  public emitToPlayer0<E extends ServerSocketEvent>(
-    player: Player,
-    event: E,
-    payload: ServerSocketEventPayloads[E],
-  ): void {
-    if (player.isConnected() && player.socket) {
-      const dtoPayload = isSerializable(payload) ? toDTO(payload) : payload;
-      player.socket.emit(event, dtoPayload);
-    } else {
-      throw new WsException(`Player ${player.id} is not connected`);
-    }
-  }
-
   public emitToPlayer<E extends ServerSocketEvent>(
     player: Player,
     event: E,
@@ -273,10 +286,12 @@ export class GameContext implements Serializable<GameDataDTO> {
       | Serializable<ServerSocketEventPayloads[E]>,
   ): void {
     if (player.isConnected() && player.socket) {
-      const dtoPayload = isSerializable(payload) ? payload.toDTO() : payload;
+      const dtoPayload = isSerializable(payload) ? toDTO(payload) : payload;
       player.socket.emit(event, dtoPayload);
     } else {
-      throw new WsException(`Player ${player.id} is not connected`);
+      this.loggerService.warn(
+        `Cannot emit event ${event} to player ${player.id}: Player is not connected.`,
+      );
     }
   }
 

@@ -49,15 +49,18 @@ export const PlayerActionSchema = z.object({
 
 export const SERVER_SOCKET_EVENTS = {
   gameEvent: 'game-event',
+  gameData: 'game-data',
   roleAssigned: 'role-assigned',
   playerEliminated: 'player-eliminated',
-  playerJoined: 'player-join',
+  playerJoin: 'player-join',
+  playerConnect: 'player-connect',
+  playerDisconnect: 'player-disconnect',
   playerLeft: 'player-left',
-  gameStarted: 'game-started',
-  phaseStarted: 'phase-start',
-  phaseEnded: 'phase-ended',
-  roleRevealed: 'role-revealed',
-  gameEnded: 'game-ended',
+  gameStart: 'game-start',
+  phaseStart: 'phase-start',
+  phaseEnd: 'phase-ended',
+  roleReveal: 'role-revealed',
+  gameEnd: 'game-ended',
   roundResults: 'round-results',
   werewolfVote: 'werewolf-vote',
   playerVote: 'player-vote',
@@ -68,21 +71,24 @@ export const SERVER_SOCKET_EVENTS = {
 // Payload types for each serverSocketEvent
 export type ServerSocketEventPayloads = {
   //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
+  [SERVER_SOCKET_EVENTS.gameData]: DeepDTO<GameContext>; // Use DeepDTO to ensure all nested properties are serialized
   [SERVER_SOCKET_EVENTS.roleAssigned]: { role: RoleName };
   [SERVER_SOCKET_EVENTS.playerEliminated]: { playerId: string };
-  [SERVER_SOCKET_EVENTS.playerJoined]: DeepDTO<Player>; // Use DeepDTO to ensure all nested properties are serialized
+  [SERVER_SOCKET_EVENTS.playerJoin]: DeepDTO<Player>; // Use DeepDTO to ensure all nested properties are serialized
+  [SERVER_SOCKET_EVENTS.playerConnect]: DeepDTO<Player>; // Use DeepDTO to ensure all nested properties are serialized
+  [SERVER_SOCKET_EVENTS.playerDisconnect]: DeepDTO<Player>; // Use DeepDTO to ensure all nested properties are serialized
   [SERVER_SOCKET_EVENTS.playerLeft]: { playerId: string };
-  [SERVER_SOCKET_EVENTS.gameStarted]: any;
-  [SERVER_SOCKET_EVENTS.phaseStarted]: {
+  [SERVER_SOCKET_EVENTS.gameStart]: any;
+  [SERVER_SOCKET_EVENTS.phaseStart]: {
     phaseName: string;
     startTime: number;
     phaseDuration: number;
     payload?: GameDataDTO; // Optional payload for the phase
     round: number;
   };
-  [SERVER_SOCKET_EVENTS.phaseEnded]: { phaseName: string; round: number };
-  [SERVER_SOCKET_EVENTS.roleRevealed]: { playerId: string; role: RoleName }; //
-  [SERVER_SOCKET_EVENTS.gameEnded]: GameResult;
+  [SERVER_SOCKET_EVENTS.phaseEnd]: { phaseName: string; round: number };
+  [SERVER_SOCKET_EVENTS.roleReveal]: { playerId: string; role: RoleName }; //
+  [SERVER_SOCKET_EVENTS.gameEnd]: GameResult;
   [SERVER_SOCKET_EVENTS.roundResults]: {
     round: number;
     eliminatedPlayers: string[];
@@ -115,3 +121,17 @@ export const PHASE_NAMES = {
   ROLE_ASSIGNMENT: 'RoleAssignment-phase',
   WAITING_FOR_GAME_START: 'WaitingForGameStart-phase',
 } as const;
+
+export type PlayerData = {
+  id: string;
+  username: string;
+  role?: string;
+  channels?: string[];
+};
+
+export type PlayerDTO = {
+  id: string;
+  username: string;
+  isAlive: boolean;
+  isConnected: boolean;
+};
