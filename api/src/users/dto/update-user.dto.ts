@@ -1,5 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Column } from 'typeorm';
+import { Badge } from '../entities/user.entity';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -17,4 +18,7 @@ export class UpdateUserDto {
   @Column('json', { nullable: true })
   @IsOptional()
   avatarOptions?: Record<string, number>;
+
+  @IsEnum(Badge, { each: true })
+  badges: Badge[];
 }

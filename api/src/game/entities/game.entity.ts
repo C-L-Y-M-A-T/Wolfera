@@ -43,7 +43,7 @@ export class GameEntity extends BaseEntity {
   @Column({ default: false })
   wasCompleted: boolean;
 
-  @Field({
+  @Field(() => String, {
     nullable: true,
   })
   @Column({ type: 'varchar', nullable: true })

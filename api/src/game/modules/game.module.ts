@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { DiscoveryModule } from '@nestjs/core';
 import { GameController } from '../controllers/game.controller';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from 'src/users/user.module';
 import { GameEntity } from '../entities/game.entity';
 import { PlayerGameResult } from '../entities/player-game-result.entity';
 import { GameHandlerRegistry } from '../events/event-handler-registry.service';
+import { GameResolver } from '../graphql/game.resolver';
 import { GamePersistenceHandler } from '../services/game/game-persistence.handler';
 import { GamePersistenceService } from '../services/game/game-persistence.service';
 import { GameService } from '../services/game/game.service';
@@ -19,6 +21,7 @@ import { GameEventsModule } from './game-events.module';
     GameEventsModule,
     TypeOrmModule.forFeature([GameEntity]),
     TypeOrmModule.forFeature([PlayerGameResult]),
+    forwardRef(() => UserModule),
   ],
   providers: [
     GameService,
@@ -26,8 +29,9 @@ import { GameEventsModule } from './game-events.module';
     GameHandlerRegistry,
     GamePersistenceHandler,
     GamePersistenceService,
+    GameResolver,
   ],
   controllers: [GameController],
-  exports: [GameService],
+  exports: [GameService, GamePersistenceService],
 })
 export class GameModule {}
