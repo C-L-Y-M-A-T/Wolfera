@@ -170,15 +170,15 @@ export default function WerewolfGame(): JSX.Element {
       //sock.emit("join_game", { userId, gameId });
     });
 
-    sock.on("joined", ({ player }: JoinedEvent) => {
+    sock.on("player-join", ({ id, username }: JoinedEvent) => {
       setJoinedMessages((prev: string[]) => [
         ...prev,
-        `${player} joined the game`,
+        `${username} joined the game`,
       ]);
-      showToast(`${player} joined the game`, "success");
+      showToast(`${username} joined the game`, "success");
     });
 
-    sock.on("game-started", (data: GameData) => {
+    sock.on("game-start", (data: GameData) => {
       console.log("Game started:", data);
       setGameData(data);
     });
@@ -240,6 +240,17 @@ export default function WerewolfGame(): JSX.Element {
 
         return { ...prevGameData, players: updatedPlayers };
       });
+    });
+    sock.on("channel-status", (status: any) => {
+      console.log("Channel status update:", status);
+      showToast(`Channel ${status.channelId} status: ${status.status}`, "info");
+    });
+    sock.on("chat-message", (message: any) => {
+      console.log("Chat message received:", message);
+      showToast(
+        `New message in ${message.channel}: ${message.content}`,
+        "info",
+      );
     });
 
     setSocket(sock);

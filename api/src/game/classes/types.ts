@@ -2,9 +2,13 @@ import { RoleName } from 'src/roles';
 import { WerewolfVote } from 'src/roles/werewolf/types';
 import { z } from 'zod';
 import { ChainableGamePhase } from '../phases/chainablePhase';
+import { Vote } from '../types/vote-manager.types';
 import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
-import { Vote } from '../types/vote-manager.types';
+
+import { DeepDTO } from 'src/utils/serializable';
+import { ChannelStatus, OutgoingMessage } from '../chat/chat.types';
+import { Player } from './Player';
 
 export enum PhaseState {
   Pending = 'pending',
@@ -57,6 +61,8 @@ export const SERVER_SOCKET_EVENTS = {
   roundResults: 'round-results',
   werewolfVote: 'werewolf-vote',
   playerVote: 'player-vote',
+  channelStatus: 'channel-status',
+  chatMessage: 'chat-message',
 } as const;
 
 // Payload types for each serverSocketEvent
@@ -64,14 +70,14 @@ export type ServerSocketEventPayloads = {
   //[serverSocketEvent.gameEvent]: { event: keyof typeof GameEvent; data: any };
   [SERVER_SOCKET_EVENTS.roleAssigned]: { role: RoleName };
   [SERVER_SOCKET_EVENTS.playerEliminated]: { playerId: string };
-  [SERVER_SOCKET_EVENTS.playerJoined]: { playerId: string; playerName: string };
+  [SERVER_SOCKET_EVENTS.playerJoined]: DeepDTO<Player>; // Use DeepDTO to ensure all nested properties are serialized
   [SERVER_SOCKET_EVENTS.playerLeft]: { playerId: string };
   [SERVER_SOCKET_EVENTS.gameStarted]: any;
   [SERVER_SOCKET_EVENTS.phaseStarted]: {
     phaseName: string;
     startTime: number;
     phaseDuration: number;
-    payload?: PublicGameData; // Optional payload for the phase
+    payload?: GameDataDTO; // Optional payload for the phase
     round: number;
   };
   [SERVER_SOCKET_EVENTS.phaseEnded]: { phaseName: string; round: number };
@@ -84,19 +90,15 @@ export type ServerSocketEventPayloads = {
   };
   [SERVER_SOCKET_EVENTS.werewolfVote]: WerewolfVote[];
   [SERVER_SOCKET_EVENTS.playerVote]: Vote[];
+  [SERVER_SOCKET_EVENTS.channelStatus]: ChannelStatus;
+  [SERVER_SOCKET_EVENTS.chatMessage]: OutgoingMessage;
 };
 export type ServerSocketEvent = keyof ServerSocketEventPayloads;
 
-export type PublicGameData = {
+export type GameDataDTO = {
   gameId: string;
   ownerId: string;
-  players: {
-    id: string;
-    username: string;
-    role?: RoleName;
-    isAlive: boolean;
-    isConnected: boolean;
-  }[];
+  players: Player[];
   gameOptions: GameOptions;
   round: number;
 };

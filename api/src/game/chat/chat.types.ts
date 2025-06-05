@@ -1,10 +1,14 @@
+import { z } from 'zod';
 import { Player } from '../classes/Player';
+import { ChatChannel } from './chatChannel';
 
-export type IncomingMessage = {
-  sender: Player;
-  content: any;
-  channel: string;
-};
+export const IncomingMessageSchema = z.object({
+  sender: z.instanceof(Player),
+  content: z.any(),
+  channel: z.string(),
+});
+
+export type IncomingMessage = z.infer<typeof IncomingMessageSchema>;
 
 type BaseOutgoingMessage = {
   type: string;
@@ -22,3 +26,23 @@ export type OutgoingSystemMessage = BaseOutgoingMessage & {
 };
 
 export type OutgoingMessage = OutgoingPlayerMessage | OutgoingSystemMessage;
+
+export enum SubscriptionType {
+  READ_WRITE, // Can send and receive messages
+  READ_ONLY, // Can only receive messages
+}
+
+export interface ChannelSubscription {
+  player: Player;
+  channel: ChatChannel;
+  subscriptionType: SubscriptionType;
+}
+
+export type ChannelOptions = {
+  IncomingMessageContentSchema?: z.ZodSchema;
+};
+
+export type ChannelStatus = {
+  channel: string;
+  isActive: boolean;
+};

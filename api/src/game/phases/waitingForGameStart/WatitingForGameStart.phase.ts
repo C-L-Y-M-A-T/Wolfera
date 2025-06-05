@@ -29,7 +29,7 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
 
   protected onStart(): Promise<void> | void {}
   protected async onEnd(): Promise<void> {
-    const gameData = this.context.getPublicGameData();
+    const gameData = this.context.toDTO();
     this.context.gameEventEmitter.emit(
       SERVER_SOCKET_EVENTS.gameStarted,
       gameData,
