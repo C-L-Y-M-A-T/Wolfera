@@ -1,14 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
-import {
-  IsEmail,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Column } from 'typeorm';
 import { Badge } from '../entities/user.entity';
@@ -39,28 +31,4 @@ export abstract class BaseUserDto {
   @Field(() => [Badge])
   @IsEnum(Badge, { each: true })
   badges: Badge[];
-
-  @Expose()
-  @Field()
-  @IsNumber()
-  @Min(0)
-  gamesPlayed: number;
-
-  @Expose()
-  @Field()
-  @IsNumber()
-  @Min(0)
-  gamesWon: number;
-
-  @Expose()
-  @Field()
-  @IsNumber()
-  @Min(0)
-  gamesAsWerewolf: number;
-
-  @Expose()
-  @Field()
-  @IsNumber()
-  @Min(0)
-  gamesAsVillager: number;
 }
