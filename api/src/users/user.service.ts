@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserGameStatsDto } from 'src/game/dto/user-stats.dto';
+import { UserGameStatsDto } from 'src/game/dto/stats/user-stats.dto';
 import { GamePersistenceService } from 'src/game/services/game/game-persistence.service';
 import { BaseService } from 'src/utils/generic/base.service';
 import { Repository } from 'typeorm';

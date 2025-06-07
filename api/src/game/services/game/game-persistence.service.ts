@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
-import { GameContext } from 'src/game/classes/GameContext';
 import { Player } from 'src/game/classes/Player';
-import { UserGameStatsDto } from 'src/game/dto/user-stats.dto';
+import { GameResult as GameResultType } from 'src/game/classes/types';
+import { UserGameStatsDto } from 'src/game/dto/stats/user-stats.dto';
 import { GameEntity, GameResult } from 'src/game/entities/game.entity';
 import { PlayerGameResult } from 'src/game/entities/player-game-result.entity';
 import { WEREWOLF_ROLE_NAME } from 'src/roles/werewolf';
 import { BaseService } from 'src/utils/generic/base.service';
+
 import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
 
 @Injectable()
@@ -26,27 +27,42 @@ export class GamePersistenceService extends BaseService<
     super(gameRepo);
   }
 
-  async createGameRecord(context: GameContext): Promise<GameEntity> {
-    return this.createOne({
-      id: context.gameId,
-    });
+  async createGameRecord(code: string): Promise<GameEntity> {
+    return this.createOne({ code });
   }
 
-  async updatePlayerRoles(gameId: string, players: Player[]): Promise<void> {
+  async findByCode(code: string): Promise<GameEntity | null> {
+    return await this.findOne({ code }, { withException: true });
+  }
+
+  async updatePlayerRoles(code: string, players: Player[]): Promise<void> {
+    const game = await this.findByCode(code);
+    const gameId = game?.id;
+
     await Promise.all(
       players.map((player) => {
-        if (!player?.role) {
-          throw new Error(`Player ${player.id} has no role assigned`);
+        const playerId = player.profile?.id;
+        const roleName = player.role?.roleData?.name;
+
+        if (!playerId || !roleName) {
+          throw new Error(
+            `Invalid player or role: ${JSON.stringify({ playerId, roleName })}`,
+          );
         }
-        return this.playerResultRepo.update(
-          { gameId, playerId: player.id },
-          { role: player.role.roleData.name },
-        );
+
+        return this.playerResultRepo.save({
+          gameId,
+          playerId,
+          role: roleName,
+        });
       }),
     );
   }
 
-  async recordPlayerDeath(gameId: string, playerId: string): Promise<void> {
+  async recordPlayerDeath(code: string, playerId: string): Promise<void> {
+    const game = await this.findByCode(code);
+    const gameId = game?.id;
+
     await this.playerResultRepo.update(
       { gameId, playerId },
       { survived: false },
@@ -54,12 +70,43 @@ export class GamePersistenceService extends BaseService<
   }
 
   async finalizeGameRecord(
-    gameId: string,
+    code: string,
     result: GameResult,
+    endedAt: Date,
   ): Promise<GameEntity> {
+    const game = await this.findByCode(code);
+    const gameId = game?.id;
     return this.updateOne(
       { id: gameId },
-      { result, endedAt: new Date(), wasCompleted: true },
+      { result, endedAt: endedAt, wasCompleted: true },
+    );
+  }
+
+  async finalizePlayerResults(
+    code: string,
+    players: Player[],
+    result: GameResultType,
+  ) {
+    const game = await this.findByCode(code);
+    const gameId = game?.id;
+    const playersFromDb = await this.playerResultRepo.find({
+      where: { gameId },
+    });
+    const finalUpdates = playersFromDb.map((playerResult) => {
+      const role = playerResult.role;
+      const isWinner =
+        (role === WEREWOLF_ROLE_NAME && result.winner === 'werewolves') ||
+        (role !== WEREWOLF_ROLE_NAME && result.winner === 'villagers')
+          ? true
+          : false;
+      return { ...playerResult, isWinner };
+    });
+
+    await Promise.all(
+      finalUpdates.map(({ gameId, playerId, isWinner }) => {
+        console.log('Updating player result', { gameId, playerId, isWinner });
+        return this.playerResultRepo.update({ gameId, playerId }, { isWinner });
+      }),
     );
   }
 
@@ -96,7 +143,7 @@ export class GamePersistenceService extends BaseService<
 
   async getCompletedGameDetails(gameId: string): Promise<GameEntity> {
     const game = await this.findOne(
-      { id: gameId, wasCompleted: true },
+      { code: gameId, wasCompleted: true },
       { withException: false },
     );
     if (!game) {

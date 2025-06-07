@@ -9,7 +9,6 @@ import { GameEntity } from '../entities/game.entity';
 import { PlayerGameResult } from '../entities/player-game-result.entity';
 import { GameHandlerRegistry } from '../events/event-handler-registry.service';
 import { GameResolver } from '../graphql/game.resolver';
-import { GamePersistenceHandler } from '../services/game/game-persistence.handler';
 import { GamePersistenceService } from '../services/game/game-persistence.service';
 import { GameService } from '../services/game/game.service';
 import { RoleService } from '../services/role/role.service';
@@ -27,7 +26,6 @@ import { GameEventsModule } from './game-events.module';
     GameService,
     RoleService,
     GameHandlerRegistry,
-    GamePersistenceHandler,
     GamePersistenceService,
     GameResolver,
   ],

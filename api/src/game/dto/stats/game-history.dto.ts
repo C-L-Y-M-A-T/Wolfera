@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { GameResult } from '../entities/game.entity';
+import { GameResult } from 'src/game/entities/game.entity';
 
 @ObjectType()
 export class GameHistoryDto {

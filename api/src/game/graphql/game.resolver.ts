@@ -3,7 +3,7 @@ import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { plainToInstance } from 'class-transformer';
 import { GraphQLError } from 'graphql';
 import { UsersService } from 'src/users/user.service';
-import { GameHistoryDto } from '../dto/game-history.dto';
+import { GameHistoryDto } from '../dto/stats/game-history.dto';
 import { GameEntity } from '../entities/game.entity';
 import { PlayerGameResult } from '../entities/player-game-result.entity';
 import { GamePersistenceService } from '../services/game/game-persistence.service';

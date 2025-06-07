@@ -1,15 +1,15 @@
+import { Exclude } from 'class-transformer';
 import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryGeneratedColumn,
   BaseEntity as TypeOrmBaseEntity,
   UpdateDateColumn,
-  Column,
-  BeforeInsert,
-  BeforeUpdate,
   VersionColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn('uuid')

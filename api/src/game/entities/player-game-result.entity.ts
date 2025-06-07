@@ -32,13 +32,11 @@ export class PlayerGameResult extends BaseEntity {
   @Column({ type: 'varchar' })
   role: RoleName;
 
-  @Field()
-  @Column()
-  isWinner: boolean;
+  @Field(() => Boolean, { nullable: true })
+  @Column({ type: 'boolean', nullable: false, default: false })
+  isWinner?: boolean | null;
 
-  @Field({
-    defaultValue: false,
-  })
-  @Column({ default: false })
-  survived: boolean;
+  @Field(() => Boolean, { nullable: true })
+  @Column({ type: 'boolean', nullable: false, default: true })
+  survived?: boolean | null;
 }

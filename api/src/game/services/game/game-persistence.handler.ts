@@ -1,53 +1,73 @@
 import { Player } from 'src/game/classes/Player';
-import { PHASE_NAMES } from 'src/game/classes/types';
-import { GameResult } from 'src/game/entities/game.entity';
+import { GameResult, PHASE_NAMES } from 'src/game/classes/types';
+import { GameResult as WinningTeam } from 'src/game/entities/game.entity';
+import { EventHandlerFactory } from 'src/game/events/event-emitter/decorators/event-handler.decorator';
 import { events } from 'src/game/events/event.types';
-import { RoleAssignmentPhase } from 'src/game/phases/roleAssignmentPhase/roleAssignment.phase';
 import { GameContext } from '../../classes/GameContext';
-import { OnGameEvent } from '../../events/event-emitter/decorators/game-event.decorator';
+import {
+  GameEventHandler,
+  OnGameEvent,
+} from '../../events/event-emitter/decorators/game-event.decorator';
 
-export class GamePersistenceHandler {
+@EventHandlerFactory()
+export class GamePersistenceHandler implements GameEventHandler {
   constructor(private context: GameContext) {}
 
   @OnGameEvent(events.GAME.CREATE)
-  async onGameStart(context: GameContext) {
-    await this.context.persistenceService.createGameRecord(context);
+  async onGameStart({ gameId }: { gameId: string }) {
+    await this.context.persistenceService.createGameRecord(gameId);
   }
 
   @OnGameEvent(events.GAME.PHASE.END(PHASE_NAMES.ROLE_ASSIGNMENT))
-  async onRolesAssigned(roleAssignmentPhase: RoleAssignmentPhase) {
+  async onRolesAssigned() {
+    console.log('role assignment fl handler');
+
     await this.context.persistenceService.updatePlayerRoles(
       this.context.gameId,
-      this.context.getAlivePlayers(),
+      this.context.getplayers(),
     );
   }
 
   @OnGameEvent(events.GAME.PLAYER.KILLED)
   async onPlayerEliminated(player: Player) {
-    //TODO: check type of payload
+    console.log('player met');
     await this.context.persistenceService.recordPlayerDeath(
       this.context.gameId,
       player.id,
     );
   }
 
-  @OnGameEvent('game:end')
-  async onGameEnd({ winner }: { winner: string }) {
-    const gameResult = this.parseGameResult(winner);
-    await this.context.persistenceService.finalizeGameRecord(
-      this.context.gameId,
-      gameResult,
-    );
+  mapWinnerToGameResult(winner: string | null): WinningTeam {
+    switch (winner) {
+      case 'villagers':
+        return WinningTeam.VILLAGERS_WIN;
+      case 'werewolves':
+        return WinningTeam.WEREWOLVES_WIN;
+      default:
+        return WinningTeam.ABANDONED;
+    }
   }
 
-  private parseGameResult(winner: string): GameResult {
-    switch (winner) {
-      case 'villagers_win':
-        return GameResult.VILLAGERS_WIN;
-      case 'werewolves_win':
-        return GameResult.WEREWOLVES_WIN;
-      default:
-        throw new Error(`Invalid game result: ${winner}`);
-    }
+  @OnGameEvent(events.GAME.END)
+  async onGameEnd({
+    results,
+    endedAt,
+  }: {
+    results: GameResult;
+    endedAt: Date;
+  }) {
+    console.log('lo3ba wfet');
+    const result = this.mapWinnerToGameResult(results.winner);
+    const endedAtDate = new Date(endedAt);
+    await this.context.persistenceService.finalizePlayerResults(
+      this.context.gameId,
+      this.context.getplayers(),
+      results,
+    );
+    await this.context.persistenceService.finalizeGameRecord(
+      this.context.gameId,
+      result,
+      endedAtDate,
+    );
   }
 }

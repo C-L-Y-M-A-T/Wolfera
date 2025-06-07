@@ -1,12 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from 'src/utils/generic/base.entity';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { PlayerGameResult } from './player-game-result.entity';
 
 export enum GameResult {
   VILLAGERS_WIN = 'villagers_win',
   WEREWOLVES_WIN = 'werewolves_win',
-  TIE = 'tie',
   ABANDONED = 'abandoned',
 }
 
@@ -18,8 +17,8 @@ registerEnumType(GameResult, {
 @Entity('games')
 export class GameEntity extends BaseEntity {
   @Field()
-  @PrimaryColumn()
-  id: string = '';
+  @Column({ unique: true })
+  code: string;
 
   @Field(() => Date, {
     nullable: true,
@@ -42,10 +41,4 @@ export class GameEntity extends BaseEntity {
   @Field()
   @Column({ default: false })
   wasCompleted: boolean;
-
-  @Field(() => String, {
-    nullable: true,
-  })
-  @Column({ type: 'varchar', nullable: true })
-  winningTeam: string | null;
 }

@@ -25,12 +25,11 @@ type FriendDto {
 
 """Represents a game session"""
 type GameEntity {
+  code: String!
   endedAt: DateTime
-  id: String!
   playerResults: [PlayerGameResult!]!
   result: GameResult
   wasCompleted: Boolean!
-  winningTeam: String
 }
 
 type GameHistoryDto {
@@ -44,7 +43,6 @@ type GameHistoryDto {
 
 enum GameResult {
   ABANDONED
-  TIE
   VILLAGERS_WIN
   WEREWOLVES_WIN
 }
@@ -57,11 +55,11 @@ scalar JSONObject
 type PlayerGameResult {
   game: GameEntity
   gameId: String!
-  isWinner: Boolean!
+  isWinner: Boolean
   player: User!
   playerId: String!
   role: String!
-  survived: Boolean!
+  survived: Boolean
 }
 
 type PlayerGameResultDto {

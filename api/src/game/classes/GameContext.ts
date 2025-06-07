@@ -189,8 +189,11 @@ export class GameContext implements Serializable<GameDataDTO> {
     this.players.forEach((player) => {
       player.disconnect();
     });
+    console.log('ena nkoul lo3ba wfet');
     this.gameEventEmitter.emit(events.GAME.END, {
       gameId: this.gameId,
+      results: this.gameResults,
+      endedAt: Date.now(),
     });
   }
 

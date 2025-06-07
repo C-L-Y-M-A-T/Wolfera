@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { plainToInstance } from 'class-transformer';
 import { GraphQLError } from 'graphql';
-import { UserGameStatsDto } from 'src/game/dto/user-stats.dto';
+import { UserGameStatsDto } from 'src/game/dto/stats/user-stats.dto';
 import { GamePersistenceService } from 'src/game/services/game/game-persistence.service';
 import { UsersLoader } from '../dataloader/user.loader';
 import { FriendDto } from '../dto/friend.dto';

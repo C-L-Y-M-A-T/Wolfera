@@ -111,8 +111,8 @@ export default function WerewolfGame(): JSX.Element {
       const res = await axios.post<CreateGameResponse>(
         `${BACKEND_URL}/game/create`,
         {
-          userId: "123",
-          username: "123",
+          userId: "f2ea15fe-1a77-4a50-b984-439741cf85b9",
+          username: "salah",
           gameOptions: {
             ...gameOptions,
             roles: {
@@ -127,7 +127,10 @@ export default function WerewolfGame(): JSX.Element {
           },
         },
       );
-      setUser({ id: "123", username: "123" });
+      setUser({
+        id: "f2ea15fe-1a77-4a50-b984-439741cf85b9",
+        username: "salah",
+      });
       setCreatorGameId(res.data.gameId);
       setGameId(res.data.gameId);
     } catch (error) {
@@ -335,10 +338,10 @@ export default function WerewolfGame(): JSX.Element {
         <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
           🐺 Werewolf Game
         </h2>
-        {/* Create game (userId = 123) */}
+        {/* Create game (userId = "f2ea15fe-1a77-4a50-b984-439741cf85b9") */}
         <div style={sectionStyle}>
           <button style={buttonStyle} onClick={handleCreateGame}>
-            Create Game (as user 123)
+            Create Game (as salah)
           </button>
           <div style={{ marginTop: "1rem" }}>
             <label style={labelStyle}>
@@ -462,7 +465,7 @@ export default function WerewolfGame(): JSX.Element {
               <strong style={{ color: "#4f8cff" }}>{user.username}</strong> in
               game <strong style={{ color: "#4f8cff" }}>{gameId}</strong>
             </p>
-            {user.id === "123" && (
+            {user.id === "f2ea15fe-1a77-4a50-b984-439741cf85b9" && (
               <button style={buttonStyle} onClick={handleStartGame}>
                 🚀 Start Game
               </button>
