@@ -32,6 +32,8 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
 
   protected async onEnd(): Promise<void> {
     const gameData = this.context.toDTO();
+    if (!(this.context.gameOptions.totalPlayers === this.context.players.size))
+      throw new WsException('Not enough players to start the game');
     this.context.gameEventEmitter.emit(events.GAME.START, gameData);
     this.context.broadcastToPlayers(SERVER_SOCKET_EVENTS.gameStart, gameData);
   }
