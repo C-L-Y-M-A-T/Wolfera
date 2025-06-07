@@ -188,7 +188,7 @@ export default function ProfilePage() {
                   </TabsTrigger>
                 </TabsList>
 
-                <AnimatePresence mode="wait">
+                <AnimatePresence>
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, y: 10 }}
