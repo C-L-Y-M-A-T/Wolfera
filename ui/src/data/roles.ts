@@ -1,14 +1,4 @@
-export interface Role {
-  id: string;
-  name: string;
-  team: "Good" | "Evil";
-  shortDescription: string;
-  detailedDescription: string;
-  abilities: string[];
-  tips: string[];
-  winCondition: string;
-  category: "villager" | "werewolf" | "seer" | "guardian" | "hunter" | "witch";
-}
+import { Role } from "@/types/role";
 
 export const ROLES_DATA: Role[] = [
   {
@@ -16,6 +6,11 @@ export const ROLES_DATA: Role[] = [
     name: "Villager",
     team: "Good",
     category: "villager",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: false,
+    actionTime: "day",
     shortDescription: "Innocent townspeople trying to survive",
     detailedDescription:
       "Villagers are the backbone of the town. They have no special abilities but must use their wit, observation skills, and voting power to identify and eliminate the werewolves threatening their community.",
@@ -35,7 +30,12 @@ export const ROLES_DATA: Role[] = [
   {
     id: "werewolf",
     name: "Werewolf",
+    canSeeWerewolfChat: true,
+    canSendWerewolfChat: true,
+    canChatDuringDay: true,
+    canChatDuringNight: true,
     team: "Evil",
+    actionTime: "night",
     category: "werewolf",
     shortDescription: "Creatures of the night hunting villagers",
     detailedDescription:
@@ -57,6 +57,11 @@ export const ROLES_DATA: Role[] = [
     id: "seer",
     name: "Seer",
     team: "Good",
+    actionTime: "night",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: false,
     category: "seer",
     shortDescription: "Can see the true nature of players",
     detailedDescription:
@@ -77,7 +82,12 @@ export const ROLES_DATA: Role[] = [
   {
     id: "guardian",
     name: "Guardian",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: false,
     team: "Good",
+    actionTime: "night",
     category: "guardian",
     shortDescription: "Protects players from werewolf attacks",
     detailedDescription:
@@ -99,7 +109,12 @@ export const ROLES_DATA: Role[] = [
     id: "hunter",
     name: "Hunter",
     team: "Good",
+    actionTime: "day",
     category: "hunter",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: false,
     shortDescription: "Takes revenge when eliminated",
     detailedDescription:
       "The Hunter is a skilled marksman who, even in death, can take one final shot. When eliminated, they can choose to eliminate another player, making them a dangerous target for werewolves.",
@@ -119,8 +134,13 @@ export const ROLES_DATA: Role[] = [
   {
     id: "witch",
     name: "Witch",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
     team: "Good",
+    actionTime: "day",
     category: "witch",
+    canChatDuringDay: true,
+    canChatDuringNight: false,
     shortDescription: "Has healing and poison potions",
     detailedDescription:
       "The Witch possesses two powerful potions: one that can save a life and another that can take one. These single-use abilities make the Witch a versatile but vulnerable role.",
@@ -134,6 +154,58 @@ export const ROLES_DATA: Role[] = [
       "Use poison on confirmed werewolves",
       "Don't waste potions early in the game",
       "Coordinate with other roles if possible",
+    ],
+    winCondition: "Help eliminate all werewolves",
+  },
+  {
+    id: "little-girl",
+    name: "Little Girl",
+    team: "Good",
+    actionTime: "day",
+    category: "little-girl",
+    canSeeWerewolfChat: true,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: true,
+    shortDescription: "Can observe the werewolves' conversation",
+    detailedDescription:
+      "The Little Girl is a curious and observant player who can observe the werewolves' conversation without being detected. This role is essential for the game's success, as it allows the villagers to communicate with each other and identify the werewolves.",
+    abilities: [
+      "Observe the werewolves' conversation",
+      "Vote and discuss during the day",
+      "No special night actions",
+    ],
+    tips: [
+      "Pay attention to the werewolves' conversation",
+      "Share information with trusted players",
+      "Don't be too eager to reveal your role",
+      "Be cautious when communicating with others",
+    ],
+    winCondition: "Help eliminate all werewolves",
+  },
+  {
+    id: "cupid",
+    name: "Cupid",
+    team: "Good",
+    actionTime: "day",
+    category: "cupid",
+    canSeeWerewolfChat: false,
+    canSendWerewolfChat: false,
+    canChatDuringDay: true,
+    canChatDuringNight: true,
+    shortDescription: "Chooses two players to make them lovers",
+    detailedDescription:
+      "The Cupid is a player who chooses two players to make them lovers. This role is crucial for the game's success, as it allows the villagers to form alliances and identify the werewolves.",
+    abilities: [
+      "On the first night, choose two players to make them lovers",
+      "Vote and discuss during the day",
+      "No special night actions",
+    ],
+    tips: [
+      "Be observant and pay attention to the game state",
+      "Communicate with trusted players",
+      "Don't be too eager to reveal your role",
+      "Be cautious when communicating with others",
     ],
     winCondition: "Help eliminate all werewolves",
   },

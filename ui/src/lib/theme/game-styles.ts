@@ -105,5 +105,10 @@ export const gameStyles = {
       fadeBottom:
         "absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent",
     },
+    phases: {
+      night:
+        "min-h-screen bg-[url('/moon-forest.jpg')] bg-cover bg-center bg-fixed",
+      day: "min-h-screen bg-[url('/sun-forest.png')] bg-cover bg-center bg-fixed",
+    },
   },
 };

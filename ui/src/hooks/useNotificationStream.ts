@@ -2,7 +2,7 @@ import { EventSourcePolyfill } from "event-source-polyfill";
 import { useEffect } from "react";
 import { useToast } from "./use-toast";
 
-export function useNotificationStream(userId: string) {
+export function useNotificationStream(userId?: string) {
   const toast = useToast();
   const baseURL = process.env.API_BASE_URL || "http://localhost:3000";
 
