@@ -2,16 +2,21 @@ import { z } from 'zod';
 import { Player } from '../classes/Player';
 import { ChatChannel } from './chatChannel';
 
-export const IncomingMessageSchema = z.object({
-  sender: z.instanceof(Player),
+export const RawIncomingMessageSchema = z.object({
+  id: z.string(),
   content: z.any(),
   channel: z.string(),
 });
 
-export type IncomingMessage = z.infer<typeof IncomingMessageSchema>;
+export type RawIncomingMessage = z.infer<typeof RawIncomingMessageSchema>;
+
+export type IncomingMessage = RawIncomingMessage & {
+  sender: Player;
+};
 
 type BaseOutgoingMessage = {
-  type: string;
+  id: string;
+  type: 'player_message' | 'system_message';
   content: string;
   channel?: string;
 };

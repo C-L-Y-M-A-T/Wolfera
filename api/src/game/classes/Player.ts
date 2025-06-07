@@ -7,7 +7,7 @@ import { Serializable } from 'src/utils/serializable';
 import { ChannelSubscription } from '../chat/chat.types';
 import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
-import { PlayerData, PlayerDTO } from './types';
+import { PlayerData, PlayerDTO, SERVER_SOCKET_EVENTS } from './types';
 
 export class Player implements Serializable<PlayerDTO> {
   public socket?: GameSocket;
@@ -68,11 +68,23 @@ export class Player implements Serializable<PlayerDTO> {
     };
   }
   getPlayerData(): PlayerData {
+    const channels = Array.from(this.channels.values()).map((sub) => ({
+      name: sub.channel.name,
+      subscriptionType: sub.subscriptionType,
+      isActive: sub.channel.isActive,
+    }));
     return {
       id: this.id,
       username: this.profile?.username,
       role: this.role?.roleData.name,
-      channels: Array.from(this.channels.keys()),
+      channels,
     };
+  }
+  sendPlayerInfo(): void {
+    this.context.emitToPlayer(
+      this,
+      SERVER_SOCKET_EVENTS.playerInfo,
+      this.getPlayerData(),
+    );
   }
 }

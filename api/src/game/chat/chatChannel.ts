@@ -17,7 +17,7 @@ import {
 
 export abstract class ChatChannel extends EventHandler {
   protected subscribers: Map<string, ChannelSubscription> = new Map();
-  private isActive: boolean = false;
+  public isActive: boolean = false;
 
   constructor(
     context: GameContext,
@@ -37,12 +37,6 @@ export abstract class ChatChannel extends EventHandler {
     player: Player,
     subscriptionType: SubscriptionType = SubscriptionType.READ_WRITE,
   ): void {
-    if (this.subscribers.has(player.id)) {
-      this.context.loggerService.warn(
-        `ChatChannel:subscribe - Player ${player.id} is already subscribed to channel ${this.name}`,
-      );
-      return;
-    }
     const subscription: ChannelSubscription = {
       player,
       channel: this,
@@ -50,8 +44,10 @@ export abstract class ChatChannel extends EventHandler {
     };
     this.subscribers.set(player.id, subscription);
     player.channels.set(this.name, subscription);
+    player.sendPlayerInfo();
 
     this.sendMessageToPlayer(player, {
+      id: this.generateId(),
       type: 'system_message',
       content: `You have joined the ${this.name} channel.`,
     });
@@ -66,11 +62,17 @@ export abstract class ChatChannel extends EventHandler {
     }
     this.subscribers.delete(player.id);
     player.channels.delete(this.name);
+    player.sendPlayerInfo();
 
     this.sendMessageToPlayer(player, {
+      id: this.generateId(),
       type: 'system_message',
       content: `You have left the ${this.name} channel.`,
     });
+  }
+
+  generateId(): string {
+    return `${this.name}-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
   }
 
   async brodcast(
@@ -112,6 +114,7 @@ export abstract class ChatChannel extends EventHandler {
   handleIncomingMessage(message: IncomingMessage): void {
     this.verifyIncomingMessage(message);
     this.brodcast({
+      id: message.id,
       type: 'player_message',
       sender_id: message.sender.id,
       content: message.content,

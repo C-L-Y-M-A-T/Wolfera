@@ -7,7 +7,11 @@ import { GameContext } from './GameContext';
 import { GamePhase } from './GamePhase';
 
 import { DeepDTO } from 'src/utils/serializable';
-import { ChannelStatus, OutgoingMessage } from '../chat/chat.types';
+import {
+  ChannelStatus,
+  OutgoingMessage,
+  SubscriptionType,
+} from '../chat/chat.types';
 import { Player } from './Player';
 
 export enum PhaseState {
@@ -66,6 +70,7 @@ export const SERVER_SOCKET_EVENTS = {
   playerVote: 'player-vote',
   channelStatus: 'channel-status',
   chatMessage: 'chat-message',
+  playerInfo: 'player-info',
 } as const;
 
 // Payload types for each serverSocketEvent
@@ -98,6 +103,7 @@ export type ServerSocketEventPayloads = {
   [SERVER_SOCKET_EVENTS.playerVote]: Vote[];
   [SERVER_SOCKET_EVENTS.channelStatus]: ChannelStatus;
   [SERVER_SOCKET_EVENTS.chatMessage]: OutgoingMessage;
+  [SERVER_SOCKET_EVENTS.playerInfo]: PlayerData;
 };
 export type ServerSocketEvent = keyof ServerSocketEventPayloads;
 
@@ -126,7 +132,11 @@ export type PlayerData = {
   id: string;
   username: string;
   role?: string;
-  channels?: string[];
+  channels?: {
+    name: string;
+    isActive: boolean;
+    subscriptionType: SubscriptionType;
+  }[];
 };
 
 export type PlayerDTO = {
