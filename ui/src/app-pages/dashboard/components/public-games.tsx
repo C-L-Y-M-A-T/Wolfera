@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useTheme } from "@/providers/theme-provider";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Users,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Crown,
-  Search,
   Filter,
-  ChevronRight,
-  ChevronLeft,
+  Search,
+  Users,
 } from "lucide-react";
-import { useTheme } from "@/providers/theme-provider";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface PublicGamesProps {
   onJoinGame: (gameId: string) => void;
@@ -104,7 +104,7 @@ export function PublicGames({ onJoinGame }: PublicGamesProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className={`${theme.typography.textColor.primary}`}>
         <div className="space-y-3">
           <AnimatePresence>
             {currentGames.length > 0 ? (
@@ -193,7 +193,7 @@ export function PublicGames({ onJoinGame }: PublicGamesProps) {
                   disabled={currentPage === 1}
                   className="h-8 w-8 border-gray-700"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 text-gray-900" />
                 </Button>
                 <span className="text-sm text-gray-400">
                   Page {currentPage} of {totalPages}
@@ -207,7 +207,7 @@ export function PublicGames({ onJoinGame }: PublicGamesProps) {
                   disabled={currentPage === totalPages}
                   className="h-8 w-8 border-gray-700"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className={`h-4 w-4 text-gray-900`} />
                 </Button>
               </div>
             </div>

@@ -1,39 +1,41 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Skull, Eye, Shield } from "lucide-react"
-import { useTheme } from "@/providers/theme-provider"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { Activity, Eye, Shield, Skull, Trophy } from "lucide-react";
 
 interface PlayerStatsProps {
   stats: {
-    gamesPlayed: number
-    wins: number
-    winRate: string
-    favoriteRole: string
-    killCount: number
-    survivedNights: number
-  }
+    gamesPlayed: number;
+    wins: number;
+    winRate: string;
+    favoriteRole: string;
+    killCount: number;
+    survivedNights: number;
+  };
 }
 
 export function PlayerStats({ stats }: PlayerStatsProps) {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <Card className={theme.gameStyles.cards.profile}>
       <CardHeader className="pb-2">
         <CardTitle className="text-xl text-red-400 flex items-center">
-          <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
+          <Activity className="w-5 h-5 mr-2 text-purple-600" />
           Your Stats
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className={`${theme.typography.textColor.primary}`}>
         <div className="space-y-4">
           {/* Win Rate Progress */}
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-400">Win Rate</span>
-              <span className="font-medium text-green-400">{stats.winRate}</span>
+              <span className="font-medium text-green-400">
+                {stats.winRate}
+              </span>
             </div>
             <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
               <motion.div
@@ -57,7 +59,9 @@ export function PlayerStats({ stats }: PlayerStatsProps) {
                 <Trophy className="h-4 w-4 text-yellow-400" />
                 <div className="text-xs text-gray-400">Games Won</div>
               </div>
-              <div className="text-xl font-bold text-yellow-400 mt-1">{stats.wins}</div>
+              <div className="text-xl font-bold text-yellow-400 mt-1">
+                {stats.wins}
+              </div>
             </motion.div>
 
             <motion.div
@@ -70,7 +74,9 @@ export function PlayerStats({ stats }: PlayerStatsProps) {
                 <Skull className="h-4 w-4 text-red-400" />
                 <div className="text-xs text-gray-400">Kills</div>
               </div>
-              <div className="text-xl font-bold text-red-400 mt-1">{stats.killCount}</div>
+              <div className="text-xl font-bold text-red-400 mt-1">
+                {stats.killCount}
+              </div>
             </motion.div>
 
             <motion.div
@@ -83,7 +89,9 @@ export function PlayerStats({ stats }: PlayerStatsProps) {
                 <Shield className="h-4 w-4 text-blue-400" />
                 <div className="text-xs text-gray-400">Nights Survived</div>
               </div>
-              <div className="text-xl font-bold text-blue-400 mt-1">{stats.survivedNights}</div>
+              <div className="text-xl font-bold text-blue-400 mt-1">
+                {stats.survivedNights}
+              </div>
             </motion.div>
 
             <motion.div
@@ -96,7 +104,9 @@ export function PlayerStats({ stats }: PlayerStatsProps) {
                 <Eye className="h-4 w-4 text-purple-400" />
                 <div className="text-xs text-gray-400">Favorite Role</div>
               </div>
-              <div className="text-xl font-bold text-purple-400 mt-1">{stats.favoriteRole}</div>
+              <div className="text-xl font-bold text-purple-400 mt-1">
+                {stats.favoriteRole}
+              </div>
             </motion.div>
           </div>
 
@@ -113,5 +123,5 @@ export function PlayerStats({ stats }: PlayerStatsProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

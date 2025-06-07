@@ -18,6 +18,13 @@ export const background = {
     blue: "bg-blue-500",
     indigo: "bg-indigo-500",
     danger: "bg-red-500",
+    roles: {
+      werewolf: "bg-red-700",
+      villager: "bg-blue-500",
+      seer: "bg-yellow-500",
+      doctor: "bg-green-500",
+      hunter: "bg-purple-500",
+    },
   },
   backgroundSize: {
     auto: "bg-auto",

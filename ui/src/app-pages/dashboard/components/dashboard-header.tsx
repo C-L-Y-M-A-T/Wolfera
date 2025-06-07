@@ -1,11 +1,8 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { useTheme } from "@/providers/theme-provider"
-import AnimatedText from "@/components/animated-text"
+import AnimatedText from "@/components/animated-text";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,20 +10,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
+import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 interface DashboardHeaderProps {
   user: {
-    username: string
-    avatar: string
-    level: number
-  }
-  notificationCount: number
-  onViewProfile: () => void
+    username: string;
+    avatar: string;
+    level: number;
+  };
+  notificationCount: number;
+  onViewProfile: () => void;
 }
 
-export function DashboardHeader({ user, notificationCount, onViewProfile }: DashboardHeaderProps) {
-  const theme = useTheme()
+export function DashboardHeader({
+  user,
+  notificationCount,
+  onViewProfile,
+}: DashboardHeaderProps) {
+  const theme = useTheme();
 
   return (
     <motion.div
@@ -35,7 +39,9 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
       transition={{ duration: 0.5 }}
       className="relative"
     >
-      <div className={`${theme.gameStyles.cards.profile} overflow-hidden`}>
+      <div
+        className={`${theme.gameStyles.cards.profile} overflow-hidden ${theme.typography.textColor.primary}`}
+      >
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 to-purple-900/20" />
 
         <div className="relative p-4 md:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -58,7 +64,9 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
                 size="text-xl md:text-2xl"
                 intensity="medium"
               />
-              <p className="text-sm text-gray-400">Welcome back, hunter of the night</p>
+              <p className="text-sm text-gray-400">
+                Welcome back, hunter of the night
+              </p>
             </div>
           </div>
 
@@ -67,8 +75,12 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
             {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="h-5 w-5 text-gray-300" />
+                <Button
+                  size="icon"
+                  className="relative hover:text-gray-700"
+                  variant="ghost"
+                >
+                  <Bell className="h-5 w-5 text-gray-300 " />
                   {notificationCount > 0 && (
                     <motion.div
                       initial={{ scale: 0 }}
@@ -83,23 +95,31 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 bg-gray-900 border-gray-700">
+              <DropdownMenuContent
+                className={`w-72 bg-gray-900 border-gray-700 ${theme.typography.textColor.primary}`}
+              >
                 <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-gray-700" />
                 <div className="max-h-80 overflow-y-auto">
                   <DropdownMenuItem className="flex flex-col items-start py-3 cursor-pointer">
                     <p className="font-medium">Friend Request</p>
-                    <p className="text-sm text-gray-400">MoonHowler sent you a friend request</p>
+                    <p className="text-sm text-gray-400">
+                      MoonHowler sent you a friend request
+                    </p>
                     <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex flex-col items-start py-3 cursor-pointer">
                     <p className="font-medium">Game Invitation</p>
-                    <p className="text-sm text-gray-400">VillageProtector invited you to a game</p>
+                    <p className="text-sm text-gray-400">
+                      VillageProtector invited you to a game
+                    </p>
                     <p className="text-xs text-gray-500 mt-1">Yesterday</p>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex flex-col items-start py-3 cursor-pointer">
                     <p className="font-medium">Achievement Unlocked</p>
-                    <p className="text-sm text-gray-400">You unlocked "Night Hunter" achievement</p>
+                    <p className="text-sm text-gray-400">
+                      You unlocked "Night Hunter" achievement
+                    </p>
                     <p className="text-xs text-gray-500 mt-1">3 days ago</p>
                   </DropdownMenuItem>
                 </div>
@@ -113,7 +133,10 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2 hover:bg-gray-800/50">
+                <Button
+                  variant="ghost"
+                  className={`flex items-center gap-2 hover:bg-gray-800/50`}
+                >
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <img
@@ -123,16 +146,25 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
                       />
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-500 border border-gray-900" />
                     </div>
-                    <div className="hidden md:block text-left">
+                    <div
+                      className={`${theme.typography.textColor.primary} hidden md:block text-left`}
+                    >
                       <p className="text-sm font-medium">{user.username}</p>
-                      <p className="text-xs text-gray-400">Level {user.level}</p>
+                      <p className="text-xs text-gray-400">
+                        Level {user.level}
+                      </p>
                     </div>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-gray-900 border-gray-700">
-                <DropdownMenuItem className="cursor-pointer" onClick={onViewProfile}>
+              <DropdownMenuContent
+                className={`w-56 bg-gray-900 border-gray-700 ${theme.typography.textColor.primary}`}
+              >
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={onViewProfile}
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
@@ -159,5 +191,5 @@ export function DashboardHeader({ user, notificationCount, onViewProfile }: Dash
         />
       </div>
     </motion.div>
-  )
+  );
 }

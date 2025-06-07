@@ -1,50 +1,45 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useTheme } from "@/providers/theme-provider"
-import { Eye, Skull, Users, Shield, FlaskRound, Axe, Plus, Minus } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRoleStyles } from "@/hooks/use-role-styles";
+import { useTheme } from "@/providers/theme-provider";
+import { Minus, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface CreateGameModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onCreateGame: (gameSettings: any) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onCreateGame: (gameSettings: any) => void;
 }
 
-const roleIcons = {
-  werewolves: <Skull className="h-4 w-4" />,
-  villagers: <Users className="h-4 w-4" />,
-  seer: <Eye className="h-4 w-4" />,
-  doctor: <Shield className="h-4 w-4" />,
-  hunter: <Axe className="h-4 w-4" />,
-  witch: <FlaskRound className="h-4 w-4" />,
-}
-
-const roleColors = {
-  werewolves: "text-red-400 bg-red-950/50 border-red-500/30",
-  villagers: "text-blue-400 bg-blue-950/50 border-blue-500/30",
-  seer: "text-purple-400 bg-purple-950/50 border-purple-500/30",
-  doctor: "text-green-400 bg-green-950/50 border-green-500/30",
-  hunter: "text-yellow-400 bg-yellow-950/50 border-yellow-500/30",
-  witch: "text-indigo-400 bg-indigo-950/50 border-indigo-500/30",
-}
-
-export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGameModalProps) {
-  const theme = useTheme()
-  const [activeTab, setActiveTab] = useState("basic")
+export function CreateGameModal({
+  open,
+  onOpenChange,
+  onCreateGame,
+}: CreateGameModalProps) {
+  const theme = useTheme();
+  const { getRoleBorderClass, getRoleColorClass, getRoleIcon } =
+    useRoleStyles();
+  const [activeTab, setActiveTab] = useState("basic");
   const [gameSettings, setGameSettings] = useState({
     name: "Night Hunt",
     isPublic: true,
     maxPlayers: 12,
     roles: {
-      werewolves: 2,
-      villagers: 6,
+      werewolf: 2,
+      villager: 6,
       seer: 1,
       doctor: 1,
       hunter: 1,
@@ -56,18 +51,21 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
       discussionTime: 180,
       votingTime: 60,
     },
-  })
+  });
 
   const handleRoleChange = (role: string, change: number) => {
-    const newCount = Math.max(0, gameSettings.roles[role as keyof typeof gameSettings.roles] + change)
+    const newCount = Math.max(
+      0,
+      gameSettings.roles[role as keyof typeof gameSettings.roles] + change,
+    );
     setGameSettings((prev) => ({
       ...prev,
       roles: {
         ...prev.roles,
         [role]: newCount,
       },
-    }))
-  }
+    }));
+  };
 
   const handleTimerChange = (timer: string, value: number[]) => {
     setGameSettings((prev) => ({
@@ -76,21 +74,28 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
         ...prev.timers,
         [timer]: value[0],
       },
-    }))
-  }
+    }));
+  };
 
   const handleCreateGame = () => {
-    onCreateGame(gameSettings)
-    onOpenChange(false)
-  }
+    onCreateGame(gameSettings);
+    onOpenChange(false);
+  };
 
-  const totalPlayers = Object.values(gameSettings.roles).reduce((sum, count) => sum + count, 0)
+  const totalPlayers = Object.values(gameSettings.roles).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-gray-900 border-gray-700 max-h-[80vh] overflow-y-auto">
+      <DialogContent
+        className={`sm:max-w-[600px] bg-gray-900 border-gray-700 max-h-[80vh] overflow-y-auto ${theme.typography.textColor.primary}`}
+      >
         <DialogHeader>
-          <DialogTitle className="text-xl text-red-400">Create New Game</DialogTitle>
+          <DialogTitle className="text-xl text-red-400">
+            Create New Game
+          </DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -106,7 +111,9 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
               <Input
                 id="game-name"
                 value={gameSettings.name}
-                onChange={(e) => setGameSettings({ ...gameSettings, name: e.target.value })}
+                onChange={(e) =>
+                  setGameSettings({ ...gameSettings, name: e.target.value })
+                }
                 className="bg-gray-800 border-gray-700"
               />
             </div>
@@ -115,14 +122,18 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
               <Checkbox
                 id="public-game"
                 checked={gameSettings.isPublic}
-                onCheckedChange={(checked) => setGameSettings({ ...gameSettings, isPublic: !!checked })}
+                onCheckedChange={(checked) =>
+                  setGameSettings({ ...gameSettings, isPublic: !!checked })
+                }
               />
               <Label htmlFor="public-game">Make this game public</Label>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="max-players">Maximum Players: {gameSettings.maxPlayers}</Label>
+                <Label htmlFor="max-players">
+                  Maximum Players: {gameSettings.maxPlayers}
+                </Label>
               </div>
               <Slider
                 id="max-players"
@@ -130,7 +141,9 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
                 max={20}
                 step={1}
                 value={[gameSettings.maxPlayers]}
-                onValueChange={(value) => setGameSettings({ ...gameSettings, maxPlayers: value[0] })}
+                onValueChange={(value) =>
+                  setGameSettings({ ...gameSettings, maxPlayers: value[0] })
+                }
               />
               <div className="flex justify-between text-xs text-gray-400">
                 <span>4</span>
@@ -141,20 +154,26 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
 
           <TabsContent value="roles" className="space-y-4">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-sm font-medium text-gray-300">Role Distribution</h3>
-              <div className="text-sm text-gray-400">Total: {totalPlayers} players</div>
+              <h3 className="text-sm font-medium text-gray-300">
+                Role Distribution
+              </h3>
+              <div className="text-sm text-gray-400">
+                Total: {totalPlayers} players
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {Object.entries(gameSettings.roles).map(([role, count]) => (
                 <div
                   key={role}
-                  className={`p-4 rounded-lg border ${roleColors[role as keyof typeof roleColors]} backdrop-blur-sm`}
+                  className={`p-4 rounded-lg border ${getRoleColorClass(role)} backdrop-blur-sm ${getRoleBorderClass(role)}`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      {roleIcons[role as keyof typeof roleIcons]}
-                      <span className="font-medium capitalize">{role === "werewolves" ? "Werewolves" : role}</span>
+                      {getRoleIcon(role)}
+                      <span className="font-medium capitalize">
+                        {role === "werewolves" ? "Werewolves" : role}
+                      </span>
                     </div>
                     <div className="text-lg font-bold">{count}</div>
                   </div>
@@ -169,7 +188,9 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
                     >
                       <Minus className="h-3 w-3" />
                     </Button>
-                    <span className="text-lg font-bold w-8 text-center">{count}</span>
+                    <span className="text-lg font-bold w-8 text-center">
+                      {count}
+                    </span>
                     <Button
                       variant="outline"
                       size="sm"
@@ -214,7 +235,11 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
         </Tabs>
 
         <DialogFooter className="pt-4 border-t border-gray-700">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="border-gray-600 text-gray-300">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-gray-600 text-gray-300"
+          >
             Cancel
           </Button>
           <Button
@@ -226,5 +251,5 @@ export function CreateGameModal({ open, onOpenChange, onCreateGame }: CreateGame
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

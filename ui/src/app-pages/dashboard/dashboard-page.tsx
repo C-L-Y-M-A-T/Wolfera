@@ -82,7 +82,6 @@ export default function DashboardPage() {
                 <PublicGames onJoinGame={handleJoinGame} />
               </motion.div>
 
-              {/* In the main content section, replace the RecentActivity component with: */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

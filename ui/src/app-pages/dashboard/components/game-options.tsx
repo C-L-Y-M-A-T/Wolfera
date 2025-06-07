@@ -1,15 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/providers/theme-provider";
+import { motion } from "framer-motion";
 import {
+  ArrowRight,
+  Dice1Icon as Dice,
   PlusCircle,
   Search,
-  Dice1Icon as Dice,
-  ArrowRight,
 } from "lucide-react";
-import { useTheme } from "@/providers/theme-provider";
 
 interface GameOptionsProps {
   onCreateGame: () => void;
@@ -19,25 +19,38 @@ interface GameOptionsProps {
 export function GameOptions({ onCreateGame, onJoinById }: GameOptionsProps) {
   const theme = useTheme();
 
-  const optionVariants = {
+  const getBoxShdowColor = (option: "create" | "byId" | "random") => {
+    switch (option) {
+      case "create":
+        return "rgba(239, 68, 68, 0.2)";
+      case "byId":
+        return "rgba(8, 68, 239, 0.2)";
+      case "random":
+        return "rgba(136, 47, 215, 0.2)";
+      default:
+        return "rgba(239, 68, 68, 0.2)";
+    }
+  };
+
+  const optionVariants = (option: "create" | "byId" | "random") => ({
     hover: {
       scale: 1.03,
-      boxShadow: "0 10px 25px -5px rgba(239, 68, 68, 0.2)",
+      boxShadow: `0 10px 25px -5px ${getBoxShdowColor(option)}`,
       transition: { duration: 0.2 },
     },
     tap: { scale: 0.98 },
-  };
+  });
 
   return (
     <Card className={theme.gameStyles.cards.profile}>
       <CardHeader className="pb-2">
         <CardTitle className="text-xl text-red-400">Game Options</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className={`${theme.typography.textColor.primary}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Create Game Option */}
           <motion.div
-            variants={optionVariants}
+            variants={optionVariants("create")}
             whileHover="hover"
             whileTap="tap"
             onClick={onCreateGame}
@@ -73,7 +86,7 @@ export function GameOptions({ onCreateGame, onJoinById }: GameOptionsProps) {
 
           {/* Join Game Option */}
           <motion.div
-            variants={optionVariants}
+            variants={optionVariants("byId")}
             whileHover="hover"
             whileTap="tap"
             onClick={onJoinById}
@@ -109,7 +122,7 @@ export function GameOptions({ onCreateGame, onJoinById }: GameOptionsProps) {
 
           {/* Quick Play Option - Spans full width */}
           <motion.div
-            variants={optionVariants}
+            variants={optionVariants("random")}
             whileHover="hover"
             whileTap="tap"
             className="relative overflow-hidden rounded-lg border border-gray-700 bg-gradient-to-br from-purple-900/30 to-gray-800 cursor-pointer md:col-span-2"
