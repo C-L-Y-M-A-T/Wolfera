@@ -3,7 +3,8 @@
 import { LanguageSwitcher, useTheme } from "@/components";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
-import { Bell, HelpCircle, Home, Skull } from "lucide-react";
+import { Bell, HelpCircle, Home } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -36,7 +37,13 @@ export default function Navbar() {
             href="/"
             className="text-xl font-bold text-red-500 mr-8 flex items-center"
           >
-            <Skull className="h-6 w-6 mr-2 text-red-500" />
+            <Image
+              src="/wolf.png"
+              alt="Wolf icon"
+              width={40}
+              height={40}
+              className="mr-2"
+            />
             {t("home.title")}
           </Link>
           <div className="hidden md:flex space-x-6">
