@@ -11,7 +11,11 @@
     "loading": "Loading...",
     "settings": "Settings",
     "profile": "Profile",
-    "language": "Language"
+    "language": "Language",
+    "help": "Help",
+    "home": "Home",
+    "current": "English",
+    "notifications": "Notifications"
   },
   "languages": {
     "en": "English",
