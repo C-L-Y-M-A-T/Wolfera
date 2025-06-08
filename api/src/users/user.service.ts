@@ -1,5 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserGameStatsDto } from 'src/game/dto/stats/user-stats.dto';
+import { GamePersistenceService } from 'src/game/services/game/game-persistence.service';
 import { BaseService } from 'src/utils/generic/base.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +17,7 @@ export class UsersService extends BaseService<
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly gamePersistence: GamePersistenceService,
   ) {
     super(userRepository);
   }
@@ -54,26 +57,50 @@ export class UsersService extends BaseService<
     return user;
   }
 
-  async awardBadges(user: User): Promise<User> {
-    if (user.gamesWon >= 1 && !user.badges.includes(Badge.FIRST_WIN)) {
-      user.badges.push(Badge.FIRST_WIN);
-    }
-    if (
-      user.gamesAsWerewolf >= 1 &&
-      !user.badges.includes(Badge.WEREWOLF_WIN)
-    ) {
-      user.badges.push(Badge.WEREWOLF_WIN);
-    }
-    if (
-      user.gamesWon - user.gamesAsWerewolf >= 1 &&
-      !user.badges.includes(Badge.VILLAGE_HERO)
-    ) {
-      user.badges.push(Badge.VILLAGE_HERO);
-    }
+  //to be called after a game ends + don't forget to send notification with the badge
+  async awardBadgesAfterGame(gameId: string): Promise<void> {
+    const game = await this.gamePersistence.getCompletedGameDetails(gameId);
+    if (!game) return;
 
-    if (user.gamesPlayed >= 5 && !user.badges.includes(Badge.MOON_SURVIVOR)) {
-      user.badges.push(Badge.MOON_SURVIVOR);
+    for (const playerResult of game.playerResults) {
+      const stats = await this.gamePersistence.calculateUserStats(
+        playerResult.playerId,
+      );
+      await this.updateUserBadges(playerResult.playerId, stats);
     }
-    return this.updateOne({ id: user.id }, user);
+  }
+
+  private async updateUserBadges(
+    userId: string,
+    stats: UserGameStatsDto,
+  ): Promise<void> {
+    const user = await this.findById(userId);
+    if (!user) {
+      return;
+    }
+    const currentBadges = [...user.badges];
+    const newBadges = [...currentBadges];
+
+    if (stats.gamesWon >= 1 && !currentBadges.includes(Badge.FIRST_WIN)) {
+      newBadges.push(Badge.FIRST_WIN);
+    }
+    if (
+      stats.gamesAsWerewolf >= 1 &&
+      !currentBadges.includes(Badge.WEREWOLF_WIN)
+    ) {
+      newBadges.push(Badge.WEREWOLF_WIN);
+    }
+    if (
+      stats.gamesWon - stats.gamesAsWerewolf >= 1 &&
+      !currentBadges.includes(Badge.VILLAGE_HERO)
+    ) {
+      newBadges.push(Badge.VILLAGE_HERO);
+    }
+    if (stats.totalGames >= 5 && !currentBadges.includes(Badge.MOON_SURVIVOR)) {
+      newBadges.push(Badge.MOON_SURVIVOR);
+    }
+    if (newBadges.length > currentBadges.length) {
+      await this.updateOne({ id: userId }, { badges: [...new Set(newBadges)] });
+    }
   }
 }

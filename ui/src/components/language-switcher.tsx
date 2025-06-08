@@ -32,8 +32,9 @@ export function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="flex items-center gap-2">
           <Globe className="h-4 w-4" />
-          <span className="hidden md:inline">{t("common.language")}</span>
-          <span className="hidden md:inline">{t("common.language")}</span>
+          <span className="hidden md:inline">
+            {t(`languages.${i18n.language}`)}
+          </span>
           <span className="sr-only">
             {t("common.language")} -{" "}
             {languages.find((lang) => lang.code === i18n.language)?.name}

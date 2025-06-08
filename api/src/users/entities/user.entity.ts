@@ -1,5 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { PlayerGameResult } from 'src/game/entities/player-game-result.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
@@ -60,23 +61,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Notification, (notification) => notification.recipient)
   notifications?: Notification[];
 
-  // ---- Game Stats ----
-  @Field()
-  @Column({ default: 0 })
-  gamesPlayed: number;
-
-  @Field()
-  @Column({ default: 0 })
-  gamesWon: number;
-
-  @Field()
-  @Column({ default: 0 })
-  gamesAsWerewolf: number;
-
-  @Field()
-  @Column({ default: 0 })
-  gamesAsVillager: number;
-
   // ---- Badges ----
   @Field(() => [Badge])
   @Column({
@@ -86,4 +70,8 @@ export class User extends BaseEntity {
     default: [Badge.NEW_PLAYER],
   })
   badges: Badge[];
+
+  @Field(() => [PlayerGameResult])
+  @OneToMany(() => PlayerGameResult, (playerResult) => playerResult.player)
+  gameResults: PlayerGameResult[];
 }
