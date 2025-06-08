@@ -1,9 +1,7 @@
-import { SocketProvider } from "@/app-pages/game/socket-context";
 import { ClientLayout } from "@/components";
 import { Toaster } from "@/components/ui";
 import { AuthProvider } from "@/context/auth-context";
 import { creepster, inter } from "@/lib/theme/fonts";
-import { GameProvider } from "@/providers/game-provider";
 import type { Metadata } from "next";
 import type React from "react";
 
@@ -24,9 +22,11 @@ export default function RootLayout({
     >
       <ClientLayout>
         <AuthProvider>
-          <SocketProvider>
-            <GameProvider>{children}</GameProvider>
-          </SocketProvider>
+          {/* <SocketProvider> */}
+          {/* <GameProvider> */}
+          {children}
+          {/* </GameProvider> */}
+          {/* </SocketProvider> */}
           <Toaster />
         </AuthProvider>
       </ClientLayout>

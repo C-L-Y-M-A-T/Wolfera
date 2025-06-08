@@ -1,10 +1,10 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui";
-import { useGame } from "@/providers/game-provider";
+import { mockGameData, mockPlayers } from "@/data/lobby";
 import { useTheme } from "@/providers/theme-provider";
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   GameCountdown,
   HostNavbar,
@@ -15,10 +15,10 @@ import {
 
 export default function WaitingRoomPage() {
   const theme = useTheme();
-  //const [players, setPlayers] = useState(mockPlayers);
-  //const [gameData, setGameData] = useState(mockGameData);
-  //const [countdown, setCountdown] = useState<number | null>(null);
-  const { gameData } = useGame();
+  const [players, setPlayers] = useState(mockPlayers);
+  const [gameData, setGameData] = useState(mockGameData);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  // const { gameData } = useGame();
 
   // Simulate players joining/leaving
   useEffect(() => {

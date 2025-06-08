@@ -1,12 +1,14 @@
-import { AnimatedText, GameAccessModal } from "@/components";
+import { AnimatedText } from "@/components";
 import { Button } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ArrowDownIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 export default function HeroSection() {
   const { t } = useTranslation();
 
+  const router = useRouter();
   return (
     <section className="py-32 md:py-40 relative overflow-hidden">
       {/* Animated blood splatter effect */}
@@ -77,33 +79,30 @@ export default function HeroSection() {
             whileTap={{ scale: 0.95 }}
             className="inline-block"
           >
-            <GameAccessModal
-              trigger={
-                <Button
-                  size="lg"
-                  className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6 shadow-lg shadow-red-600/30 relative overflow-hidden group"
+            <Button
+              size="lg"
+              className="bg-red-600 hover:bg-red-700 text-lg px-8 py-6 shadow-lg shadow-red-600/30 relative overflow-hidden group"
+              onClick={() => router.push("/auth")}
+            >
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-red-500 to-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10 flex items-center">
+                {t("common.play")}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  role="img"
                 >
-                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-red-500 to-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 flex items-center">
-                    {t("common.play")}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 ml-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                      role="img"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </Button>
-              }
-            />
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+            </Button>
           </motion.div>
         </div>
       </motion.div>
