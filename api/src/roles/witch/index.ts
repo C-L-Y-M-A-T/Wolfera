@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { GameRole } from '..';
 import { WitchNightPhase } from './night-action';
 
@@ -14,6 +13,8 @@ const witchRole: GameRole = {
     name: WITCH_ROLE_NAME,
     team: 'villagers',
     description: 'see role at night.',
+    maxPlayers: 1, // Only one witch can exist in the game
+    power: 3, // Power level for balancing
   },
   nightPhase: {
     class: WitchNightPhase,
@@ -21,16 +22,5 @@ const witchRole: GameRole = {
     nightPriority: 3,
   },
 };
-
-enum WitchAction {
-  KILL = 'kill',
-  SAVE = 'save',
-}
-
-export const witchActionSchema = z.object({
-  targetId: z.string(),
-  action: z.nativeEnum(WitchAction),
-});
-export type WitchActionPayload = z.infer<typeof witchActionSchema>;
 
 export default witchRole;

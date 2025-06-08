@@ -13,7 +13,10 @@ import { Player } from 'src/game/classes/Player';
 import { PlayerAction } from 'src/game/classes/types';
 import { GameService } from 'src/game/services/game/game.service';
 import { GameSocket } from 'src/socket/socket.types';
-import { User } from 'src/temp/temp.user';
+
+import { RawIncomingMessage } from 'src/game/chat/chat.types';
+import { LoggerService } from 'src/logger/logger.service';
+import { User } from 'src/users/entities/user.entity';
 import { SocketGame } from './decorators/socketGame.decorator';
 import { SocketPlayer } from './decorators/socketPlayer.decorator';
 import { JwtSocket } from './jwt-socket';
@@ -31,6 +34,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private gameService: GameService,
     private readonly jwtSocket: JwtSocket,
+    private readonly loggerService: LoggerService,
   ) {}
 
   @SubscribeMessage('player-action')
@@ -46,27 +50,40 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('start-dummy-game')
   createDummyGame(client: GameSocket, payload: any) {
-    console.log('start-dummy-game event received');
+    this.loggerService.log('start-dummy-game event received');
     const dummyPlayers: User[] = [
       {
         id: '456',
+        username: 'Dummy Player 1',
       },
       {
         id: '789',
+        username: 'Dummy Player 2',
       },
       {
         id: '101112',
+        username: 'Dummy Player 3',
       },
       {
         id: '131415',
+        username: 'Dummy Player 4',
       },
-    ];
+    ] as User[];
     dummyPlayers.forEach((player) => {
       client.data.game.addPlayer(player);
     });
     client.data.game.handlePlayerAction(client.data.game.owner, {
       action: 'start-game',
     });
+  }
+
+  @SubscribeMessage('chat-message')
+  async handleChatMessage(
+    @SocketGame() game: GameContext,
+    @SocketPlayer() player: Player,
+    @MessageBody() message: RawIncomingMessage,
+  ) {
+    game.chatHandler.handleIncomingMessage(player, message);
   }
 
   async handleConnection(client: Socket) {
@@ -81,8 +98,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // );
       const user: User = {
         id: client.handshake.query.userId as string,
+        username: client.handshake.query.username || ('Temp User' as string),
         // Add other user properties if needed
-      };
+      } as User;
       this.gameService.connectPlayer(user, gameId, client);
       console.log('Client ' + client.id + ' connected to game ' + gameId);
     } catch (error) {
@@ -95,6 +113,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: GameSocket) {
     //TODO: Handle disconnect
-    console.log('Client disconnected:', client.id);
+    this.loggerService.log('Client disconnected:', client.id);
   }
 }

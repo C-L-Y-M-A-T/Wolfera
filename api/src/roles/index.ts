@@ -1,6 +1,6 @@
 import { GameContext } from 'src/game/classes/GameContext';
-import { RolePhase } from 'src/game/classes/phases/nightPhase/rolePhase/role.phase';
 import { PhaseConstructor } from 'src/game/classes/types';
+import { RolePhase } from 'src/game/phases/nightPhase/rolePhase/role.phase';
 import { z } from 'zod';
 //TODO: explain why I used zod instead of class-validator
 
@@ -24,12 +24,13 @@ export type RoleNightPhase = {
   isActiveTonight: (context: GameContext) => boolean;
   nightPriority: number;
 };
-
 export type RoleData = {
   name: RoleName;
   team: Team;
   description: string;
   maxPlayers?: number; // Maximum number of players with this role, not define or 0 means unlimited
+  minPlayers?: number; // Minimum number of players with this role, not define or 0 means unlimited
+  power: number; // power for the role, used for balancing
 };
 
 export const RoleDataSchema = z
@@ -38,6 +39,8 @@ export const RoleDataSchema = z
     team: z.enum(['villagers', 'werewolves']),
     description: z.string(),
     maxPlayers: z.number().optional(),
+    minPlayers: z.number().optional(),
+    power: z.number(),
   })
   .strict();
 

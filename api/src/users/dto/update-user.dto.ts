@@ -1,12 +1,24 @@
-import { IsAlphanumeric, IsOptional, IsUrl, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { Column } from 'typeorm';
+import { Badge } from '../entities/user.entity';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsAlphanumeric()
-  @Length(3, 20)
+  @IsString()
   username?: string;
 
   @IsOptional()
-  @IsUrl()
-  avatar_url?: string;
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @Column('json', { nullable: true })
+  @IsOptional()
+  avatarOptions?: Record<string, number>;
+
+  @IsEnum(Badge, { each: true })
+  badges: Badge[];
 }

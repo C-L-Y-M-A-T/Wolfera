@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { GameRole } from '..';
 import { SeerNightPhase } from './night-action';
 
@@ -14,6 +13,8 @@ const seerRole: GameRole = {
     name: SEER_ROLE_NAME,
     team: 'villagers',
     description: 'see role at night.',
+    maxPlayers: 1, // Only one seer can exist in the game
+    power: 3, // Power level for balancing
   },
   nightPhase: {
     class: SeerNightPhase,
@@ -21,11 +22,5 @@ const seerRole: GameRole = {
     nightPriority: 2,
   },
 };
-
-export const SeerActionPayloadSchema = z.object({
-  targetId: z.string(),
-});
-
-export type SeerActionPayload = z.infer<typeof SeerActionPayloadSchema>;
 
 export default seerRole;

@@ -1,16 +1,18 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { LoggerService } from 'src/logger/logger.service';
+import { GameContext } from '../classes/GameContext';
 import { GAME_HANDLER_FACTORY_METADATA } from '../events/event-emitter/decorators/event-handler.decorator';
 import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
 
 export interface GameHandlerClass {
-  new (gameService: any, gameId: string, ...args: any[]): any;
+  new (context: GameContext, ...args: any[]): any;
 }
 
 @Injectable()
 export class GameHandlerRegistry implements OnModuleInit {
   private handlerClasses: GameHandlerClass[] = [];
 
-  constructor() {}
+  constructor(private readonly loggerService: LoggerService) {}
 
   onModuleInit() {
     // Register handler classes manually
@@ -28,7 +30,9 @@ export class GameHandlerRegistry implements OnModuleInit {
         Reflect.getMetadata(GAME_EVENT_METADATA, HandlerClass)
       ) {
         this.handlerClasses.push(HandlerClass);
-        console.log(`Registered game handler factory: ${HandlerClass.name}`);
+        this.loggerService.verbose(
+          `Registered game handler factory: ${HandlerClass.name}`,
+        );
       }
     });
   }
@@ -39,12 +43,17 @@ export class GameHandlerRegistry implements OnModuleInit {
    */
   private getAvailableHandlerClasses(): GameHandlerClass[] {
     // Import handler classes dynamically or statically
+    // const {
+    //   NightPhaseEventHandler,
+    // } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
+
     const {
-      NightPhaseEventHandler,
-    } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
+      GamePersistenceHandler,
+    } = require('../services/game/game-persistence.handler');
 
     return [
-      NightPhaseEventHandler,
+      // GamePersistenceHandler,
+      // NightPhaseEventHandler,
       // Add other handler classes here as you create them
     ];
   }
@@ -52,16 +61,13 @@ export class GameHandlerRegistry implements OnModuleInit {
   /**
    * Create all handler instances for a specific game
    */
-  createHandlersForGame(
-    gameService: any,
-    gameId: string,
-  ): GameHandlerInstance[] {
+  createHandlersForGame(gamecontext: GameContext): GameHandlerInstance[] {
     return this.handlerClasses.map((HandlerClass: GameHandlerClass) => {
-      const instance = new HandlerClass(gameService, gameId);
+      const instance = new HandlerClass(gamecontext);
       return {
         instance,
         className: HandlerClass.name,
-        gameId,
+        gameId: gamecontext.gameId,
       };
     });
   }

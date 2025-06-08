@@ -11,6 +11,7 @@ import { JwtGuard } from './auth/guards/jwt.guard';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { config } from './config';
 import { GameModule } from './game/modules/game.module';
+import { LoggerModule } from './logger/logger.module';
 import { NotificationModule } from './notifications/notifications.module';
 import { SocketModule } from './socket/socket.module';
 import { UserModule } from './users/user.module';
@@ -19,7 +20,7 @@ import { UserModule } from './users/user.module';
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/users/graphql/schema.gql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       context: ({ req }) => ({ req, user: req.user || undefined }),
     }),
@@ -37,6 +38,7 @@ import { UserModule } from './users/user.module';
     SocketModule,
     AuthModule,
     UserModule,
+    LoggerModule,
     NotificationModule,
   ],
   controllers: [AppController],

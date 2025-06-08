@@ -3,18 +3,21 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { assert } from 'console';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { LoggerService } from 'src/logger/logger.service';
 import { GameRole, RoleName, RoleSchema } from 'src/roles';
 
 @Injectable()
 export class RoleService implements OnModuleInit {
   private roles: Map<RoleName, GameRole> = new Map();
 
+  constructor(private readonly loggerService: LoggerService) {}
+
   async onModuleInit() {
     await this.loadRoles();
   }
   validateRole(role: unknown): GameRole {
     const result = RoleSchema.parse(role);
-
+    console.log('Role validated:', result.roleData.name);
     return result as GameRole;
   }
 
@@ -31,12 +34,12 @@ export class RoleService implements OnModuleInit {
         assert(role, 'Role validation failed');
         this.roles.set(role.roleData.name, role);
       } catch (error) {
-        console.error(`Failed to load role ${folder}:`);
+        this.loggerService.error(`Failed to load role ${folder}:`);
         throw error;
       }
     }
 
-    console.log(
+    this.loggerService.verbose(
       'Roles loaded:',
       Array.from(this.roles.values()).map((r) => r),
     );
@@ -57,7 +60,7 @@ export class RoleService implements OnModuleInit {
 
     for (const [priority, roleNames] of priorityMap.entries()) {
       if (roleNames.length > 1) {
-        console.warn(
+        this.loggerService.warn(
           `Warning: Multiple roles have the same priority (${priority}): ${roleNames.join(
             ', ',
           )}`,
@@ -77,20 +80,20 @@ export class RoleService implements OnModuleInit {
       (role) => role.nightPhase === undefined,
     );
 
-    console.log('Night Roles sorted by priority:');
+    this.loggerService.verbose('Night Roles sorted by priority:');
     for (const role of rolesWithNightPhase) {
-      console.log(
+      this.loggerService.verbose(
         `-${role.nightPhase?.nightPriority || -1}- ${role.roleData.name} `,
       );
     }
 
-    console.log('Roles without night phase:');
+    this.loggerService.verbose('Roles without night phase:');
     if (rolesWithoutNightPhase.length > 0) {
       for (const role of rolesWithoutNightPhase) {
-        console.log(`- ${role.roleData.name}`);
+        this.loggerService.verbose(`- ${role.roleData.name}`);
       }
     } else {
-      console.log(' -- none --');
+      this.loggerService.verbose(' -- none --');
     }
   }
 

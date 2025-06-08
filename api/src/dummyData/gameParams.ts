@@ -2,11 +2,12 @@ import { GameOptions } from 'src/game/classes/types';
 
 export const tempGameOptions: GameOptions = {
   roles: {
-    Werewolf: 1,
-    Seer: 0,
-    Villager: 1,
+    Werewolf: 4,
+    Seer: 1,
+    Villager: 4,
+    Witch: 1,
   },
-  totalPlayers: 2,
+  totalPlayers: 10,
 };
 
 //TODO: if player wants to join a game, check if the game is full

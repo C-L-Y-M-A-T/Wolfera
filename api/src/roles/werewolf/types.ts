@@ -1,34 +1,18 @@
 import { Player } from 'src/game/classes/Player';
-import { PlayerAction } from 'src/game/classes/types';
+import {
+  Vote,
+  VoteActionPayload,
+  VoteState,
+  voteActionSchema,
+} from 'src/game/types/vote-manager.types';
 
-export type WerewolfAction = PlayerAction & {
-  action: 'werewolf-vote' | 'werewolf-skip';
-  targetId?: string;
+// Keep your existing types for backward compatibility
+export {
+  VoteActionPayload as WerewolfActionPayload,
+  Vote as WerewolfVote,
+  VoteState as WerewolfVoteState,
+  voteActionSchema as werewolfActionSchema,
 };
-
-export type WerewolfVoteAction = WerewolfAction & {
-  action: 'werewolf-vote';
-  targetId: string;
-};
-
-export type WerewolfSkipAction = WerewolfAction & {
-  action: 'werewolf-skip';
-};
-
-// Vote tracking for werewolf consensus
-export interface WerewolfVote {
-  voterId: string;
-  targetId: string;
-  timestamp: number;
-}
-
-export interface WerewolfVoteState {
-  votes: Map<string, WerewolfVote>; // voterId -> vote
-  targetVoteCounts: Map<string, number>; // targetId -> count
-  hasConsensus: boolean;
-  consensusTarget?: Player;
-  skipVotes: Set<string>; // Players who voted to skip
-}
 
 export interface WerewolfNightEndPayload {
   phase: 'Werewolf-phase';
@@ -36,7 +20,7 @@ export interface WerewolfNightEndPayload {
     action: 'kill' | 'skip';
     target?: Player;
   };
-  votes: WerewolfVoteState;
+  votes: VoteState;
 }
 
 export interface WerewolfErrorPayload {
@@ -53,5 +37,5 @@ export interface WerewolfErrorPayload {
       | 'TARGET_NOT_FOUND';
     message: string;
   };
-  action: WerewolfAction;
+  action: VoteActionPayload;
 }

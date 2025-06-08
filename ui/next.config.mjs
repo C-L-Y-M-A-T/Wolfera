@@ -9,6 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ["framer-motion"],
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

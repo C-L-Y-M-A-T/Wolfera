@@ -1,9 +1,15 @@
 import { WsException } from '@nestjs/websockets';
+import { RoleName } from 'src/roles';
 import { z } from 'zod';
 import { events } from '../events/event.types';
 import { GameContext } from './GameContext';
 import { Player } from './Player';
-import { PhaseName, PhaseState, PlayerAction } from './types';
+import {
+  PhaseName,
+  PhaseState,
+  PlayerAction,
+  SERVER_SOCKET_EVENTS,
+} from './types';
 
 export abstract class GamePhase<A = any> {
   public phaseState: PhaseState = PhaseState.Pending;
@@ -32,7 +38,7 @@ export abstract class GamePhase<A = any> {
     return 3000;
   } // 3s post-phase by default
 
-  private input?: any;
+  protected input?: any;
   private onComplete?: (output: any) => void;
   protected output?: any;
   // can be overridden in subclasses by using:
@@ -52,7 +58,10 @@ export abstract class GamePhase<A = any> {
     this.input = input;
     this.onComplete = onComplete;
 
-    console.log('Executing phase:', this.phaseName);
+    this.context.loggerService.debug(
+      `Executing phase: ${this.phaseName} with input:`,
+      this.input,
+    );
     if (this.phaseState !== PhaseState.Pending) {
       throw new Error(
         `Phase ${this.phaseName} is already running or completed.`,
@@ -190,34 +199,10 @@ export abstract class GamePhase<A = any> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /**
-   *
-   * Broadcasts an event to all connected players
-   * @param event - The event name to broadcast
-   * @param payload - The payload to send to players
-   */
-  protected broadcastToPlayers(
-    event: string,
-    payload: any,
-    filter: (player: Player) => boolean = () => true,
-  ) {
-    this.context.players.forEach((player) => {
-      if (filter(player)) this.emitToPlayer(player, event, payload);
+  protected roleReveal(revealTo: Player, player: Player, roleName: RoleName) {
+    this.context.emitToPlayer(revealTo, SERVER_SOCKET_EVENTS.roleReveal, {
+      playerId: player.id,
+      role: roleName,
     });
-  }
-
-  /**
-   * Emits an event to a specific player
-   * @param player - The player to send the event to
-   * @param event - The event name
-   * @param payload - The payload to send
-   * @throws Error if the player is not connected
-   */
-  protected emitToPlayer(player: Player, event: string, payload: any): void {
-    if (player.isConnected() && player.socket) {
-      player.socket.emit(event, payload);
-    } else {
-      throw new WsException(`Player ${player.id} is not connected`);
-    }
   }
 }
