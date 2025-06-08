@@ -5,12 +5,12 @@ import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type AppUser = {
+export type AppUser = {
   id: string;
   email: string;
   username: string;
   avatarOptions?: Record<keyof AvatarConfigType, number>;
-  created_at: string;
+  createdAt: string;
 };
 
 type AuthContextType = {
@@ -58,6 +58,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     const { data, error } = await api.auth.profile();
     if (data) {
+      console.log("User data received:", data);
+
       setUser(data as AppUser);
       return data as AppUser;
     } else {

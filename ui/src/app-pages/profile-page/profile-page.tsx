@@ -27,26 +27,19 @@ import {
   StatsCard,
 } from "./components";
 
-export default function ProfilePage() {
+export default function ProfilePage({ id }: { id: string }) {
   const theme = useTheme();
+  const { user } = useAuth();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [avatarBuilderOpen, setAvatarBuilderOpen] = useState(false);
   const [profile, setProfile] = useState({
-    username: userData.username,
+    username: user.username,
     bio: userData.bio,
-    email: userData.email,
+    email: user.email,
   });
 
   const [activeTab, setActiveTab] = useState("about");
   const toast = useToast();
-
-  const { user } = useAuth();
-  // const [user, setUser] = useState(null);
-
-  // useEffect(() => {
-  //   const user = fetchUser();
-  //   setUser(user);
-  // }, []);
   console.log("User data:", user);
 
   useNotificationStream(user?.id);
@@ -127,7 +120,7 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4">
           {/* Profile Header */}
           <ProfileHeader
-            userData={userData}
+            userData={{ ...userData, ...user }}
             onEditProfile={() => setEditProfileOpen(true)}
             onEditAvatar={() => setAvatarBuilderOpen(true)}
             avatarOptions={avatarOptions}

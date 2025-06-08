@@ -25,7 +25,8 @@ const api = {
     },
 
     profile: async () => {
-      return request(apiClient.get("/auth/profile"));
+      const user = request(apiClient.get("/auth/profile"));
+      return user;
     },
   },
 };

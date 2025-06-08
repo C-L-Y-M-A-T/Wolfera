@@ -6,7 +6,7 @@ export interface UserStats {
 export interface UserData {
   username: string;
   level: number;
-  joinDate: string;
+  created_at: string;
   stats: UserStats;
   xp: number; // percentage 0-100
 }

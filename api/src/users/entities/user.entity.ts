@@ -3,6 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { BaseEntity } from 'src/utils/generic/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { initialState } from '../types/AvatarOptions';
 
 export enum Badge {
   NEW_PLAYER = 'NEW_PLAYER', // Auto-assigned on signup
@@ -32,7 +33,12 @@ export class User extends BaseEntity {
   hashedPassword: string;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  @Column('json', { nullable: true })
+  @Column('json', {
+    nullable: true,
+    default: {
+      ...initialState,
+    },
+  })
   avatarOptions: Record<string, number>;
 
   @Field(() => [User], { nullable: true })

@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ConnectPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("login");
 
@@ -44,7 +44,7 @@ export default function ConnectPage() {
 
     try {
       await login(data.access_token); // <- sets token and user
-      router.push("/");
+      router.push(`/dashboard/${user.id}`);
     } catch (err) {
       console.error("Login failed while setting user:", err);
       alert("Login failed. Try again.");
@@ -69,7 +69,7 @@ export default function ConnectPage() {
 
     try {
       await login(data.access_token);
-      router.push("/dashboard");
+      router.push(`/dashboard/${user.id}`);
     } catch (err) {
       console.error("Signup failed while setting user:", err);
       alert("Signup failed. Try again.");

@@ -1,6 +1,7 @@
 "use client";
 
 import AnimatedText from "@/components/animated-text";
+import { AvatarPreview } from "@/components/avatar-builder/components";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,14 +13,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/providers/theme-provider";
+import { AvatarConfigType } from "@/types/avatar-builder/avatarConfig";
 import { motion } from "framer-motion";
 import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 interface DashboardHeaderProps {
   user: {
     username: string;
-    avatar: string;
     level: number;
+    avatarOptions?: Record<keyof AvatarConfigType, number>;
   };
   notificationCount: number;
   onViewProfile: () => void;
@@ -31,6 +33,8 @@ export function DashboardHeader({
   onViewProfile,
 }: DashboardHeaderProps) {
   const theme = useTheme();
+
+  console.log("user in dashboard header:", user);
 
   return (
     <motion.div
@@ -139,11 +143,21 @@ export function DashboardHeader({
                 >
                   <div className="flex items-center gap-2">
                     <div className="relative">
-                      <img
-                        src={user.avatar || "/placeholder.svg"}
-                        alt={user.username}
-                        className="w-8 h-8 rounded-full border border-gray-700"
-                      />
+                      <div className="w-8 h-8 rounded-full border border-gray-700">
+                        {user.avatarOptions ? (
+                          <AvatarPreview
+                            currentOptions={user.avatarOptions}
+                            className="w-full h-full bg-white "
+                          />
+                        ) : (
+                          <img
+                            src={"/placeholder.svg"}
+                            alt={user.username}
+                            className="w-full h-full bg-white"
+                          />
+                        )}
+                      </div>
+
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-500 border border-gray-900" />
                     </div>
                     <div

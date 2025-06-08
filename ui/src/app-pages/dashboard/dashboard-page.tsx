@@ -1,8 +1,12 @@
 "use client";
 
 // Mock user data - in a real app this would come from an API or auth context
+import { useAuth } from "@/context/auth-context";
 import userData from "@/data/profile/user-data.mock.json";
+import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/providers/theme-provider";
+import { gameService } from "@/services/game-service/game.service";
+import type { GameSettings } from "@/types/dashboard/game-options";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,14 +25,29 @@ import {
 export default function DashboardPage() {
   const theme = useTheme();
   const router = useRouter();
+  const { user } = useAuth();
   const [createGameModalOpen, setCreateGameModalOpen] = useState(false);
   const [joinByIdModalOpen, setJoinByIdModalOpen] = useState(false);
+  const [gameSettings, setGameSettings] = useState<GameSettings>({
+    roles: {
+      Werewolf: 1,
+    },
+    totalPlayers: 4,
+  });
+  const toast = useToast();
 
-  const handleCreateGame = (gameSettings: any) => {
-    console.log("Creating game with settings:", gameSettings);
-    // In a real app, this would create a game on the server
-    // and then redirect to the waiting room
-    router.push("/waiting-room");
+  const handleCreateGame = async (): Promise<void> => {
+    try {
+      const res = await gameService.createGame(gameSettings, user);
+      router.push(`/game/${res.gameId}/lobby`);
+    } catch (error) {
+      console.error("Error creating game:", error);
+      toast.toast({
+        title: "Failed to create game",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleJoinGame = (gameId: string) => {
@@ -54,7 +73,7 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-6">
           {/* Dashboard Header */}
           <DashboardHeader
-            user={userData}
+            user={{ ...userData, ...user }}
             notificationCount={3}
             onViewProfile={() => router.push("/profile")}
           />

@@ -101,7 +101,7 @@ export function ProfileHeader({
               variant="outline"
               className={theme.gameStyles.badges.default}
             >
-              <Calendar className="h-3 w-3 mr-1" /> Joined {userData.joinDate}
+              <Calendar className="h-3 w-3 mr-1" /> Joined {userData.created_at}
             </Badge>
             <Badge
               variant="outline"

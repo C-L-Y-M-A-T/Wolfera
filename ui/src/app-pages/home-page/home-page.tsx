@@ -1,4 +1,3 @@
-import { Navbar } from "@/components";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,6 +5,7 @@ import {
   FeaturesSection,
   HeroSection,
   HowToPlaySection,
+  Navbar,
   TestimonialsSection,
 } from "./components";
 
@@ -80,8 +80,8 @@ export default function HomePage() {
                 >
                   <svg
                     className="w-6 h-6"
-                    fill="currentColor"
                     viewBox="0 0 24 24"
+                    fill="currentColor"
                     aria-hidden="true"
                   >
                     <path
