@@ -53,7 +53,8 @@ export const colors = {
     redToRedDark: "from-red-900/80 to-red-700/80",
     yellowToYellowDark: "from-yellow-900/80 to-yellow-700/80",
     blueToBlue: "from-blue-900/80 to-blue-700/80",
-    greenToGreen: "from-green-600 to-green-700 hover:from-green-500 hover:to-green-600",
+    greenToGreen:
+      "from-green-600 to-green-700 hover:from-green-500 hover:to-green-600",
   },
 
   // CSS classes for role-specific styling
@@ -65,10 +66,18 @@ export const colors = {
     witch: "text-indigo-500 bg-indigo-950/50",
   },
 
+  roleBorderClasses: {
+    villager: "border-sky-500",
+    werewolf: "border-red-700",
+    seer: "border-purple-500",
+    hunter: "border-yellow-500",
+    witch: "border-indigo-500",
+  },
+
   // Status colors
   status: {
     online: "bg-green-500",
     offline: "bg-gray-500",
     "in-game": "bg-yellow-500",
   },
-}
+};

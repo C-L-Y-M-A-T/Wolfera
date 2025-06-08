@@ -14,6 +14,7 @@ export class DeadChannel extends ChatChannel {
   onPlayerDie(player: Player): void {
     this.subscribe(player);
     this.sendMessageToPlayer(player, {
+      id: this.generateId(),
       type: 'system_message',
       content: `You are dead. You can chat here.`,
       channel: this.name,

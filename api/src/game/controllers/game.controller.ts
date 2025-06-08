@@ -2,7 +2,6 @@ import { Body, Controller, Get, Injectable, Post } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { tempGameOptions } from 'src/dummyData/gameParams';
 import { User } from 'src/users/entities/user.entity';
-import { events } from '../events/event.types';
 import { GameService } from '../services/game/game.service';
 
 @Injectable()
@@ -19,9 +18,6 @@ export class GameController {
     } as User; // TODO: (after testing) This should be replaced with actual user retrieval logic
     const gameOptions = body.gameOptions || tempGameOptions; // This should be replaced with actual game options retrieval logic and validation
     const game = await this.gameService.createGame(tempUser, gameOptions);
-    game.gameEventEmitter.emit(events.GAME.CREATE, {
-      gameId: game.gameId,
-    });
     return {
       gameId: game.gameId,
     }; //TODO: create dto for output

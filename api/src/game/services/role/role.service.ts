@@ -17,7 +17,7 @@ export class RoleService implements OnModuleInit {
   }
   validateRole(role: unknown): GameRole {
     const result = RoleSchema.parse(role);
-
+    console.log('Role validated:', result.roleData.name);
     return result as GameRole;
   }
 

@@ -17,17 +17,17 @@ export function useRoleStyles() {
 
   // Role icons mapping
   const roleIcons: Record<string, ReactNode> = {
-    Villager: <Users className="h-4 w-4" />,
-    Werewolf: <Skull className="h-4 w-4" />,
-    Seer: <Eye className="h-4 w-4" />,
-    Hunter: <Axe className="h-4 w-4" />,
-    Witch: <Flask className="h-4 w-4" />,
-    Guardian: <Shield className="h-4 w-4" />,
+    VILLAGER: <Users className="h-4 w-4" />,
+    WEREWOLF: <Skull className="h-4 w-4" />,
+    SEER: <Eye className="h-4 w-4" />,
+    HUNTER: <Axe className="h-4 w-4" />,
+    WITCH: <Flask className="h-4 w-4" />,
+    GUARDIAN: <Shield className="h-4 w-4" />,
   };
 
   // Get role icon
   const getRoleIcon = (role: string): ReactNode => {
-    return roleIcons[role] || <User className="h-4 w-4" />;
+    return roleIcons[role.toUpperCase()] || <User className="h-4 w-4" />;
   };
 
   // Get role color class
@@ -42,9 +42,22 @@ export function useRoleStyles() {
     return "text-gray-400 bg-gray-800";
   };
 
+  // Get role border class
+  const getRoleBorderClass = (role: string): string => {
+    const roleKey = role.toLowerCase();
+    const roleBorderClasses = theme.colors?.roleBorderClasses;
+
+    if (roleBorderClasses && roleKey in roleBorderClasses) {
+      return roleBorderClasses[roleKey as keyof typeof roleBorderClasses];
+    }
+
+    return "border-gray-400";
+  };
+
   return {
     roleIcons,
     getRoleIcon,
     getRoleColorClass,
+    getRoleBorderClass,
   };
 }

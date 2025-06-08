@@ -7,6 +7,7 @@ import { ChatChannel } from '../chatChannel';
 export class GeneralChannel extends ChatChannel {
   constructor(context: GameContext) {
     super(context);
+    this.activate();
   }
 
   get name(): string {
@@ -20,10 +21,7 @@ export class GeneralChannel extends ChatChannel {
 
   @OnGameEvent(events.GAME.PLAYER.KILLED)
   onPlayerKilled(player: Player): void {
-    const subscriber = this.subscribers.get(player.id);
-    if (subscriber) {
-      subscriber.subscriptionType = SubscriptionType.READ_ONLY;
-    }
+    this.subscribe(player, SubscriptionType.READ_ONLY);
   }
   validateMessage(message: IncomingMessage): void {
     return;

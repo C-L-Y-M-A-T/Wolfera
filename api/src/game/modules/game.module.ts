@@ -13,6 +13,7 @@ import { GamePersistenceService } from '../services/game/game-persistence.servic
 import { GameService } from '../services/game/game.service';
 import { RoleService } from '../services/role/role.service';
 import { GameEventsModule } from './game-events.module';
+import { GameOptionsValidatorService } from '../services/game/game-options-validator.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { GameEventsModule } from './game-events.module';
     GameService,
     RoleService,
     GameHandlerRegistry,
+    GameOptionsValidatorService,
     GamePersistenceService,
     GameResolver,
   ],

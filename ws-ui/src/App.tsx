@@ -4,6 +4,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Socket } from "socket.io-client";
 import { BACKEND_URL, connectToGameSocket } from "./api";
+
+import Chat, { Channel, ChannelStatus, PlayerMessage } from "./chat";
 import DayVotingPhase from "./day-voting.component";
 import GameContextComponent, {
   ActivePhaseComponent,
@@ -18,6 +20,7 @@ import {
   Phase,
   Player,
   PlayerActionPayload,
+  PlayerData,
   RoleAssignedEvent,
   RoleRevealvent,
   User,
@@ -104,6 +107,7 @@ export default function WerewolfGame(): JSX.Element {
   const [werewolfesVotes, setwerewolfesVotes] = useState<WerewolfVote[]>([]);
   const [dayVotes, setDayVotes] = useState<WerewolfVote[]>([]);
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   const getGameData = () => gameData;
   const handleCreateGame = async (): Promise<void> => {
@@ -288,16 +292,69 @@ export default function WerewolfGame(): JSX.Element {
         return { ...prevGameData, players: updatedPlayers };
       });
     });
-    sock.on("channel-status", (status: any) => {
+    sock.on("channel-status", (status: ChannelStatus) => {
       console.log("Channel status update:", status);
-      showToast(`Channel ${status.channelId} status: ${status.status}`, "info");
+      showToast(
+        `Channel ${status.channel} status: ${status.isActive ? "Active" : "Inactive"}`,
+        "info",
+      );
+      // add channel to channels if it doesn't exist, if it does the update status
+      setChannels((prev) => {
+        const existingChannel = prev.find((ch) => ch.name === status.channel);
+        if (existingChannel) {
+          // Update existing channel status
+          return prev.map((ch) =>
+            ch.name === status.channel
+              ? { ...ch, isActive: status.isActive }
+              : ch,
+          );
+        }
+        return prev;
+      });
     });
-    sock.on("chat-message", (message: any) => {
+    sock.on("chat-message", (message: PlayerMessage) => {
+      //TODO: handle system message too
       console.log("Chat message received:", message);
       showToast(
         `New message in ${message.channel}: ${message.content}`,
         "info",
       );
+      setChannels((prev) => {
+        const channel = prev.find((ch) => ch.name === message.channel);
+        if (!channel) return prev;
+
+        channel.messages.push(message);
+        return prev;
+      });
+    });
+    sock.on("player-info", ({ channels }: PlayerData) => {
+      console.log("888 Player info received:", channels);
+      if (channels && channels.length > 0) {
+        setChannels((prevChannels) => {
+          // For each channel from server, update or add
+          const updatedChannels = [...prevChannels];
+          channels.forEach((ch) => {
+            const idx = updatedChannels.findIndex((c) => c.name === ch.name);
+            if (idx !== -1) {
+              // Update isActive and subscriptionType
+              updatedChannels[idx] = {
+                ...updatedChannels[idx],
+                isActive: ch.isActive,
+                subscriptionType: ch.subscriptionType,
+              };
+            } else {
+              // Add new channel
+              updatedChannels.push({
+                name: ch.name,
+                messages: [],
+                subscriptionType: ch.subscriptionType,
+                isActive: ch.isActive,
+              });
+            }
+          });
+          return updatedChannels;
+        });
+      }
     });
 
     setSocket(sock);
@@ -334,6 +391,19 @@ export default function WerewolfGame(): JSX.Element {
         />
       )}
       {activePhase && <ActivePhaseComponent {...activePhase} />}
+      {gameData && channels && channels.length > 0 && (
+        <Chat
+          gameData={gameData}
+          channels={channels}
+          onSendMessage={(channel, content) => {
+            console.log("889 Sending message to channel:", channel, content);
+            if (socket) {
+              const id = Math.random().toString(36);
+              socket.emit("chat-message", { channel, content, id });
+            }
+          }}
+        ></Chat>
+      )}
       <div style={containerStyle}>
         <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
           🐺 Werewolf Game

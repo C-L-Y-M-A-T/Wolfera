@@ -37,7 +37,7 @@ export class GameContext implements Serializable<GameDataDTO> {
   public gameEventEmitter: GameEventEmitter;
   public gameResults: GameResult;
   private gamePersistanceHandler = new GamePersistenceHandler(this);
-  private chatHandler: ChatHandler;
+  public chatHandler: ChatHandler;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
     WaitingForGameStartPhase,
@@ -89,8 +89,8 @@ export class GameContext implements Serializable<GameDataDTO> {
 
   @OnGameEvent(events.GAME.PLAYER_CONNECT)
   onPlayerConnect(player: Player): void {
-    debugger;
     this.emitToPlayer(player, SERVER_SOCKET_EVENTS.gameData, toDTO(this));
+    player.sendPlayerInfo();
     this.loggerService.debug(`Player ${player.id} connected`);
     this.broadcastToPlayers(
       SERVER_SOCKET_EVENTS.playerConnect,
