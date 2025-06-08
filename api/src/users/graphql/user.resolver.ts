@@ -9,6 +9,8 @@ import {
 } from '@nestjs/graphql';
 import { plainToInstance } from 'class-transformer';
 import { GraphQLError } from 'graphql';
+import { UserGameStatsDto } from 'src/game/dto/stats/user-stats.dto';
+import { GamePersistenceService } from 'src/game/services/game/game-persistence.service';
 import { UsersLoader } from '../dataloader/user.loader';
 import { FriendDto } from '../dto/friend.dto';
 import { UserDto } from '../dto/user.dto';
@@ -19,6 +21,7 @@ export class UserResolver {
   constructor(
     private userService: UsersService,
     private usersLoader: UsersLoader,
+    private gamePersistenceService: GamePersistenceService,
   ) {}
 
   @Query(() => UserDto, { name: 'userProfile' })
@@ -67,5 +70,10 @@ export class UserResolver {
   async getFriends(@Parent() user: UserDto): Promise<FriendDto[]> {
     const friends = await this.usersLoader.friendsByUserIdLoader.load(user.id);
     return friends.map((friend) => plainToInstance(FriendDto, friend));
+  }
+
+  @ResolveField('gamesStats', () => UserGameStatsDto)
+  getGameStats(@Parent() user: UserDto): Promise<UserGameStatsDto> {
+    return this.gamePersistenceService.calculateUserStats(user.id);
   }
 }

@@ -1,23 +1,37 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { DiscoveryModule } from '@nestjs/core';
 import { GameController } from '../controllers/game.controller';
 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from 'src/users/user.module';
+import { GameEntity } from '../entities/game.entity';
+import { PlayerGameResult } from '../entities/player-game-result.entity';
+import { GameHandlerRegistry } from '../events/event-handler-registry.service';
+import { GameResolver } from '../graphql/game.resolver';
+import { GamePersistenceService } from '../services/game/game-persistence.service';
 import { GameService } from '../services/game/game.service';
 import { RoleService } from '../services/role/role.service';
 import { GameEventsModule } from './game-events.module';
-import { GameHandlerRegistry } from '../events/event-handler-registry.service';
 import { GameOptionsValidatorService } from '../services/game/game-options-validator.service';
 
 @Module({
-  imports: [DiscoveryModule, GameEventsModule],
+  imports: [
+    DiscoveryModule,
+    GameEventsModule,
+    TypeOrmModule.forFeature([GameEntity]),
+    TypeOrmModule.forFeature([PlayerGameResult]),
+    forwardRef(() => UserModule),
+  ],
   providers: [
     GameService,
     RoleService,
     GameHandlerRegistry,
     GameOptionsValidatorService,
+    GamePersistenceService,
+    GameResolver,
   ],
   controllers: [GameController],
-  exports: [GameService],
+  exports: [GameService, GamePersistenceService],
 })
 export class GameModule {}

@@ -1,0 +1,107 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+enum Badge {
+  FIRST_WIN
+  MOON_SURVIVOR
+  NEW_PLAYER
+  VILLAGE_HERO
+  WEREWOLF_WIN
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FriendDto {
+  avatarOptions: JSONObject
+  badges: [Badge!]!
+  email: String!
+  id: String!
+  username: String!
+}
+
+"""Represents a game session"""
+type GameEntity {
+  code: String!
+  endedAt: DateTime
+  playerResults: [PlayerGameResult!]!
+  result: GameResult
+  wasCompleted: Boolean!
+}
+
+type GameHistoryDto {
+  code: String
+  endedAt: DateTime
+  playerResults: [PlayerGameResultDto!]!
+  result: GameResult
+}
+
+enum GameResult {
+  ABANDONED
+  VILLAGERS_WIN
+  WEREWOLVES_WIN
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+type PlayerGameResult {
+  game: GameEntity
+  gameId: String!
+  isWinner: Boolean
+  player: User!
+  playerId: String!
+  role: String!
+  survived: Boolean
+}
+
+type PlayerGameResultDto {
+  isWinner: Boolean
+  playerId: String!
+  role: String!
+  survived: Boolean
+}
+
+type Query {
+  allUsers: [UserDto!]!
+  completedGameDetails(gameId: String!): GameHistoryDto!
+  completedGames(limit: Float, playerId: String): [GameHistoryDto!]!
+  me: UserDto!
+  userProfile(username: String!): UserDto!
+}
+
+type User {
+  avatarOptions: JSONObject
+  badges: [Badge!]!
+  email: String!
+  friends: [User!]
+  gameResults: [PlayerGameResult!]!
+  hashedPassword: String!
+  username: String!
+}
+
+type UserDto {
+  avatarOptions: JSONObject
+  badges: [Badge!]!
+  email: String!
+  friends: [FriendDto!]
+  gamesStats: UserGameStatsDto!
+  id: String!
+  username: String!
+}
+
+type UserGameStatsDto {
+  gamesAsVillager: Float!
+  gamesAsWerewolf: Float!
+  gamesWon: Float!
+  survivalRate: Float!
+  totalGames: Float!
+  villagerWinRate: Float!
+  werewolfWinRate: Float!
+  winRate: Float!
+}

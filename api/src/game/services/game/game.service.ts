@@ -31,21 +31,18 @@ export class GameService {
     const game = await this.createGameInstance(gameOwner, options);
 
     // Automatically create all handler instances for this game
-    const handlerInstances = this.handlerRegistry.createHandlersForGame(
-      this,
-      game.gameId,
-    );
+    const handlerInstances = this.handlerRegistry.createHandlersForGame(game);
 
     handlerInstances.forEach(({ instance, className }) => {
-      console.log(`Registering ${className} for game ${game.gameId}`); //TODO: remove this log
+      // console.log(`Registering ${className} for game ${game.gameId}`); //TODO: remove this log
 
       game.gameEventEmitter.registerGameEventHandler(instance);
     });
 
     // i want to log for each game each event handlers :
     this.games.forEach((game) => {
-      console.log(game.gameId); //TODO: remove this log
-      console.log(game.gameEventEmitter.getHandlers()); //TODO: remove this log
+      // console.log(game.gameId); //TODO: remove this log
+      // console.log(game.gameEventEmitter.getHandlers()); //TODO: remove this log
     });
 
     return game;

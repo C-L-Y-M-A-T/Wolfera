@@ -1,10 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from 'src/logger/logger.service';
+import { GameContext } from '../classes/GameContext';
 import { GAME_HANDLER_FACTORY_METADATA } from '../events/event-emitter/decorators/event-handler.decorator';
 import { GAME_EVENT_METADATA } from '../events/event-emitter/decorators/game-event.decorator';
 
 export interface GameHandlerClass {
-  new (gameService: any, gameId: string, ...args: any[]): any;
+  new (context: GameContext, ...args: any[]): any;
 }
 
 @Injectable()
@@ -46,7 +47,12 @@ export class GameHandlerRegistry implements OnModuleInit {
     //   NightPhaseEventHandler,
     // } = require('./event-emitter/event-handlers/NightPhaseEventHandler');
 
+    const {
+      GamePersistenceHandler,
+    } = require('../services/game/game-persistence.handler');
+
     return [
+      // GamePersistenceHandler,
       // NightPhaseEventHandler,
       // Add other handler classes here as you create them
     ];
@@ -55,16 +61,13 @@ export class GameHandlerRegistry implements OnModuleInit {
   /**
    * Create all handler instances for a specific game
    */
-  createHandlersForGame(
-    gameService: any,
-    gameId: string,
-  ): GameHandlerInstance[] {
+  createHandlersForGame(gamecontext: GameContext): GameHandlerInstance[] {
     return this.handlerClasses.map((HandlerClass: GameHandlerClass) => {
-      const instance = new HandlerClass(gameService, gameId);
+      const instance = new HandlerClass(gamecontext);
       return {
         instance,
         className: HandlerClass.name,
-        gameId,
+        gameId: gamecontext.gameId,
       };
     });
   }

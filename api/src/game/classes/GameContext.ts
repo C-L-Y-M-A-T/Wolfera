@@ -13,6 +13,8 @@ import { GameEventEmitter } from '../events/event-emitter/GameEventEmitter';
 import { events } from '../events/event.types';
 import { ChainPhaseOrchestrator } from '../phases/orchertrators/ChainPhaseOrchestrator';
 import { WaitingForGameStartPhase } from '../phases/waitingForGameStart/WatitingForGameStart.phase';
+import { GamePersistenceHandler } from '../services/game/game-persistence.handler';
+import { GamePersistenceService } from '../services/game/game-persistence.service';
 import { RoleService } from '../services/role/role.service';
 import { GamePhase } from './GamePhase';
 import { Player } from './Player';
@@ -34,6 +36,7 @@ export class GameContext implements Serializable<GameDataDTO> {
   private _owner: Player;
   public gameEventEmitter: GameEventEmitter;
   public gameResults: GameResult;
+  private gamePersistanceHandler;
   public chatHandler: ChatHandler;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
@@ -45,8 +48,10 @@ export class GameContext implements Serializable<GameDataDTO> {
   constructor(
     public rolesService: RoleService,
     public loggerService: LoggerService,
+    public persistenceService: GamePersistenceService,
   ) {
     this.gameEventEmitter = new GameEventEmitter(this);
+    this.gamePersistanceHandler = new GamePersistenceHandler(this);
     this.chatHandler = new ChatHandler(this);
     this.gameId = this.generateGameId();
     this.gameEventEmitter.registerGameEventHandler(this);
@@ -185,8 +190,11 @@ export class GameContext implements Serializable<GameDataDTO> {
     this.players.forEach((player) => {
       player.disconnect();
     });
+    console.log('ena nkoul lo3ba wfet');
     this.gameEventEmitter.emit(events.GAME.END, {
       gameId: this.gameId,
+      results: this.gameResults,
+      endedAt: Date.now(),
     });
   }
 
