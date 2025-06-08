@@ -33,12 +33,10 @@ type GameEntity {
 }
 
 type GameHistoryDto {
+  code: String
   endedAt: DateTime
-  id: String!
   playerResults: [PlayerGameResultDto!]!
   result: GameResult
-  wasCompleted: Boolean!
-  winningTeam: String
 }
 
 enum GameResult {
@@ -63,15 +61,15 @@ type PlayerGameResult {
 }
 
 type PlayerGameResultDto {
-  isWinner: Boolean!
+  isWinner: Boolean
   playerId: String!
   role: String!
-  survived: Boolean!
+  survived: Boolean
 }
 
 type Query {
   allUsers: [UserDto!]!
-  completedGameDetails(gameId: String!): GameEntity!
+  completedGameDetails(gameId: String!): GameHistoryDto!
   completedGames(limit: Float, playerId: String): [GameHistoryDto!]!
   me: UserDto!
   userProfile(username: String!): UserDto!

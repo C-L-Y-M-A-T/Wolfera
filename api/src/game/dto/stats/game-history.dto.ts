@@ -1,40 +1,42 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
 import { GameResult } from 'src/game/entities/game.entity';
+import { RoleName } from 'src/roles';
 
 @ObjectType()
 export class GameHistoryDto {
-  @Field()
-  id: string;
+  @Expose()
+  @Field({ nullable: true })
+  code: string;
 
+  @Expose()
   @Field(() => Date, { nullable: true })
   endedAt: Date | null;
 
+  @Expose()
   @Field(() => GameResult, { nullable: true })
   result: GameResult | null;
 
-  @Field()
-  wasCompleted: boolean;
-
-  @Field(() => String, {
-    nullable: true,
-  })
-  winningTeam: string | null;
-
+  @Expose()
   @Field(() => [PlayerGameResultDto])
   playerResults: PlayerGameResultDto[];
 }
 
 @ObjectType()
-class PlayerGameResultDto {
+export class PlayerGameResultDto {
+  @Expose()
   @Field()
   playerId: string;
 
-  @Field()
-  role: string;
+  @Expose()
+  @Field(() => String)
+  role: RoleName;
 
-  @Field()
-  isWinner: boolean;
+  @Expose()
+  @Field(() => Boolean, { nullable: true })
+  isWinner?: boolean | null;
 
-  @Field()
-  survived: boolean;
+  @Expose()
+  @Field(() => Boolean, { nullable: true })
+  survived?: boolean | null;
 }

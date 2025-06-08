@@ -143,8 +143,15 @@ export class GamePersistenceService extends BaseService<
 
   async getCompletedGameDetails(gameId: string): Promise<GameEntity> {
     const game = await this.findOne(
-      { code: gameId, wasCompleted: true },
-      { withException: false },
+      { id: gameId, wasCompleted: true },
+      {
+        withException: false,
+        relations: {
+          playerResults: {
+            player: true,
+          },
+        },
+      },
     );
     if (!game) {
       throw new NotFoundException(

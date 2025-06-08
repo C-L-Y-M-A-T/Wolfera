@@ -33,11 +33,7 @@ export class GameResolver {
       }
       const games = await this.gamesService.findCompletedGames(playerId, limit);
 
-      return games.map((game) =>
-        plainToInstance(GameHistoryDto, game, {
-          excludeExtraneousValues: true,
-        }),
-      );
+      return games.map((game) => plainToInstance(GameHistoryDto, game));
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new GraphQLError(error.message, {
@@ -51,12 +47,18 @@ export class GameResolver {
     }
   }
 
-  @Query(() => GameEntity, { name: 'completedGameDetails' })
+  @Query(() => GameHistoryDto, { name: 'completedGameDetails' })
   async getCompletedGameDetails(
     @Args('gameId') gameId: string,
-  ): Promise<GameEntity> {
+  ): Promise<GameHistoryDto> {
     try {
-      return this.gamesService.getCompletedGameDetails(gameId);
+      const game = await this.gamesService.getCompletedGameDetails(gameId);
+
+      const dto = plainToInstance(GameHistoryDto, game);
+
+      dto.playerResults = game.playerResults || [];
+
+      return dto;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new GraphQLError(`Completed game with ID ${gameId} not found`, {
