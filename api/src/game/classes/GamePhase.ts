@@ -18,6 +18,7 @@ export abstract class GamePhase<A = any> {
     protected playerActionPayloadSchema?: z.ZodSchema,
   ) {}
   abstract readonly phaseName: PhaseName;
+  abstract readonly phaseDisplayName;
 
   public startTime: number;
   protected abstract onStart(): Promise<void> | void;

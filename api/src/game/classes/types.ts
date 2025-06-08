@@ -85,7 +85,8 @@ export type ServerSocketEventPayloads = {
   [SERVER_SOCKET_EVENTS.playerLeft]: { playerId: string };
   [SERVER_SOCKET_EVENTS.gameStart]: any;
   [SERVER_SOCKET_EVENTS.phaseStart]: {
-    phaseName: string;
+    phaseName: PhaseName;
+    phaseDisplayName: string;
     startTime: number;
     phaseDuration: number;
     payload?: GameDataDTO; // Optional payload for the phase

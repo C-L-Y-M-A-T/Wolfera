@@ -27,4 +27,7 @@ export abstract class RolePhase<A = any> extends GamePhase<A> {
   get phaseName(): `${string}-phase` {
     return PHASE_NAMES.ROLE(this.role.roleData.name);
   }
+  get phaseDisplayName(): string {
+    return this.role.roleData.name;
+  }
 }

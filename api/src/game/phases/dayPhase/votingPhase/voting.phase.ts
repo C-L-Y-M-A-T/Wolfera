@@ -21,6 +21,9 @@ export class VotingPhase extends GamePhase<VoteActionPayload> {
   get phaseName(): `${string}-phase` {
     return 'Voting-phase';
   }
+  get phaseDisplayName(): string {
+    return 'Voting';
+  }
 
   get phaseDuration(): number {
     return 20 * 1000; // 5 seconds for voting

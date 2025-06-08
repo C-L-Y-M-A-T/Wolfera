@@ -14,6 +14,7 @@ export class NightResultsPhase extends ResultsPhase {
   get phaseName(): `${string}-phase` {
     return 'NightResults-phase';
   }
+  readonly phaseDisplayName = 'Night Results';
 
   processActions(): void {
     this.processWerewolvesActions();

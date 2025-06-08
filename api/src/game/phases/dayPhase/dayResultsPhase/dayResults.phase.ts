@@ -11,6 +11,7 @@ export class DayResultsPhase extends ResultsPhase {
   get phaseName(): `${string}-phase` {
     return 'DayResults-phase';
   }
+  readonly phaseDisplayName = 'Day Results';
 
   processActions(): void {
     const voteResults = this.input[PHASE_NAMES.DAY_PHASES.VOTE] as

@@ -228,6 +228,7 @@ export class GameContext implements Serializable<GameDataDTO> {
     // For example, you can emit an event to notify players
     this.broadcastToPlayers(SERVER_SOCKET_EVENTS.phaseStart, {
       phaseName: phase.phaseName,
+      phaseDisplayName: phase.phaseDisplayName,
       startTime: phase.startTime,
       phaseDuration: phase.phaseDuration,
       //payload?? //TODO: add payload if needed

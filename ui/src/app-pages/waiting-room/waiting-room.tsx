@@ -1,8 +1,8 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui";
+import { mockGameData, mockPlayers } from "@/data/lobby";
 import { useTheme } from "@/providers/theme-provider";
-import { Player } from "@/types/waiting-room/player";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
@@ -12,7 +12,6 @@ import {
   RolePreview,
   WaitingRoomHeader,
 } from "./components";
-import { mockGameData, mockPlayers } from "@/data/lobby";
 
 export default function WaitingRoomPage() {
   const theme = useTheme();

@@ -22,6 +22,9 @@ export class WaitingForGameStartPhase extends ChainableGamePhase<WaitingForGameS
   getNextPhase?(): PhaseConstructor<ChainableGamePhase> | undefined {
     return RoleAssignmentPhase;
   }
+  get phaseDisplayName(): string {
+    return 'Waiting for Game Start';
+  }
 
   readonly phaseName = PHASE_NAMES.WAITING_FOR_GAME_START;
   get phaseDuration(): number {

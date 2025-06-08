@@ -17,6 +17,7 @@ export class RoleAssignmentPhase extends ChainableGamePhase {
     return NightPhase;
   }
   readonly phaseName = PHASE_NAMES.ROLE_ASSIGNMENT;
+  readonly phaseDisplayName = 'Role Assignment';
 
   get phaseDuration(): number {
     return 10 * 1000;

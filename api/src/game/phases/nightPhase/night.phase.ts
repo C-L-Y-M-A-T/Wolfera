@@ -17,6 +17,7 @@ export class NightPhase extends ChainableGamePhase {
   }
   protected async onEnd(): Promise<void> {}
   readonly phaseName = PHASE_NAMES.NIGHT;
+  readonly phaseDisplayName = 'Night';
   private orchestrator: PhaseOrchestrator;
   private activeRoles: GameRole[] = [];
 

@@ -18,6 +18,7 @@ export class DayPhase extends ChainableGamePhase {
   }
   protected async onEnd(): Promise<void> {}
   readonly phaseName = PHASE_NAMES.DAY;
+  readonly phaseDisplayName = 'Day';
   private orchestrator: PhaseOrchestrator;
 
   async onPrePhase(): Promise<void> {
