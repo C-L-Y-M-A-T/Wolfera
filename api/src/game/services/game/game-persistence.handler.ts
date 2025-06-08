@@ -3,16 +3,11 @@ import { GameResult, PHASE_NAMES } from 'src/game/classes/types';
 import { GameResult as WinningTeam } from 'src/game/entities/game.entity';
 import { EventHandlerFactory } from 'src/game/events/event-emitter/decorators/event-handler.decorator';
 import { events } from 'src/game/events/event.types';
-import { GameContext } from '../../classes/GameContext';
-import {
-  GameEventHandler,
-  OnGameEvent,
-} from '../../events/event-emitter/decorators/game-event.decorator';
+import { EventHandler } from 'src/game/events/eventHandler';
+import { OnGameEvent } from '../../events/event-emitter/decorators/game-event.decorator';
 
 @EventHandlerFactory()
-export class GamePersistenceHandler implements GameEventHandler {
-  constructor(private context: GameContext) {}
-
+export class GamePersistenceHandler extends EventHandler {
   @OnGameEvent(events.GAME.CREATE)
   async onGameStart({ gameId }: { gameId: string }) {
     await this.context.persistenceService.createGameRecord(gameId);

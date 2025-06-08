@@ -36,7 +36,7 @@ export class GameContext implements Serializable<GameDataDTO> {
   private _owner: Player;
   public gameEventEmitter: GameEventEmitter;
   public gameResults: GameResult;
-  private gamePersistanceHandler = new GamePersistenceHandler(this);
+  private gamePersistanceHandler;
   public chatHandler: ChatHandler;
   private orchestrator = new ChainPhaseOrchestrator(
     this,
@@ -51,6 +51,7 @@ export class GameContext implements Serializable<GameDataDTO> {
     public persistenceService: GamePersistenceService,
   ) {
     this.gameEventEmitter = new GameEventEmitter(this);
+    this.gamePersistanceHandler = new GamePersistenceHandler(this);
     this.chatHandler = new ChatHandler(this);
     this.gameId = this.generateGameId();
     this.gameEventEmitter.registerGameEventHandler(this);

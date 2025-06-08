@@ -52,7 +52,7 @@ export class GameHandlerRegistry implements OnModuleInit {
     } = require('../services/game/game-persistence.handler');
 
     return [
-      GamePersistenceHandler,
+      // GamePersistenceHandler,
       // NightPhaseEventHandler,
       // Add other handler classes here as you create them
     ];
